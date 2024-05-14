@@ -5,6 +5,7 @@
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "TideMath.h"
 
 ATidePlayerController::ATidePlayerController()
 {
@@ -36,6 +37,7 @@ void ATidePlayerController::SetupInputComponent()
 
 	// Bind input actions to functions
 	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ATidePlayerController::MoveTriggered);
+	EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ATidePlayerController::LookTriggered);
 }
 
 void ATidePlayerController::MoveTriggered(const FInputActionValue& ActionValue)
@@ -44,6 +46,21 @@ void ATidePlayerController::MoveTriggered(const FInputActionValue& ActionValue)
 	if (!IsValid(ControlledPawn)) return;
 
 	const FVector2D InputVector = ActionValue.Get<FVector2D>();
-	GEngine->AddOnScreenDebugMessage(1, 1.0f, FColor::Blue, InputVector.ToString());
+	
+	// Scale and clamp the input vector between 0 and 1
+	const FVector2D Value = UTideMath::ClampMagnitude012D(InputVector);
+
+	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Blue, Value.ToString());
+
+	const FVector ForwardDirection = UTideMath::AngleToDirectionXY(UE_REAL_TO_FLOAT(ControlledPawn->GetActorRotation().Yaw));
+	const FVector RightDirection = UTideMath::PerpendicularCounterClockwiseXY(ForwardDirection);
+	ControlledPawn->AddMovementInput(ForwardDirection * Value.Y + RightDirection * Value.X);
+}
+
+void ATidePlayerController::LookTriggered(const FInputActionValue& ActionValue)
+{
+	const FVector2D InputVector = ActionValue.Get<FVector2D>();
+	AddYawInput(InputVector.X);
+	AddPitchInput(InputVector.Y);
 }
 #pragma endregion 

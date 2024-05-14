@@ -37,6 +37,9 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category="Input")
 	TObjectPtr<UInputAction> MoveAction;
 	void MoveTriggered(const FInputActionValue& ActionValue);
-	
+
+	UPROPERTY(EditDefaultsOnly, Category="Input")
+	TObjectPtr<UInputAction> LookAction;
+	void LookTriggered(const FInputActionValue& ActionValue);
 #pragma endregion 
 };
