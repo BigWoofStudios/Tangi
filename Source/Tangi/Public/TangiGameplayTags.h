@@ -6,7 +6,7 @@
 #include "GameplayTagContainer.h"
 #include "NativeGameplayTags.h"
 
-namespace FVeilGameplayTags
+namespace FTangiGameplayTags
 {
 	// -----------------------------------------------------------------------------------------------------------------
 	// Input Tags
@@ -63,6 +63,7 @@ namespace FVeilGameplayTags
 	// -----------------------------------------------------------------------------------------------------------------
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Vital_Health);
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Vital_Endurance);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Vital_Oxygen);
 
 	// -----------------------------------------------------------------------------------------------------------------
 	// Primary Attributes

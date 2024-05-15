@@ -8,9 +8,15 @@ public class Tangi : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "NetCore", "GameplayAbilities" });
+		PublicDependencyModuleNames.AddRange(new string[]
+		{
+			"Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "NetCore", "GameplayAbilities"
+		});
 
-		PrivateDependencyModuleNames.AddRange(new string[] { "GameplayTags", "Niagara" });
+		PrivateDependencyModuleNames.AddRange(new string[]
+		{
+			"GameplayTags", "GameplayTasks", "Niagara"
+		});
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });

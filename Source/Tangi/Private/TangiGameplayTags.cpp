@@ -1,8 +1,9 @@
 // Copyright Big Woof Studios, LLC. All Rights Reserved.
 
+
 #include "TangiGameplayTags.h"
 
-namespace FTnagiGameplayTags
+namespace FTangiGameplayTags
 {
 	// -----------------------------------------------------------------------------------------------------------------
 	// Input Tags
@@ -59,6 +60,7 @@ namespace FTnagiGameplayTags
 	// -----------------------------------------------------------------------------------------------------------------
 	UE_DEFINE_GAMEPLAY_TAG(Attribute_Vital_Health, FName{TEXTVIEW("Attribute.Vital.Health")});
 	UE_DEFINE_GAMEPLAY_TAG(Attribute_Vital_Endurance, FName{TEXTVIEW("Attribute.Vital.Endurance")});
+	UE_DEFINE_GAMEPLAY_TAG(Attribute_Vital_Oxygen, FName{TEXTVIEW("Attribute.Vital.Oxygen")});
 
 	// -----------------------------------------------------------------------------------------------------------------
 	// Primary Attributes
