@@ -3,6 +3,8 @@
 
 #include "TangiAssetManager.h"
 
+#include "AbilitySystemGlobals.h"
+
 UTangiAssetManager& UTangiAssetManager::Get()
 {
 	check(GEngine);
@@ -17,5 +19,5 @@ void UTangiAssetManager::StartInitialLoading()
 	Super::StartInitialLoading();
 	
 	// This is required to use TargetData!
-	// UAbilitySystemGlobals::Get().InitGlobalData();
+	UAbilitySystemGlobals::Get().InitGlobalData();
 }
