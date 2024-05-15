@@ -7,6 +7,11 @@ namespace FTnagiGameplayTags
 	// -----------------------------------------------------------------------------------------------------------------
 	// Input Tags
 	// -----------------------------------------------------------------------------------------------------------------
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Attack, FName{TEXTVIEW("InputTag.Attack")});
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Aim, FName{TEXTVIEW("InputTag.Aim")});
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Sprint, FName{TEXTVIEW("InputTag.Sprint")});
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Jump, FName{TEXTVIEW("InputTag.Jump")});
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Crouch, FName{TEXTVIEW("InputTag.Crouch")});
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Move, FName{TEXTVIEW("InputTag.Move")});
 
 	// -----------------------------------------------------------------------------------------------------------------
@@ -27,18 +32,15 @@ namespace FTnagiGameplayTags
 	// -----------------------------------------------------------------------------------------------------------------
 	UE_DEFINE_GAMEPLAY_TAG(Gameplay_Ability, FName{TEXTVIEW("Gameplay.Ability")});
 	UE_DEFINE_GAMEPLAY_TAG(Gameplay_Ability_InputBlocked, FName{TEXTVIEW("Gameplay.Ability.InputBlocked")});
+	
+	//~ Common
 	UE_DEFINE_GAMEPLAY_TAG(Gameplay_Ability_Death, FName{TEXTVIEW("Gameplay.Ability.Death")});
 	UE_DEFINE_GAMEPLAY_TAG(Gameplay_Ability_HitReact, FName{TEXTVIEW("Gameplay.Ability.HitReact")});
 	UE_DEFINE_GAMEPLAY_TAG(Gameplay_Ability_Attack, FName{TEXTVIEW("Gameplay.Ability.Attack")});
-	
-	//~ Action-based
-	UE_DEFINE_GAMEPLAY_TAG(Gameplay_Ability_Action, FName{TEXTVIEW("Gameplay.Ability.Action")});
-	UE_DEFINE_GAMEPLAY_TAG(Gameplay_Ability_Action_Jump, FName{TEXTVIEW("Gameplay.Ability.Action.Jump")});
-	UE_DEFINE_GAMEPLAY_TAG(Gameplay_Ability_Action_Sprint, FName{TEXTVIEW("Gameplay.Ability.Action.Sprint")});
+	UE_DEFINE_GAMEPLAY_TAG(Gameplay_Ability_Sprint, FName{TEXTVIEW("Gameplay.Ability.Sprint")});
+	UE_DEFINE_GAMEPLAY_TAG(Gameplay_Ability_HealthRegeneration, FName{TEXTVIEW("Gameplay.Ability.Passive.HealthRegeneration")});
+	UE_DEFINE_GAMEPLAY_TAG(Gameplay_Ability_EnduranceRegeneration, FName{TEXTVIEW("Gameplay.Ability.Passive.EnduranceRegeneration")});
 
-	//~ Passive-based
-	UE_DEFINE_GAMEPLAY_TAG(Gameplay_Ability_Passive_HealthRegeneration, FName{TEXTVIEW("Gameplay.Ability.Passive.HealthRegeneration")});
-	UE_DEFINE_GAMEPLAY_TAG(Gameplay_Ability_Passive_EnduranceRegeneration, FName{TEXTVIEW("Gameplay.Ability.Passive.EnduranceRegeneration")});
 
 	//~ Costs
 	UE_DEFINE_GAMEPLAY_TAG(Gameplay_Ability_Cost, FName{TEXTVIEW("Gameplay.Ability.Cost")});
@@ -46,7 +48,6 @@ namespace FTnagiGameplayTags
 
 	//~ Cooldowns
 	UE_DEFINE_GAMEPLAY_TAG(Gameplay_Ability_Cooldown, FName{TEXTVIEW("Gameplay.Ability.Cooldown")});
-	UE_DEFINE_GAMEPLAY_TAG(Gameplay_Ability_Cooldown_Jump, FName{TEXTVIEW("Gameplay.Ability.Cooldown.Jump")});
 
 	// -----------------------------------------------------------------------------------------------------------------
 	// Statuses
@@ -72,7 +73,6 @@ namespace FTnagiGameplayTags
 	// -----------------------------------------------------------------------------------------------------------------
 	UE_DEFINE_GAMEPLAY_TAG(Attribute_Secondary_MaxHealth, FName{TEXTVIEW("Attribute.Secondary.MaxHealth")});
 	UE_DEFINE_GAMEPLAY_TAG(Attribute_Secondary_MaxEndurance, FName{TEXTVIEW("Attribute.Secondary.MaxEndurance")});
-	UE_DEFINE_GAMEPLAY_TAG(Attribute_Secondary_RegenerationRate, FName{TEXTVIEW("Attribute.Secondary.RegenerationRate")});
 
 	// -----------------------------------------------------------------------------------------------------------------
 	// Movement Moves
