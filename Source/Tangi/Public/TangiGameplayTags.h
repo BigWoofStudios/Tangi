@@ -12,10 +12,10 @@ namespace FVeilGameplayTags
 	// Input Tags
 	// -----------------------------------------------------------------------------------------------------------------
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Attack);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Aim);
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Sprint);
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Jump);
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Crouch);
-	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Walk);
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Move);
 
 	// -----------------------------------------------------------------------------------------------------------------
@@ -36,19 +36,15 @@ namespace FVeilGameplayTags
 	// -----------------------------------------------------------------------------------------------------------------
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Gameplay_Ability);
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Gameplay_Ability_InputBlocked);
+	
+	//~ Common
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Gameplay_Ability_Death);
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Gameplay_Ability_HitReact);
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Gameplay_Ability_Attack);
-	
-	//~ Action-based
-	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Gameplay_Ability_Action);
-	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Gameplay_Ability_Action_Jump);
-	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Gameplay_Ability_Action_Sprint);
-	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Gameplay_Ability_Action_Rest);
-
-	//~ Passive-based
-	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Gameplay_Ability_Passive_HealthRegeneration);
-	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Gameplay_Ability_Passive_EnduranceRegeneration);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Gameplay_Ability_Aim);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Gameplay_Ability_Sprint);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Gameplay_Ability_HealthRegeneration);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Gameplay_Ability_EnduranceRegeneration);
 
 	//~ Costs
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Gameplay_Ability_Cost);
@@ -56,7 +52,6 @@ namespace FVeilGameplayTags
 
 	//~ Cooldowns
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Gameplay_Ability_Cooldown);
-	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Gameplay_Ability_Cooldown_Jump);
 
 	// -----------------------------------------------------------------------------------------------------------------
 	// Statuses
@@ -82,7 +77,6 @@ namespace FVeilGameplayTags
 	// -----------------------------------------------------------------------------------------------------------------
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Secondary_MaxHealth);
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Secondary_MaxEndurance);
-	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Secondary_RegenerationRate);
 
 	// -----------------------------------------------------------------------------------------------------------------
 	// Movement Moves
