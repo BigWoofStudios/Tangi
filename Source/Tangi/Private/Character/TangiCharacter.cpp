@@ -55,8 +55,8 @@ void ATangiCharacter::InitAbilityActorInfo()
 {
 	check(GetTangiPlayerState());
 	GetTangiPlayerState()->GetAbilitySystemComponent()->InitAbilityActorInfo(GetTangiPlayerState(), this);
-	GetTangiAbilitySystemComponent()->AbilityActorInfoSet();
 	GetTangiAbilitySystemComponent()->SetTagRelationshipMapping(TagRelationshipMapping);
+	GetTangiAbilitySystemComponent()->AbilityActorInfoSet();
 	
 	// Assign references to ASC & AS on player character
 	AbilitySystemComponent = GetTangiPlayerState()->GetAbilitySystemComponent();

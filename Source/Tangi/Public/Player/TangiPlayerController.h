@@ -7,9 +7,9 @@
 #include "GameFramework/PlayerController.h"
 #include "TangiPlayerController.generated.h"
 
+struct FInputActionValue;
 class UTangiInputConfig;
 class UDamageTextComponent;
-struct FInputActionValue;
 class UInputAction;
 class UInputMappingContext;
 
@@ -49,14 +49,14 @@ protected:
 	virtual void SetupInputComponent() override;
 	
 private:
+	void AbilityInputTagPressed(const FGameplayTag InputTag);
+	void AbilityInputTagReleased(const FGameplayTag InputTag);
+	
 	UPROPERTY(EditDefaultsOnly, Category="Input|Settings")
 	TObjectPtr<UInputMappingContext> TangiContext = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Settings")
 	TObjectPtr<UTangiInputConfig> InputConfig = nullptr;
-	
-	void AbilityInputTagPressed(const FGameplayTag InputTag);
-	void AbilityInputTagReleased(const FGameplayTag InputTag);
 	
 	UPROPERTY(EditDefaultsOnly, Category="Input|Action")
 	TObjectPtr<UInputAction> MoveAction;
