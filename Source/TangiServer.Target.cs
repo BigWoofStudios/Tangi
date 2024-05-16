@@ -3,12 +3,13 @@
 using UnrealBuildTool;
 using System.Collections.Generic;
 
-public class TangiEditorTarget : TargetRules
+public class TangiServerTarget : TargetRules
 {
-	public TangiEditorTarget(TargetInfo Target) : base(Target)
+	public TangiServerTarget(TargetInfo Target) : base(Target)
 	{
-		Type = TargetType.Editor;
+		Type = TargetType.Server;
 		DefaultBuildSettings = BuildSettingsVersion.V5;
+		bWithPushModel = true;
 		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_4;
 
 		ExtraModuleNames.AddRange( new string[] { "Tangi" } );

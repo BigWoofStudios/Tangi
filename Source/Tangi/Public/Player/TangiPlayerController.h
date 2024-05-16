@@ -49,21 +49,29 @@ protected:
 	virtual void SetupInputComponent() override;
 	
 private:
-	UPROPERTY(EditDefaultsOnly, Category="Input")
+	UPROPERTY(EditDefaultsOnly, Category="Input|Settings")
 	TObjectPtr<UInputMappingContext> TangiContext = nullptr;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UPROPERTY(EditDefaultsOnly, Category = "Input|Settings")
 	TObjectPtr<UTangiInputConfig> InputConfig = nullptr;
 	
 	void AbilityInputTagPressed(const FGameplayTag InputTag);
 	void AbilityInputTagReleased(const FGameplayTag InputTag);
 	
-	UPROPERTY(EditDefaultsOnly, Category="Input")
+	UPROPERTY(EditDefaultsOnly, Category="Input|Action")
 	TObjectPtr<UInputAction> MoveAction;
 	void MoveTriggered(const FInputActionValue& ActionValue);
 
-	UPROPERTY(EditDefaultsOnly, Category="Input")
+	UPROPERTY(EditDefaultsOnly, Category="Input|Action")
 	TObjectPtr<UInputAction> LookAction;
 	void LookTriggered(const FInputActionValue& ActionValue);
+
+	UPROPERTY(EditDefaultsOnly, Category="Input|Action")
+	TObjectPtr<UInputAction> CrouchAction;
+	void CrouchStarted(const FInputActionValue& ActionValue);
+
+	UPROPERTY(EditDefaultsOnly, Category="Input|Action")
+	TObjectPtr<UInputAction> JumpAction;
+	void JumpStarted(const FInputActionValue& ActionValue);
 #pragma endregion
 };

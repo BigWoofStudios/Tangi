@@ -66,10 +66,6 @@ public:
 	UFUNCTION()
 	FORCEINLINE bool GetIsDead() const { return bIsDead; }
 
-protected:
-	UFUNCTION()
-	void SetIsDead(const bool bNewIsDead);
-
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Combat|Montages")
 	TObjectPtr<UAnimMontage> DeathMontage = nullptr;
@@ -77,9 +73,8 @@ private:
 	UPROPERTY(VisibleAnywhere, Replicated, Category = "Combat")
 	bool bIsDead = false;
 
-	void SetIsDead(const bool bNewIsDead, const bool bSendRpc);
+	void SetIsDead(const bool bNewIsDead);
 
-	UFUNCTION(Client, Reliable) void ClientSetIsDead(bool bNewIsDead);
-	UFUNCTION(Server, Reliable)void ServerSetIsDead(bool bNewIsDead);
+	UFUNCTION(Server, Reliable) void ServerSetIsDead(bool bNewIsDead);
 #pragma endregion
 };

@@ -71,9 +71,10 @@ void ATangiPlayerController::SetupInputComponent()
 	Super::SetupInputComponent();
 	UTangiInputComponent* TangiInputComponent = CastChecked<UTangiInputComponent>(InputComponent);
 
-	// Bind input actions to functions
 	TangiInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ATangiPlayerController::MoveTriggered);
 	TangiInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ATangiPlayerController::LookTriggered);
+	TangiInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &ATangiPlayerController::CrouchStarted);
+	TangiInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ATangiPlayerController::JumpStarted);
 	
 	TangiInputComponent->BindAbilityActions(InputConfig, this, &ATangiPlayerController::AbilityInputTagPressed, &ATangiPlayerController::AbilityInputTagReleased);
 }
@@ -103,9 +104,6 @@ void ATangiPlayerController::MoveTriggered(const FInputActionValue& ActionValue)
 	
 	// Scale and clamp the input vector between 0 and 1
 	const FVector2D Value = UTangiMath::ClampMagnitude012D(InputVector);
-
-	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Blue, Value.ToString());
-
 	const FVector ForwardDirection = UTangiMath::AngleToDirectionXY(UE_REAL_TO_FLOAT(ControlledPawn->GetActorRotation().Yaw));
 	const FVector RightDirection = UTangiMath::PerpendicularCounterClockwiseXY(ForwardDirection);
 	ControlledPawn->AddMovementInput(ForwardDirection * Value.Y + RightDirection * Value.X);
@@ -113,8 +111,39 @@ void ATangiPlayerController::MoveTriggered(const FInputActionValue& ActionValue)
 
 void ATangiPlayerController::LookTriggered(const FInputActionValue& ActionValue)
 {
+	if (const APawn* ControlledPawn = GetPawn(); !IsValid(ControlledPawn)) return;
+	
 	const FVector2D InputVector = ActionValue.Get<FVector2D>();
 	AddYawInput(InputVector.X);
 	AddPitchInput(InputVector.Y);
+}
+
+void ATangiPlayerController::CrouchStarted(const FInputActionValue&)
+{
+	// TODO: Set desired stance on the character
+	// if (GetDesiredStance() == FTangiGameplayTags::Movement_Stance_Standing)
+	// {
+	// 	SetDesiredStance(FTangiGameplayTags::Movement_Stance_Crouching);	
+	// }
+	// else if (GetDesiredStance() == FTangiGameplayTags::Movement_Stance_Crouching)
+	// {
+	// 	SetDesiredStance(FTangiGameplayTags::Movement_Stance_Standing);
+	// }
+}
+
+void ATangiPlayerController::JumpStarted(const FInputActionValue& ActionValue)
+{
+	const bool InputValue = ActionValue.Get<bool>();
+	ACharacter* ControlledCharacter = GetCharacter();
+	if (!IsValid(ControlledCharacter)) return;
+	
+	if (InputValue)
+	{
+		ControlledCharacter->Jump();
+	}
+	else
+	{
+		ControlledCharacter->StopJumping();
+	}
 }
 #pragma endregion 

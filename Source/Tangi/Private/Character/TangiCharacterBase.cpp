@@ -18,9 +18,9 @@ void ATangiCharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	FDoRepLifetimeParams Parameters;
+	
 	Parameters.bIsPushBased = true;
-
-	Parameters.Condition = COND_SkipOwner;
+	Parameters.RepNotifyCondition = REPNOTIFY_OnChanged;
 	DOREPLIFETIME_WITH_PARAMS_FAST(ThisClass, bIsDead, Parameters);
 }
 
@@ -32,10 +32,9 @@ void ATangiCharacterBase::DeathTagChanged(const FGameplayTag CallbackTag, const 
 void ATangiCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	if (AbilitySystemComponent)
+	if (GetAbilitySystemComponent())
 	{
-		AbilitySystemComponent->RegisterGameplayTagEvent(FTangiGameplayTags::Status_IsDead, EGameplayTagEventType::NewOrRemoved).AddUObject(
+		GetAbilitySystemComponent()->RegisterGameplayTagEvent(FTangiGameplayTags::Status_IsDead, EGameplayTagEventType::NewOrRemoved).AddUObject(
 			this, &ATangiCharacterBase::DeathTagChanged
 		);
 	}
@@ -80,40 +79,19 @@ void ATangiCharacterBase::AddCharacterAbilities() const
 #pragma region Death
 void ATangiCharacterBase::SetIsDead(const bool bNewIsDead)
 {
-	SetIsDead(bNewIsDead, true);
-}
-
-void ATangiCharacterBase::SetIsDead(const bool bNewIsDead, const bool bSendRpc)
-{
-	if (bIsDead == bNewIsDead || GetLocalRole() < ROLE_AutonomousProxy)
+	if (HasAuthority())
 	{
-		return;
+		bIsDead = bNewIsDead;
+		MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, bIsDead, this)
 	}
-
-	bIsDead = bNewIsDead;
-
-	MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, bIsDead, this)
-
-	if (bSendRpc)
+	else
 	{
-		if (GetLocalRole() >= ROLE_Authority)
-		{
-			ClientSetIsDead(bIsDead);
-		}
-		else
-		{
-			ServerSetIsDead(bIsDead);
-		}
+		ServerSetIsDead(bNewIsDead);
 	}
-}
-
-void ATangiCharacterBase::ClientSetIsDead_Implementation(const bool bNewIsDead)
-{
-	SetIsDead(bNewIsDead, false);
 }
 
 void ATangiCharacterBase::ServerSetIsDead_Implementation(const bool bNewIsDead)
 {
-	SetIsDead(bNewIsDead, false);
+	SetIsDead(bNewIsDead);
 }
 #pragma endregion 
