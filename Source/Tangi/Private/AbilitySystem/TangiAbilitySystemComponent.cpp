@@ -68,7 +68,7 @@ void UTangiAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& I
 
 void UTangiAbilitySystemComponent::ProcessAbilityInput(const float DeltaTime, const bool bGamePaused)
 {
-	if (HasMatchingGameplayTag(FTangiGameplayTags::Gameplay_Ability_InputBlocked))
+	if (HasMatchingGameplayTag(FTangiGameplayTags::GameplayAbility_InputBlocked))
 	{
 		ClearAbilityInput();
 		return;

@@ -34,29 +34,33 @@ namespace FTangiGameplayTags
 	// -----------------------------------------------------------------------------------------------------------------
 	// Gameplay Abilities
 	// -----------------------------------------------------------------------------------------------------------------
-	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Gameplay_Ability);
-	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Gameplay_Ability_InputBlocked);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_InputBlocked);
 	
 	//~ Common
-	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Gameplay_Ability_Death);
-	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Gameplay_Ability_HitReact);
-	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Gameplay_Ability_Attack);
-	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Gameplay_Ability_Aim);
-	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Gameplay_Ability_Sprint);
-	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Gameplay_Ability_HealthRegeneration);
-	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Gameplay_Ability_EnduranceRegeneration);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_Death);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_HitReact);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_Attack);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_Aim);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_Sprint);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_HealthRegeneration);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_EnduranceRegeneration);
+
+	//~ Failed to activate tags
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GamplayAbility_ActivateFail_IsDead);
 
 	//~ Costs
-	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Gameplay_Ability_Cost);
-	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Gameplay_Ability_Cost_Sprint);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_Cost);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_Cost_Sprint);
 
 	//~ Cooldowns
-	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Gameplay_Ability_Cooldown);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_Cooldown);
 
 	// -----------------------------------------------------------------------------------------------------------------
 	// Statuses
 	// -----------------------------------------------------------------------------------------------------------------
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_IsDead);
 
 	// -----------------------------------------------------------------------------------------------------------------
 	// Vital Attributes
@@ -78,6 +82,7 @@ namespace FTangiGameplayTags
 	// -----------------------------------------------------------------------------------------------------------------
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Secondary_MaxHealth);
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Secondary_MaxEndurance);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Secondary_MaxOxygen);
 
 	// -----------------------------------------------------------------------------------------------------------------
 	// Movement Moves

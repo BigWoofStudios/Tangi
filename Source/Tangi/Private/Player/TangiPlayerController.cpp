@@ -7,11 +7,24 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "TangiMath.h"
+#include "GameFramework/Character.h"
+#include "Input/TangiInputComponent.h"
+#include "UI/Widget/DamageTextComponent.h"
 
 ATangiPlayerController::ATangiPlayerController()
 {
 	bReplicates = true;
 	bShowMouseCursor = false;
+}
+
+void ATangiPlayerController::PostProcessInput(const float DeltaTime, const bool bGamePaused)
+{
+	if (UTangiAbilitySystemComponent* VeilASC = GetTangiAbilitySystemComponent())
+	{
+		VeilASC->ProcessAbilityInput(DeltaTime, bGamePaused);
+	}
+
+	Super::PostProcessInput(DeltaTime, bGamePaused);
 }
 
 UTangiAbilitySystemComponent* ATangiPlayerController::GetTangiAbilitySystemComponent()
@@ -22,6 +35,18 @@ UTangiAbilitySystemComponent* ATangiPlayerController::GetTangiAbilitySystemCompo
     	}
     
     	return TangiAbilitySystemComponent;
+}
+
+void ATangiPlayerController::ShowDamageNumber_Implementation(const float DamageAmount, ACharacter* TargetCharacter)
+{
+	if (IsValid(TargetCharacter) && DamageTextComponentClass && IsLocalController())
+	{
+		UDamageTextComponent* DamageText = NewObject<UDamageTextComponent>(TargetCharacter, DamageTextComponentClass);
+		DamageText->RegisterComponent();
+		DamageText->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+		DamageText->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+		DamageText->SetDamageText(DamageAmount);
+	}
 }
 
 void ATangiPlayerController::BeginPlay()
@@ -44,11 +69,13 @@ void ATangiPlayerController::BeginPlay()
 void ATangiPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
-	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
+	UTangiInputComponent* TangiInputComponent = CastChecked<UTangiInputComponent>(InputComponent);
 
 	// Bind input actions to functions
-	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ATangiPlayerController::MoveTriggered);
-	EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ATangiPlayerController::LookTriggered);
+	TangiInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ATangiPlayerController::MoveTriggered);
+	TangiInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ATangiPlayerController::LookTriggered);
+	
+	TangiInputComponent->BindAbilityActions(InputConfig, this, &ThisClass::AbilityInputTagPressed, &ThisClass::AbilityInputTagReleased);
 }
 
 void ATangiPlayerController::AbilityInputTagPressed(const FGameplayTag& InputTag)

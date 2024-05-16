@@ -3,7 +3,9 @@
 
 #include "Character/TangiCharacterBase.h"
 
+#include "TangiGameplayTags.h"
 #include "AbilitySystem/TangiAbilitySystemComponent.h"
+#include "Net/UnrealNetwork.h"
 
 ATangiCharacterBase::ATangiCharacterBase()
 {
@@ -12,21 +14,40 @@ ATangiCharacterBase::ATangiCharacterBase()
 	SetReplicates(true);
 }
 
+void ATangiCharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	FDoRepLifetimeParams Parameters;
+	Parameters.bIsPushBased = true;
+
+	Parameters.Condition = COND_SkipOwner;
+	DOREPLIFETIME_WITH_PARAMS_FAST(ThisClass, bIsDead, Parameters);
+}
+
+void ATangiCharacterBase::DeathTagChanged(const FGameplayTag CallbackTag, const int32 NewCount)
+{
+	SetIsDead(NewCount > 0);
+}
+
 void ATangiCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	if (AbilitySystemComponent)
+	{
+		AbilitySystemComponent->RegisterGameplayTagEvent(FTangiGameplayTags::Status_IsDead, EGameplayTagEventType::NewOrRemoved).AddUObject(
+			this, &ATangiCharacterBase::DeathTagChanged
+		);
+	}
 }
 
-void ATangiCharacterBase::InitAbilityActorInfo()
-{
-	// Used in inherited classes.
-}
+void ATangiCharacterBase::InitAbilityActorInfo() { /* Used in inherited classes. */ }
 
 void ATangiCharacterBase::ApplyEffectToSelf(const TSubclassOf<UGameplayEffect>& GameplayEffectClass, const float Level) const
 {
-	check(IsValid(GetAbilitySystemComponent()));
-	check(GameplayEffectClass);
+	checkf(IsValid(GetAbilitySystemComponent()), TEXT("AbilitySystemComponent isn't valid in Character Base."));
+	checkf(GameplayEffectClass, TEXT("GameplayEffectClass passed to ApplyEffectToSelf isn't valid in CharacterBase."));
+	
 	FGameplayEffectContextHandle ContextHandle = GetAbilitySystemComponent()->MakeEffectContext();
 	const FGameplayEffectSpecHandle SpecHandle = GetAbilitySystemComponent()->MakeOutgoingSpec(GameplayEffectClass, Level, ContextHandle);
 	ContextHandle.AddSourceObject(this);
@@ -39,8 +60,8 @@ void ATangiCharacterBase::InitializeDefaultAttributes()
 	checkf(DefaultSecondaryAttributes, TEXT("TangiCharacterBase required a DefaultSecondaryAttributes to be set. Please check the BP implementation."));
 
 	// TODO: Load this from saved game??
-	ApplyEffectToSelf(DefaultVitalAttributes, 1.f);
 	ApplyEffectToSelf(DefaultSecondaryAttributes, 1.f);
+	ApplyEffectToSelf(DefaultVitalAttributes, 1.f);
 }
 
 void ATangiCharacterBase::AddCharacterAbilities() const
@@ -53,3 +74,46 @@ void ATangiCharacterBase::AddCharacterAbilities() const
 	VeilAbilitySystemComponent->AddStartupAbilities(StartupAbilities);
 }
 
+// ---------------------------------------------------------------------------------------------------------------------
+// Death
+// ---------------------------------------------------------------------------------------------------------------------
+#pragma region Death
+void ATangiCharacterBase::SetIsDead(const bool bNewIsDead)
+{
+	SetIsDead(bNewIsDead, true);
+}
+
+void ATangiCharacterBase::SetIsDead(const bool bNewIsDead, const bool bSendRpc)
+{
+	if (bIsDead == bNewIsDead || GetLocalRole() < ROLE_AutonomousProxy)
+	{
+		return;
+	}
+
+	bIsDead = bNewIsDead;
+
+	MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, bIsDead, this)
+
+	if (bSendRpc)
+	{
+		if (GetLocalRole() >= ROLE_Authority)
+		{
+			ClientSetIsDead(bIsDead);
+		}
+		else
+		{
+			ServerSetIsDead(bIsDead);
+		}
+	}
+}
+
+void ATangiCharacterBase::ClientSetIsDead_Implementation(const bool bNewIsDead)
+{
+	SetIsDead(bNewIsDead, false);
+}
+
+void ATangiCharacterBase::ServerSetIsDead_Implementation(const bool bNewIsDead)
+{
+	SetIsDead(bNewIsDead, false);
+}
+#pragma endregion 

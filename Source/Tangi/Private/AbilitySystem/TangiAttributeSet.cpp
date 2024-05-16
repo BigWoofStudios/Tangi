@@ -8,6 +8,7 @@
 #include "TangiGameplayTags.h"
 #include "GameFramework/Character.h"
 #include "Net/UnrealNetwork.h"
+#include "Player/TangiPlayerController.h"
 
 UTangiAttributeSet::UTangiAttributeSet()
 {
@@ -65,12 +66,12 @@ void UTangiAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallb
 			
 			if (NewHealth <= 0.f)
 			{
-				TagContainer.AddTag(FTangiGameplayTags::Gameplay_Ability_Death);
+				TagContainer.AddTag(FTangiGameplayTags::GameplayAbility_Death);
 				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
 			}
 			else
 			{
-				TagContainer.AddTag(FTangiGameplayTags::Gameplay_Ability_HitReact);
+				TagContainer.AddTag(FTangiGameplayTags::GameplayAbility_HitReact);
 				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
 			}
 		}
@@ -112,17 +113,17 @@ void UTangiAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackDat
 void UTangiAttributeSet::ShowFloatingText(const FEffectProperties& Props, const float Damage)
 {
 	// TODO: Get FloatingText working on damage 
-	// if (Props.SourceCharacter != Props.TargetCharacter)
-	// {
-	// 	if (ATangiPlayerController *SourcePlayerController = Cast<ATangiPlayerController>(Props.SourceCharacter->Controller))
-	// 	{
-	// 		// SourcePlayerController->ShowDamageNumber(Damage, Props.TargetCharacter);
-	// 	}
-	// 	else if (ATangiPlayerController *TargetPlayerController = Cast<ATangiPlayerController>(Props.TargetCharacter->Controller))
-	// 	{
-	// 		// TargetPlayerController->ShowDamageNumber(Damage, Props.TargetCharacter);
-	// 	}
-	// }
+	if (Props.SourceCharacter != Props.TargetCharacter)
+	{
+		if (ATangiPlayerController *SourcePlayerController = Cast<ATangiPlayerController>(Props.SourceCharacter->Controller))
+		{
+			SourcePlayerController->ShowDamageNumber(Damage, Props.TargetCharacter);
+		}
+		else if (ATangiPlayerController *TargetPlayerController = Cast<ATangiPlayerController>(Props.TargetCharacter->Controller))
+		{
+			TargetPlayerController->ShowDamageNumber(Damage, Props.TargetCharacter);
+		}
+	}
 }
 
 // -----------------------------------------------------------------------------------------------------------------

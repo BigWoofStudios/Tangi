@@ -4,6 +4,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemGlobals.h"
+#include "TangiGameplayTags.h"
 #include "Abilities/Tasks/AbilityTask_WaitCancel.h"
 #include "AbilitySystem/TangiAbilitySystemComponent.h"
 
@@ -96,11 +97,10 @@ bool UTangiGameplayAbility::DoesAbilitySatisfyTagRequirements(const UAbilitySyst
 		if (AbilitySystemComponentTags.HasAny(AllBlockedTags))
 		{
 			
-			if (OptionalRelevantTags)
+			if (OptionalRelevantTags && AbilitySystemComponentTags.HasTag(FTangiGameplayTags::Status_IsDead))
 			{
-				// TODO: && AbilitySystemComponentTags.HasTag(FTangiGameplayTags::Status_Effect_Death)
 				// TODO: If player is dead and was rejected due to blocking tags, give that feedback
-				// TODO: OptionalRelevantTags->AddTag(FTangiGameplayTags::Ability_ActivateFail_IsDead);
+				OptionalRelevantTags->AddTag(FTangiGameplayTags::GamplayAbility_ActivateFail_IsDead);
 			}
 
 			bBlocked = true;

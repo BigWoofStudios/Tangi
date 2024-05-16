@@ -15,5 +15,5 @@ class TANGI_API UDamageTextComponent : public UWidgetComponent
 	GENERATED_BODY()
 public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void SetDamageText(float Damage, const bool bBlockedHit, const bool bCriticalHit, const bool bParriedHit, const bool bDodgedHit, const bool bMissedHit);
+	void SetDamageText(float Damage);
 };

@@ -26,34 +26,37 @@ namespace FTangiGameplayTags
 	// -----------------------------------------------------------------------------------------------------------------
 	UE_DEFINE_GAMEPLAY_TAG(Gameplay_Event, FName{TEXTVIEW("Gameplay.Event")});
 	UE_DEFINE_GAMEPLAY_TAG(Gameplay_Event_Montage, FName{TEXTVIEW("Gameplay.Event.Montage")});
-	
 	UE_DEFINE_GAMEPLAY_TAG(Gameplay_Event_Montage_ActivateAbility, FName{TEXTVIEW("Gameplay.Event.Montage.ActivateAbility")});
+
 	// -----------------------------------------------------------------------------------------------------------------
 	// Gameplay Abilities
 	// -----------------------------------------------------------------------------------------------------------------
-	UE_DEFINE_GAMEPLAY_TAG(Gameplay_Ability, FName{TEXTVIEW("Gameplay.Ability")});
-	UE_DEFINE_GAMEPLAY_TAG(Gameplay_Ability_InputBlocked, FName{TEXTVIEW("Gameplay.Ability.InputBlocked")});
-	
-	//~ Common
-	UE_DEFINE_GAMEPLAY_TAG(Gameplay_Ability_Death, FName{TEXTVIEW("Gameplay.Ability.Death")});
-	UE_DEFINE_GAMEPLAY_TAG(Gameplay_Ability_HitReact, FName{TEXTVIEW("Gameplay.Ability.HitReact")});
-	UE_DEFINE_GAMEPLAY_TAG(Gameplay_Ability_Attack, FName{TEXTVIEW("Gameplay.Ability.Attack")});
-	UE_DEFINE_GAMEPLAY_TAG(Gameplay_Ability_Sprint, FName{TEXTVIEW("Gameplay.Ability.Sprint")});
-	UE_DEFINE_GAMEPLAY_TAG(Gameplay_Ability_HealthRegeneration, FName{TEXTVIEW("Gameplay.Ability.Passive.HealthRegeneration")});
-	UE_DEFINE_GAMEPLAY_TAG(Gameplay_Ability_EnduranceRegeneration, FName{TEXTVIEW("Gameplay.Ability.Passive.EnduranceRegeneration")});
+	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility, FName{TEXTVIEW("GameplayAbility")});
+	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_InputBlocked, FName{TEXTVIEW("GameplayAbility.InputBlocked")});
 
+	//~ Common
+	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_Death, FName{TEXTVIEW("GameplayAbility.Death")});
+	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_HitReact, FName{TEXTVIEW("GameplayAbility.HitReact")});
+	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_Attack, FName{TEXTVIEW("GameplayAbility.Attack")});
+	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_Sprint, FName{TEXTVIEW("GameplayAbility.Sprint")});
+	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_HealthRegeneration, FName{TEXTVIEW("GameplayAbility.Passive.HealthRegeneration")});
+	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_EnduranceRegeneration, FName{TEXTVIEW("GameplayAbility.Passive.EnduranceRegeneration")});
+
+	//~ Failed to activate tags
+	UE_DEFINE_GAMEPLAY_TAG(GamplayAbility_ActivateFail_IsDead, FName{TEXTVIEW("GameplayAbility.ActivateFail.IsDead")});
 
 	//~ Costs
-	UE_DEFINE_GAMEPLAY_TAG(Gameplay_Ability_Cost, FName{TEXTVIEW("Gameplay.Ability.Cost")});
-	UE_DEFINE_GAMEPLAY_TAG(Gameplay_Ability_Cost_Sprint, FName{TEXTVIEW("Gameplay.Ability.Cost.Sprint")});
+	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_Cost, FName{TEXTVIEW("GameplayAbility.Cost")});
+	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_Cost_Sprint, FName{TEXTVIEW("GameplayAbility.Cost.Sprint")});
 
 	//~ Cooldowns
-	UE_DEFINE_GAMEPLAY_TAG(Gameplay_Ability_Cooldown, FName{TEXTVIEW("Gameplay.Ability.Cooldown")});
+	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_Cooldown, FName{TEXTVIEW("GameplayAbility.Cooldown")});
 
 	// -----------------------------------------------------------------------------------------------------------------
 	// Statuses
 	// -----------------------------------------------------------------------------------------------------------------
 	UE_DEFINE_GAMEPLAY_TAG(Status, FName{TEXTVIEW("Status")});
+	UE_DEFINE_GAMEPLAY_TAG(Status_IsDead, FName{TEXTVIEW("Status.IsDead")});
 
 	// -----------------------------------------------------------------------------------------------------------------
 	// Vital Attributes
@@ -75,6 +78,7 @@ namespace FTangiGameplayTags
 	// -----------------------------------------------------------------------------------------------------------------
 	UE_DEFINE_GAMEPLAY_TAG(Attribute_Secondary_MaxHealth, FName{TEXTVIEW("Attribute.Secondary.MaxHealth")});
 	UE_DEFINE_GAMEPLAY_TAG(Attribute_Secondary_MaxEndurance, FName{TEXTVIEW("Attribute.Secondary.MaxEndurance")});
+	UE_DEFINE_GAMEPLAY_TAG(Attribute_Secondary_MaxOxygen, FName{TEXTVIEW("Attribute.Secondary.MaxOxygen")});
 
 	// -----------------------------------------------------------------------------------------------------------------
 	// Movement Moves
