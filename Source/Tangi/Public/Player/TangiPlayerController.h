@@ -22,25 +22,25 @@ class TANGI_API ATangiPlayerController : public APlayerController
 	GENERATED_BODY()
 public:
 	ATangiPlayerController();
-	
+
 	virtual void PostProcessInput(const float DeltaTime, const bool bGamePaused) override;
-	
+
 	UFUNCTION(BlueprintCallable, Category = "Veil|PlayerController")
 	UTangiAbilitySystemComponent* GetTangiAbilitySystemComponent();
-	
+
 	UFUNCTION(Client, Reliable)
 	void ShowDamageNumber(const float DamageAmount, ACharacter* TargetCharacter);
-	
+
 protected:
 	virtual void BeginPlay() override;
 
 private:
 	UPROPERTY()
 	TObjectPtr<UTangiAbilitySystemComponent> TangiAbilitySystemComponent = nullptr;
-	
+
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UDamageTextComponent> DamageTextComponentClass;
-	
+
 // ---------------------------------------------------------------------------------------------------------------------
 // Input
 // ---------------------------------------------------------------------------------------------------------------------
@@ -55,8 +55,8 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UTangiInputConfig> InputConfig = nullptr;
 	
-	void AbilityInputTagPressed(const FGameplayTag& InputTag);
-	void AbilityInputTagReleased(const FGameplayTag& InputTag);
+	void AbilityInputTagPressed(const FGameplayTag InputTag);
+	void AbilityInputTagReleased(const FGameplayTag InputTag);
 	
 	UPROPERTY(EditDefaultsOnly, Category="Input")
 	TObjectPtr<UInputAction> MoveAction;
