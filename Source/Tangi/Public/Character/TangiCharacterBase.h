@@ -22,8 +22,8 @@ class TANGI_API ATangiCharacterBase : public ACharacter, public IAbilitySystemIn
 public:
 	ATangiCharacterBase();
 
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent; }
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void DeathTagChanged(const FGameplayTag CallbackTag, const int32 NewCount);
 	
 	// If set, this table is used to look up tag relationships for activate and cancel

@@ -77,9 +77,7 @@ void UTangiAbilitySystemComponent::ProcessAbilityInput(const float DeltaTime, co
 	static TArray<FGameplayAbilitySpecHandle> AbilitiesToActivate;
 	AbilitiesToActivate.Reset();
 
-	//
 	// Process all abilities that activate when the input is held.
-	//
 	for (const FGameplayAbilitySpecHandle& SpecHandle : InputHeldSpecHandles)
 	{
 		if (const FGameplayAbilitySpec* AbilitySpec = FindAbilitySpecFromHandle(SpecHandle))
@@ -96,9 +94,7 @@ void UTangiAbilitySystemComponent::ProcessAbilityInput(const float DeltaTime, co
 		}
 	}
 
-	//
 	// Process all abilities that had their input pressed this frame.
-	//
 	for (const FGameplayAbilitySpecHandle& SpecHandle : InputPressedSpecHandles)
 	{
 		if (FGameplayAbilitySpec* AbilitySpec = FindAbilitySpecFromHandle(SpecHandle))
