@@ -18,7 +18,6 @@ class TANGI_API ATangiPlayerState : public APlayerState, public IAbilitySystemIn
 public:
 	ATangiPlayerState();
 	
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent; }
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
 

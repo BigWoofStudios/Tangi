@@ -4,7 +4,7 @@
 #include "AbilitySystem/TangiAbilitySystemComponent.h"
 
 #include "TangiGameplayTags.h"
-#include "AbilitySystem/Abilities/TangiGameplayAbility.h"
+#include "AbilitySystem/Ability/TangiGameplayAbility.h"
 
 UTangiAbilitySystemComponent::UTangiAbilitySystemComponent(const FObjectInitializer&)
 {
@@ -181,8 +181,7 @@ void UTangiAbilitySystemComponent::GetAdditionalActivationTagRequirements(const 
 	}
 }
 
-void UTangiAbilitySystemComponent::ClientEffectApplied_Implementation(UAbilitySystemComponent* AbilitySystemComponent,
-	const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle)
+void UTangiAbilitySystemComponent::ClientEffectApplied_Implementation(UAbilitySystemComponent*, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle)
 {
 	FGameplayTagContainer TagContainer;
 	EffectSpec.GetAllAssetTags(TagContainer);

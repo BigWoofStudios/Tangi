@@ -1,6 +1,6 @@
 // Copyright Big Woof Studios, LLC. All Rights Reserved.
 
-#include "AbilitySystem/Abilities/TangiGameplayAbility.h"
+#include "AbilitySystem/Ability/TangiGameplayAbility.h"
 
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemGlobals.h"

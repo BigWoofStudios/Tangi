@@ -3,6 +3,7 @@
 
 #include "Player/TangiPlayerController.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "TangiMath.h"
@@ -11,6 +12,16 @@ ATangiPlayerController::ATangiPlayerController()
 {
 	bReplicates = true;
 	bShowMouseCursor = false;
+}
+
+UTangiAbilitySystemComponent* ATangiPlayerController::GetTangiAbilitySystemComponent()
+{
+	if (TangiAbilitySystemComponent == nullptr)
+    	{
+    		TangiAbilitySystemComponent = Cast<UTangiAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn<APawn>()));
+    	}
+    
+    	return TangiAbilitySystemComponent;
 }
 
 void ATangiPlayerController::BeginPlay()
@@ -38,6 +49,22 @@ void ATangiPlayerController::SetupInputComponent()
 	// Bind input actions to functions
 	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ATangiPlayerController::MoveTriggered);
 	EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ATangiPlayerController::LookTriggered);
+}
+
+void ATangiPlayerController::AbilityInputTagPressed(const FGameplayTag& InputTag)
+{
+	UTangiAbilitySystemComponent* ASC = GetTangiAbilitySystemComponent();
+	if (!ASC) return;
+	
+	ASC->AbilityInputTagPressed(InputTag);
+}
+
+void ATangiPlayerController::AbilityInputTagReleased(const FGameplayTag& InputTag)
+{
+	UTangiAbilitySystemComponent* ASC = GetTangiAbilitySystemComponent();
+	if (!ASC) return;
+	
+	ASC->AbilityInputTagReleased(InputTag);
 }
 
 void ATangiPlayerController::MoveTriggered(const FInputActionValue& ActionValue)

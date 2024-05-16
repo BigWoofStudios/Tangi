@@ -18,8 +18,3 @@ ATangiPlayerState::ATangiPlayerState()
 	
 	NetUpdateFrequency = 100.f;
 }
-
-void ATangiPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-}

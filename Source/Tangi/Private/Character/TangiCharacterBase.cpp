@@ -3,32 +3,53 @@
 
 #include "Character/TangiCharacterBase.h"
 
-// Sets default values
+#include "AbilitySystem/TangiAbilitySystemComponent.h"
+
 ATangiCharacterBase::ATangiCharacterBase()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
+	PrimaryActorTick.bCanEverTick = false;
+	ACharacter::SetReplicateMovement(true);
+	SetReplicates(true);
 }
 
-// Called when the game starts or when spawned
 void ATangiCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
-// Called every frame
-void ATangiCharacterBase::Tick(float DeltaTime)
+void ATangiCharacterBase::InitAbilityActorInfo()
 {
-	Super::Tick(DeltaTime);
-
+	// Used in inherited classes.
 }
 
-// Called to bind functionality to input
-void ATangiCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void ATangiCharacterBase::ApplyEffectToSelf(const TSubclassOf<UGameplayEffect>& GameplayEffectClass, const float Level) const
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	check(IsValid(GetAbilitySystemComponent()));
+	check(GameplayEffectClass);
+	FGameplayEffectContextHandle ContextHandle = GetAbilitySystemComponent()->MakeEffectContext();
+	const FGameplayEffectSpecHandle SpecHandle = GetAbilitySystemComponent()->MakeOutgoingSpec(GameplayEffectClass, Level, ContextHandle);
+	ContextHandle.AddSourceObject(this);
+	GetAbilitySystemComponent()->ApplyGameplayEffectSpecToTarget(*SpecHandle.Data.Get(), GetAbilitySystemComponent());
+}
 
+void ATangiCharacterBase::InitializeDefaultAttributes()
+{
+	checkf(DefaultVitalAttributes, TEXT("TangiCharacterBase required a DefaultVitalAttributes to be set. Please check the BP implementation."));
+	checkf(DefaultSecondaryAttributes, TEXT("TangiCharacterBase required a DefaultSecondaryAttributes to be set. Please check the BP implementation."));
+
+	// TODO: Load this from saved game??
+	ApplyEffectToSelf(DefaultVitalAttributes, 1.f);
+	ApplyEffectToSelf(DefaultSecondaryAttributes, 1.f);
+}
+
+void ATangiCharacterBase::AddCharacterAbilities() const
+{
+	if (!HasAuthority()) return;
+	
+	UTangiAbilitySystemComponent *VeilAbilitySystemComponent = CastChecked<UTangiAbilitySystemComponent>(AbilitySystemComponent);
+	
+	// Add the default startup abilities for this character
+	VeilAbilitySystemComponent->AddStartupAbilities(StartupAbilities);
 }
 

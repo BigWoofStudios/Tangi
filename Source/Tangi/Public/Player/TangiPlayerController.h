@@ -3,9 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystem/TangiAbilitySystemComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "TangiPlayerController.generated.h"
 
+class UTangiInputConfig;
+class UDamageTextComponent;
 struct FInputActionValue;
 class UInputAction;
 class UInputMappingContext;
@@ -20,9 +23,18 @@ class TANGI_API ATangiPlayerController : public APlayerController
 public:
 	ATangiPlayerController();
 
+	UFUNCTION(BlueprintCallable, Category = "Veil|PlayerController")
+	UTangiAbilitySystemComponent* GetTangiAbilitySystemComponent();
+
 protected:
 	virtual void BeginPlay() override;
 
+private:
+	UPROPERTY()
+	TObjectPtr<UTangiAbilitySystemComponent> TangiAbilitySystemComponent = nullptr;
+	
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UDamageTextComponent> DamageTextComponentClass;
 // ---------------------------------------------------------------------------------------------------------------------
 // Input
 // ---------------------------------------------------------------------------------------------------------------------
@@ -32,8 +44,14 @@ protected:
 	
 private:
 	UPROPERTY(EditDefaultsOnly, Category="Input")
-	TObjectPtr<UInputMappingContext> TangiContext;
+	TObjectPtr<UInputMappingContext> TangiContext = nullptr;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<UTangiInputConfig> InputConfig = nullptr;
+	
+	void AbilityInputTagPressed(const FGameplayTag& InputTag);
+	void AbilityInputTagReleased(const FGameplayTag& InputTag);
+	
 	UPROPERTY(EditDefaultsOnly, Category="Input")
 	TObjectPtr<UInputAction> MoveAction;
 	void MoveTriggered(const FInputActionValue& ActionValue);
@@ -41,5 +59,5 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category="Input")
 	TObjectPtr<UInputAction> LookAction;
 	void LookTriggered(const FInputActionValue& ActionValue);
-#pragma endregion 
+#pragma endregion
 };
