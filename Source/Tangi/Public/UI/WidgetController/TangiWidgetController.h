@@ -18,8 +18,8 @@ struct FWidgetControllerParams
 	GENERATED_BODY()
 
 	FWidgetControllerParams() {};
-	FWidgetControllerParams(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS)
-	: PlayerController(PC), PlayerState(PS), AbilitySystemComponent(ASC), AttributeSet(AS) {}
+	FWidgetControllerParams(APlayerController* PlayerController, APlayerState* PlayerState, UAbilitySystemComponent* AbilitySystemComponent, UAttributeSet* AttributeSet)
+	: PlayerController(PlayerController), PlayerState(PlayerState), AbilitySystemComponent(AbilitySystemComponent), AttributeSet(AttributeSet) {}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<APlayerController> PlayerController = nullptr;
@@ -37,7 +37,7 @@ struct FWidgetControllerParams
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedSignature, float, NewValue);
 
 /**
- * 
+ * The base widget controller class
  */
 UCLASS()
 class TANGI_API UTangiWidgetController : public UObject
@@ -52,21 +52,25 @@ public:
 	virtual void BindCallbacksToDependencies();
 
 protected:
-	UFUNCTION(BlueprintPure) ATangiPlayerController* GetTangiPlayerController();
-	UFUNCTION(BlueprintPure) ATangiPlayerState* GetTangiPlayerState();
-	UFUNCTION(BlueprintPure) UTangiAbilitySystemComponent* GetTangiAbilitySystemComponent();
-	UFUNCTION(BlueprintPure) UTangiAttributeSet* GetTangiAttributeSet();
+	UFUNCTION(BlueprintCallable) ATangiPlayerController* GetTangiPlayerController();
+	UFUNCTION(BlueprintCallable) ATangiPlayerState* GetTangiPlayerState();
+	UFUNCTION(BlueprintCallable) UTangiAbilitySystemComponent* GetTangiAbilitySystemComponent();
+	UFUNCTION(BlueprintCallable) UTangiAttributeSet* GetTangiAttributeSet();
 
-	UPROPERTY(BlueprintReadOnly, Category = "WidgetController")
+	UPROPERTY(BlueprintReadOnly, Category = "WidgetController",
+		meta=(Description="The base class for PlayerController reference, useful for things that don't require a custom implementation. Use GetTangiPlayerController for the casted version."))
 	TObjectPtr<APlayerController> PlayerController;
 
-	UPROPERTY(BlueprintReadOnly, Category = "WidgetController")
+	UPROPERTY(BlueprintReadOnly, Category = "WidgetController",
+		meta=(Description="The base class for PlayerState reference, useful for things that don't require a custom implementation. Use GetTangiPlayerState for the casted version."))
 	TObjectPtr<APlayerState> PlayerState;
 
-	UPROPERTY(BlueprintReadOnly, Category = "WidgetController")
+	UPROPERTY(BlueprintReadOnly, Category = "WidgetController",
+		meta=(Description="The base class for AbilitySystemComponent reference, useful for things that don't require a custom implementation. Use GetTangiAbilitySystemComponent for the casted version."))
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
-	UPROPERTY(BlueprintReadOnly, Category = "WidgetController")
+	UPROPERTY(BlueprintReadOnly, Category = "WidgetController",
+		meta=(Description="The base class for AttributeSet reference, useful for things that don't require a custom implementation. Use GetTangiAttributeSet for the casted version."))
 	TObjectPtr<UAttributeSet> AttributeSet;
 
 private:

@@ -16,15 +16,8 @@ void UTangiWidgetController::SetWidgetControllerParams(const FWidgetControllerPa
 	AttributeSet = WidgetControllerParams.AttributeSet;
 }
 
-void UTangiWidgetController::BroadcastInitialValues()
-{
-	// Used in classes that derive from this base class.
-}
-
-void UTangiWidgetController::BindCallbacksToDependencies()
-{
-	// Used in classes that derive from this base class.
-}
+void UTangiWidgetController::BroadcastInitialValues() {/* Used in classes that derive from this base class. */}
+void UTangiWidgetController::BindCallbacksToDependencies() {/* Used in classes that derive from this base class. */}
 
 ATangiPlayerController* UTangiWidgetController::GetTangiPlayerController()
 {
