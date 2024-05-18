@@ -68,17 +68,17 @@ namespace FTangiGameplayTags
 	// -----------------------------------------------------------------------------------------------------------------
 	// Primary Attributes
 	// -----------------------------------------------------------------------------------------------------------------
-	UE_DEFINE_GAMEPLAY_TAG(Attribute_Primary_Strength, FName{TEXTVIEW("Attribute.Primary.Strength")});
-	UE_DEFINE_GAMEPLAY_TAG(Attribute_Primary_Vitality, FName{TEXTVIEW("Attribute.Primary.Vitality")});
-	UE_DEFINE_GAMEPLAY_TAG(Attribute_Primary_Sneak, FName{TEXTVIEW("Attribute.Primary.Sneak")});
-	UE_DEFINE_GAMEPLAY_TAG(Attribute_Primary_Charisma, FName{TEXTVIEW("Attribute.Primary.Charisma")});
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attribute_Primary_Whenua, FName{TEXTVIEW("Attribute.Primary.Whenua")}, "This refers to the mana associated with land and territories; the power and authority derived from the ancestral connections to the land.")
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attribute_Primary_Tangata, FName{TEXTVIEW("Attribute_.Primary.Tangata")}, "This pertains to the mana of people, reflecting their personal achievements, status, and influence.")
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attribute_Primary_Atua, FName{TEXTVIEW("Attribute.Primary.Atua")}, "This is the mana derived from the gods, representing the spiritual aspect and divine authority.")
 
 	// -----------------------------------------------------------------------------------------------------------------
 	// Secondary Attributes
 	// -----------------------------------------------------------------------------------------------------------------
 	UE_DEFINE_GAMEPLAY_TAG(Attribute_Secondary_MaxHealth, FName{TEXTVIEW("Attribute.Secondary.MaxHealth")});
 	UE_DEFINE_GAMEPLAY_TAG(Attribute_Secondary_MaxEndurance, FName{TEXTVIEW("Attribute.Secondary.MaxEndurance")});
-	UE_DEFINE_GAMEPLAY_TAG(Attribute_Secondary_MaxOxygen, FName{TEXTVIEW("Attribute.Secondary.MaxOxygen")});
+	UE_DEFINE_GAMEPLAY_TAG(Attribute_Secondary_MaxOxygen, FName{TEXTVIEW("Aedttribute.Secondary.MaxOxygen")});
+	UE_DEFINE_GAMEPLAY_TAG(Attribute_Primary_Utu, FName{TEXTVIEW("Attribute.Primary.Utu")});
 
 	// -----------------------------------------------------------------------------------------------------------------
 	// Movement Moves
@@ -88,14 +88,6 @@ namespace FTangiGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Movement_Mode_Falling, FName{TEXTVIEW("Movement.Mode.Falling")});
 	UE_DEFINE_GAMEPLAY_TAG(Movement_Mode_Swimming, FName{TEXTVIEW("Movement.Mode.Swimming")});
 	UE_DEFINE_GAMEPLAY_TAG(Movement_Mode_Flying, FName{TEXTVIEW("Movement.Mode.Flying")});
-	
-	UE_DEFINE_GAMEPLAY_TAG(Movement_Gait_Walking, FName{TEXTVIEW("Movement.Gait.Walking")});
-	UE_DEFINE_GAMEPLAY_TAG(Movement_Gait_Running, FName{TEXTVIEW("Movement.Gait.Running")});
-	UE_DEFINE_GAMEPLAY_TAG(Movement_Gait_Sprinting, FName{TEXTVIEW("Movement.Gait.Sprinting")});
-	
-	UE_DEFINE_GAMEPLAY_TAG(Movement_LocomotionMode_Grounded, FName{TEXTVIEW("Movement.LocomotionMode.Grounded")});
-	UE_DEFINE_GAMEPLAY_TAG(Movement_LocomotionMode_Swimming, FName{TEXTVIEW("Movement.LocomotionMode.Swimming")});
-	UE_DEFINE_GAMEPLAY_TAG(Movement_LocomotionMode_InAir, FName{TEXTVIEW("Movement.LocomotionMode.InAir")});
 	
 	const TMap<uint8, FGameplayTag> MovementModeTagMap = {
 			{MOVE_Walking, Movement_Mode_Walking},
@@ -129,3 +121,11 @@ namespace FTangiGameplayTags
 		return Tag;
 	}
 }
+
+
+
+
+// Mana
+// - Combination of prestige, supernatural force, influence, spriritual power
+// Utu
+// - Needs to be balanced, mean reciprocity... good deed for good deed, bad deed for bad deed

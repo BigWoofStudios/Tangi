@@ -6,8 +6,6 @@
 #include "UI/WidgetController/TangiWidgetController.h"
 #include "OverlayWidgetController.generated.h"
 
-struct FGameplayTag;
-
 /**
  *
  */

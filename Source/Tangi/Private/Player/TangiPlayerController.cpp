@@ -120,15 +120,9 @@ void ATangiPlayerController::LookTriggered(const FInputActionValue& ActionValue)
 
 void ATangiPlayerController::CrouchStarted(const FInputActionValue&)
 {
-	// TODO: Set desired stance on the character
-	// if (GetDesiredStance() == FTangiGameplayTags::Movement_Stance_Standing)
-	// {
-	// 	SetDesiredStance(FTangiGameplayTags::Movement_Stance_Crouching);	
-	// }
-	// else if (GetDesiredStance() == FTangiGameplayTags::Movement_Stance_Crouching)
-	// {
-	// 	SetDesiredStance(FTangiGameplayTags::Movement_Stance_Standing);
-	// }
+	ACharacter* ControlledCharacter = GetCharacter();
+	if (!IsValid(ControlledCharacter)) return;
+	// TODO
 }
 
 void ATangiPlayerController::JumpStarted(const FInputActionValue& ActionValue)
