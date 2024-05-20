@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "AbilitySystem/TangiAbilitySystemComponent.h"
 #include "GameFramework/PlayerController.h"
+#include "Interaction/InteractionComponent.h"
 #include "TangiPlayerController.generated.h"
 
 struct FInputActionValue;
@@ -35,8 +36,8 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	UPROPERTY()
-	TObjectPtr<UTangiAbilitySystemComponent> TangiAbilitySystemComponent = nullptr;
+	UPROPERTY() TObjectPtr<UInteractionComponent> InteractionComponent = nullptr;
+	UPROPERTY() TObjectPtr<UTangiAbilitySystemComponent> TangiAbilitySystemComponent = nullptr;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UDamageTextComponent> DamageTextComponentClass;
@@ -73,5 +74,9 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category="Input|Action")
 	TObjectPtr<UInputAction> JumpAction;
 	void JumpStarted(const FInputActionValue& ActionValue);
+	
+	UPROPERTY(EditDefaultsOnly, Category="Input|Action")
+	TObjectPtr<UInputAction> InteractAction;
+	void InteractStarted(const FInputActionValue& ActionValue);
 #pragma endregion
 };

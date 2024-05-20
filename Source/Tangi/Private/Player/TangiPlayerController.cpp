@@ -15,6 +15,9 @@ ATangiPlayerController::ATangiPlayerController()
 {
 	bReplicates = true;
 	bShowMouseCursor = false;
+	
+	InteractionComponent = CreateDefaultSubobject<UInteractionComponent>("InteractionComponent");
+	AddOwnedComponent(InteractionComponent);
 }
 
 void ATangiPlayerController::PostProcessInput(const float DeltaTime, const bool bGamePaused)
@@ -75,6 +78,7 @@ void ATangiPlayerController::SetupInputComponent()
 	TangiInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ATangiPlayerController::LookTriggered);
 	TangiInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &ATangiPlayerController::CrouchStarted);
 	TangiInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ATangiPlayerController::JumpStarted);
+	TangiInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &ATangiPlayerController::InteractStarted);
 	
 	TangiInputComponent->BindAbilityActions(InputConfig, this, &ATangiPlayerController::AbilityInputTagPressed, &ATangiPlayerController::AbilityInputTagReleased);
 }
@@ -106,6 +110,7 @@ void ATangiPlayerController::MoveTriggered(const FInputActionValue& ActionValue)
 	const FVector2D Value = UTangiMath::ClampMagnitude012D(InputVector);
 	const FVector ForwardDirection = UTangiMath::AngleToDirectionXY(UE_REAL_TO_FLOAT(ControlledPawn->GetActorRotation().Yaw));
 	const FVector RightDirection = UTangiMath::PerpendicularCounterClockwiseXY(ForwardDirection);
+
 	ControlledPawn->AddMovementInput(ForwardDirection * Value.Y + RightDirection * Value.X);
 }
 
@@ -139,5 +144,10 @@ void ATangiPlayerController::JumpStarted(const FInputActionValue& ActionValue)
 	{
 		ControlledCharacter->StopJumping();
 	}
+}
+
+void ATangiPlayerController::InteractStarted(const FInputActionValue&)
+{
+	InteractionComponent->Interact();
 }
 #pragma endregion 
