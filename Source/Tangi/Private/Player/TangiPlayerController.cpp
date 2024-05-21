@@ -79,6 +79,7 @@ void ATangiPlayerController::SetupInputComponent()
 	TangiInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &ATangiPlayerController::CrouchStarted);
 	TangiInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ATangiPlayerController::JumpStarted);
 	TangiInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &ATangiPlayerController::InteractStarted);
+	TangiInputComponent->BindAction(InteractAction, ETriggerEvent::Completed, this, &ATangiPlayerController::InteractEnded);
 	
 	TangiInputComponent->BindAbilityActions(InputConfig, this, &ATangiPlayerController::AbilityInputTagPressed, &ATangiPlayerController::AbilityInputTagReleased);
 }
@@ -148,6 +149,11 @@ void ATangiPlayerController::JumpStarted(const FInputActionValue& ActionValue)
 
 void ATangiPlayerController::InteractStarted(const FInputActionValue&)
 {
-	InteractionComponent->Interact();
+	InteractionComponent->BeginInteract();
+}
+
+void ATangiPlayerController::InteractEnded(const FInputActionValue&)
+{
+	InteractionComponent->EndInteract();
 }
 #pragma endregion 

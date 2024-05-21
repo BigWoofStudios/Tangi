@@ -27,13 +27,12 @@ public:
 	virtual void EndFocus() = 0;
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void Interact(const AActor* OtherActor);
+	void Interact(AActor* OtherActor);
 
-	virtual bool IsInteractable(const AActor* OtherActor);
+	virtual float GetInteractionDuration() = 0;
+
+	virtual void BeginInteract(AActor* OtherActor) = 0;
+	virtual void EndInteract() = 0;
 	
-	// UFUNCTION(BlueprintImplementableEvent)
-	// void BeginInteract(const AActor* OtherActor);
-	//
-	// UFUNCTION(BlueprintImplementableEvent)
-	// void EndInteract(const AActor* OtherActor);
+	virtual bool IsInteractable(const AActor* OtherActor) = 0;
 };

@@ -58,9 +58,8 @@ void UInteractionComponent::CheckForInteractionTarget()
 
 		if (IInteractionInterface* InteractionInterface = Cast<IInteractionInterface>(HitActor))
 		{
-			if ()
 			// Switch focus and update the interaction target
-			if (InteractionTarget) Cast<IInteractionInterface>(InteractionTarget)->EndFocus();
+			ResetInteraction();
 			InteractionInterface->BeginFocus();
 			InteractionTarget = HitActor;
 			return;
@@ -68,28 +67,55 @@ void UInteractionComponent::CheckForInteractionTarget()
 	}
 
 	// Reset InteractionTarget when the hit actor isn't interactable
-	if (InteractionTarget) Cast<IInteractionInterface>(InteractionTarget)->EndFocus();
+	ResetInteraction();
+}
+
+void UInteractionComponent::ResetInteraction()
+{
+	EndInteract();
 	InteractionTarget = nullptr;
 }
 
-void UInteractionComponent::Interact()
+void UInteractionComponent::BeginInteract()
 {
-	ServerInteract(InteractionTarget);
+	ServerBeginInteract(InteractionTarget, GetOwner());
 }
 
-void UInteractionComponent::ServerInteract_Implementation(AActor* Target)
+void UInteractionComponent::ServerBeginInteract_Implementation(AActor* Target, AActor* OtherActor)
 {
-	if (const IInteractionInterface* InteractionInterface = Cast<IInteractionInterface>(Target))
+	if (IInteractionInterface* InteractionInterface = Cast<IInteractionInterface>(Target))
 	{
-		InteractionInterface->Execute_Interact(Target, OwningActor);
-		MulticastInteract(Target);
+		InteractionInterface->BeginInteract(OtherActor);
+		MulticastBeginInteract(Target, OtherActor);
 	}
 }
 
-void UInteractionComponent::MulticastInteract_Implementation(AActor* Target)
+void UInteractionComponent::MulticastBeginInteract_Implementation(AActor* Target, AActor* OtherActor)
 {
-	if (const IInteractionInterface* InteractionInterface = Cast<IInteractionInterface>(Target))
+	if (IInteractionInterface* InteractionInterface = Cast<IInteractionInterface>(Target))
 	{
-		InteractionInterface->Execute_Interact(Target, OwningActor);
+		InteractionInterface->BeginInteract(OtherActor);
+	}
+}
+
+void UInteractionComponent::EndInteract()
+{
+	ServerEndInteract(InteractionTarget);
+}
+
+void UInteractionComponent::ServerEndInteract_Implementation(AActor* Target)
+{
+		if (IInteractionInterface* InteractionInterface = Cast<IInteractionInterface>(Target))
+		{
+			InteractionInterface->EndInteract();
+			MulticastEndInteract(Target);
+		}
+}
+
+void UInteractionComponent::MulticastEndInteract_Implementation(AActor* Target)
+{
+	if (IInteractionInterface* InteractionInterface = Cast<IInteractionInterface>(Target))
+	{
+		InteractionInterface->EndInteract();
 	}
 }

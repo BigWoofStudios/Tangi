@@ -15,7 +15,26 @@ class TANGI_API ABaseInteractableActor : public AActor, public IInteractionInter
 public:	
 	ABaseInteractableActor();
 
+	//~ Begin IInteractionInterface
+	virtual bool IsInteractable(const AActor* OtherActor) override;
+	
+	virtual float GetInteractionDuration() override { return InteractionDuration; }
+	
 	virtual void BeginFocus() override;
 	virtual void EndFocus() override;
-	virtual bool IsInteractable(const AActor* OtherActor) override;
+	
+	virtual void BeginInteract(AActor* OtherActor) override;
+	virtual void EndInteract() override;
+	//~ End IInteractionInterface
+	
+protected:
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta=(Description="The instigator of the current interation."))
+	AActor* InteractingActor = nullptr;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float InteractionDuration = 0.f;
+
+private:
+	FTimerHandle InteractionTimer;
+	void HandleInteract();
 };

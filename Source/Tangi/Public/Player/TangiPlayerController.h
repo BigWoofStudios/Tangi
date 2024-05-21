@@ -78,5 +78,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category="Input|Action")
 	TObjectPtr<UInputAction> InteractAction;
 	void InteractStarted(const FInputActionValue& ActionValue);
+	void InteractEnded(const FInputActionValue& ActionValue);
+	
 #pragma endregion
 };

@@ -16,8 +16,9 @@ public:
 	UInteractionComponent();
 	virtual void TickComponent(const float DeltaTime, const ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	void Interact();
-
+	UFUNCTION() void BeginInteract();
+	UFUNCTION() void EndInteract();
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float MaxInteractionDistance = 250.f;
 
@@ -25,18 +26,16 @@ protected:
 	virtual void BeginPlay() override;
 		
 private:
-	UFUNCTION()
-	void CheckForInteractionTarget();
-
-	UPROPERTY()
-	TObjectPtr<AActor> OwningActor;
 	
-	UPROPERTY()
-	TObjectPtr<AActor> InteractionTarget = nullptr;
+	UFUNCTION() void CheckForInteractionTarget();
+	UPROPERTY() TObjectPtr<AActor> OwningActor;
+	UPROPERTY() TObjectPtr<AActor> InteractionTarget = nullptr;
+	
+	UFUNCTION(Server, Reliable) void ServerBeginInteract(AActor* Target, AActor* OtherActor);
+	UFUNCTION(NetMulticast, Reliable) void MulticastBeginInteract(AActor* Target, AActor* OtherActor);
 
-	UFUNCTION(Server, Reliable)
-	void ServerInteract(AActor* Target);
+	UFUNCTION(Server, Reliable) void ServerEndInteract(AActor* Target);
+	UFUNCTION(NetMulticast, Reliable) void MulticastEndInteract(AActor* Target);
 
-	UFUNCTION(NetMulticast, Reliable)
-	void MulticastInteract(AActor* Target);
+	void ResetInteraction();
 };
