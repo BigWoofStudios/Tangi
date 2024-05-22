@@ -35,4 +35,6 @@ public:
 	virtual void EndInteract() = 0;
 	
 	virtual bool IsInteractable(const AActor* OtherActor) = 0;
+
+	virtual bool IsBeingInteractedWith() = 0;
 };

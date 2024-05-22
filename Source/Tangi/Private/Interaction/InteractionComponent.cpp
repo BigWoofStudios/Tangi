@@ -36,6 +36,7 @@ void UInteractionComponent::TickComponent(const float DeltaTime, const ELevelTic
 void UInteractionComponent::CheckForInteractionTarget()
 {
 	if (!IsValid(OwningActor)) return;
+	
 	const UWorld* World = GetWorld();
 	if (!IsValid(World)) return;
 	
@@ -47,8 +48,8 @@ void UInteractionComponent::CheckForInteractionTarget()
 	FCollisionQueryParams Params = FCollisionQueryParams::DefaultQueryParam;
 	Params.bTraceComplex = true;
 	Params.AddIgnoredActor(GetOwner());
-	
-	World->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECC_Interaction, Params);
+
+	World->SweepSingleByChannel(HitResult, TraceStart, TraceEnd, FQuat::Identity, ECC_Interaction, FCollisionShape::MakeSphere(30.f));
 
 	if (AActor* HitActor = HitResult.GetActor())
 	{
@@ -72,7 +73,15 @@ void UInteractionComponent::CheckForInteractionTarget()
 
 void UInteractionComponent::ResetInteraction()
 {
-	EndInteract();
+	if (IInteractionInterface* InteractionInterface = Cast<IInteractionInterface>(InteractionTarget))
+	{
+		InteractionInterface->EndFocus();
+		if (InteractionInterface->IsBeingInteractedWith())
+		{
+			EndInteract();
+		}
+	}
+	
 	InteractionTarget = nullptr;
 }
 
@@ -85,6 +94,8 @@ void UInteractionComponent::ServerBeginInteract_Implementation(AActor* Target, A
 {
 	if (IInteractionInterface* InteractionInterface = Cast<IInteractionInterface>(Target))
 	{
+		if (InteractionInterface->IsBeingInteractedWith()) return;
+		
 		InteractionInterface->BeginInteract(OtherActor);
 		MulticastBeginInteract(Target, OtherActor);
 	}
@@ -105,11 +116,11 @@ void UInteractionComponent::EndInteract()
 
 void UInteractionComponent::ServerEndInteract_Implementation(AActor* Target)
 {
-		if (IInteractionInterface* InteractionInterface = Cast<IInteractionInterface>(Target))
-		{
-			InteractionInterface->EndInteract();
-			MulticastEndInteract(Target);
-		}
+	if (IInteractionInterface* InteractionInterface = Cast<IInteractionInterface>(Target))
+	{
+		InteractionInterface->EndInteract();
+		MulticastEndInteract(Target);
+	}
 }
 
 void UInteractionComponent::MulticastEndInteract_Implementation(AActor* Target)
