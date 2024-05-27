@@ -10,10 +10,10 @@
  * 
  */
 UCLASS()
-class TANGI_API UFocusWidget : public UWidgetComponent
+class TANGI_API UFocusWidget : public UUserWidget
 {
 	GENERATED_BODY()
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	float TimeRemaining = 0.f;
+	float PercentComplete = 0.f;
 };

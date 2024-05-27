@@ -12,6 +12,9 @@ ATangiCharacterBase::ATangiCharacterBase()
 	PrimaryActorTick.bCanEverTick = false;
 	ACharacter::SetReplicateMovement(true);
 	SetReplicates(true);
+
+	MotionWarping = CreateDefaultSubobject<UMotionWarpingComponent>("MotionWarping");
+	AddOwnedComponent(MotionWarping);
 }
 
 void ATangiCharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

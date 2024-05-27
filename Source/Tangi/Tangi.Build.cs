@@ -10,7 +10,7 @@ public class Tangi : ModuleRules
 	
 		PublicDependencyModuleNames.AddRange(new string[]
 		{
-			"Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "NetCore", "GameplayAbilities"
+			"Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "NetCore", "GameplayAbilities", "MotionWarping"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[]

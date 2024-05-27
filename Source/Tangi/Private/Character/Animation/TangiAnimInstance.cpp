@@ -6,7 +6,7 @@
 void UTangiAnimInstance::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
-	Character = Cast<ATangiCharacter>(GetOwningActor());
+	Character = Cast<ATangiCharacterBase>(GetOwningActor());
 }
 
 void UTangiAnimInstance::NativeBeginPlay()

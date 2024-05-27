@@ -40,12 +40,14 @@ namespace FTangiGameplayTags
 	//~ Common
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_Death);
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_HitReact);
-	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_Attack);
-	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_Aim);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_MeleeAttack);
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_Sprint);
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_HealthRegeneration);
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_EnduranceRegeneration);
 
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_Aim);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_Block);
+	
 	//~ Failed to activate tags
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GamplayAbility_ActivateFail_IsDead);
 

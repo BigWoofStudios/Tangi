@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
-#include "Character/TangiCharacter.h"
+#include "Character/TangiCharacterBase.h"
 #include "TangiAnimInstance.generated.h"
 
 /**
@@ -21,5 +21,6 @@ public:
 	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State", Transient)
-	TObjectPtr<ATangiCharacter> Character;
+	TObjectPtr<ATangiCharacterBase> Character;
 };
+

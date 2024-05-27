@@ -37,11 +37,14 @@ namespace FTangiGameplayTags
 	//~ Common
 	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_Death, FName{TEXTVIEW("GameplayAbility.Death")});
 	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_HitReact, FName{TEXTVIEW("GameplayAbility.HitReact")});
-	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_Attack, FName{TEXTVIEW("GameplayAbility.Attack")});
+	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_MeleeAttack, FName{TEXTVIEW("GameplayAbility.MeleeAttack")});
 	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_Sprint, FName{TEXTVIEW("GameplayAbility.Sprint")});
 	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_HealthRegeneration, FName{TEXTVIEW("GameplayAbility.Passive.HealthRegeneration")});
 	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_EnduranceRegeneration, FName{TEXTVIEW("GameplayAbility.Passive.EnduranceRegeneration")});
 
+	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_Aim, FName{TEXTVIEW("GameplayAbility.Aim")});
+	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_Block, FName{TEXTVIEW("GameplayAbility.Block")});
+	
 	//~ Failed to activate tags
 	UE_DEFINE_GAMEPLAY_TAG(GamplayAbility_ActivateFail_IsDead, FName{TEXTVIEW("GameplayAbility.ActivateFail.IsDead")});
 
@@ -68,9 +71,14 @@ namespace FTangiGameplayTags
 	// -----------------------------------------------------------------------------------------------------------------
 	// Primary Attributes
 	// -----------------------------------------------------------------------------------------------------------------
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attribute_Primary_Whenua, FName{TEXTVIEW("Attribute.Primary.Whenua")}, "This refers to the mana associated with land and territories; the power and authority derived from the ancestral connections to the land.")
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attribute_Primary_Tangata, FName{TEXTVIEW("Attribute_.Primary.Tangata")}, "This pertains to the mana of people, reflecting their personal achievements, status, and influence.")
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attribute_Primary_Atua, FName{TEXTVIEW("Attribute.Primary.Atua")}, "This is the mana derived from the gods, representing the spiritual aspect and divine authority.")
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attribute_Primary_Whenua, FName{TEXTVIEW("Attribute.Primary.Whenua")},
+		"This refers to the mana associated with land and territories; the power and authority derived from the ancestral connections to the land.")
+	
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attribute_Primary_Tangata, FName{TEXTVIEW("Attribute.Primary.Tangata")},
+		"This pertains to the mana of people, reflecting their personal achievements, status, and influence.")
+	
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attribute_Primary_Atua, FName{TEXTVIEW("Attribute.Primary.Atua")},
+		"This is the mana derived from the gods, representing the spiritual aspect and divine authority.")
 
 	// -----------------------------------------------------------------------------------------------------------------
 	// Secondary Attributes
@@ -121,11 +129,3 @@ namespace FTangiGameplayTags
 		return Tag;
 	}
 }
-
-
-
-
-// Mana
-// - Combination of prestige, supernatural force, influence, spriritual power
-// Utu
-// - Needs to be balanced, mean reciprocity... good deed for good deed, bad deed for bad deed
