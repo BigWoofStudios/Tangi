@@ -6,6 +6,7 @@
 #include "AbilitySystemInterface.h"
 #include "GameplayTagContainer.h"
 #include "MotionWarpingComponent.h"
+#include "Combat/CombatInterface.h"
 #include "GameFramework/Character.h"
 #include "TangiCharacterBase.generated.h"
 
@@ -16,13 +17,14 @@ class UGameplayEffect;
 class UGameplayAbility;
 
 UCLASS()
-class TANGI_API ATangiCharacterBase : public ACharacter, public IAbilitySystemInterface
+class TANGI_API ATangiCharacterBase : public ACharacter, public IAbilitySystemInterface, public ICombatInterface
 {
 	GENERATED_BODY()
 
 public:
 	ATangiCharacterBase();
 
+	virtual USkeletalMeshComponent* GetActiveWeaponMesh() override;
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent; }
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void DeathTagChanged(const FGameplayTag CallbackTag, const int32 NewCount);
