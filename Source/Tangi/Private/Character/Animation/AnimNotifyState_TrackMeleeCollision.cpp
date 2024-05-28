@@ -36,7 +36,6 @@ void UAnimNotifyState_TrackMeleeCollision::NotifyTick(USkeletalMeshComponent* Me
 			if (OverlapActor == Owner) continue;
 			if (!OverlapActor->Implements<UCombatInterface>()) continue;
 
-
 			// Send a gameplay event to the owner of this anim notify state, so they can respond to the hit
 			FGameplayEventData GameplayEventData;
 			GameplayEventData.Target = OverlapActor;
