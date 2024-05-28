@@ -15,11 +15,17 @@ ATangiCharacterBase::ATangiCharacterBase()
 
 	MotionWarping = CreateDefaultSubobject<UMotionWarpingComponent>("MotionWarping");
 	AddOwnedComponent(MotionWarping);
+	
+	SecondWeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>("SecondWeaponMesh");
+	SecondWeaponMesh->CanCharacterStepUpOn = ECB_No;
+	SecondWeaponMesh->SetCollisionResponseToAllChannels(ECR_Overlap);
+	SecondWeaponMesh->SetGenerateOverlapEvents(true);
+	SecondWeaponMesh->SetupAttachment(GetRootComponent());
 }
 
-USkeletalMeshComponent* ATangiCharacterBase::GetActiveWeaponMesh()
+UStaticMeshComponent* ATangiCharacterBase::GetActiveWeaponMesh()
 {
-	return GetMesh();
+	return SecondWeaponMesh;
 }
 
 void ATangiCharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

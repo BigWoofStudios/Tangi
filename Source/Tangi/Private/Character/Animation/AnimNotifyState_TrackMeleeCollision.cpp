@@ -2,6 +2,8 @@
 
 #include "Character/Animation/AnimNotifyState_TrackMeleeCollision.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
+#include "TangiGameplayTags.h"
 #include "Combat/CombatInterface.h"
 #include "Components/SkeletalMeshComponent.h"
 
@@ -24,22 +26,23 @@ FString UAnimNotifyState_TrackMeleeCollision::GetNotifyName_Implementation() con
 void UAnimNotifyState_TrackMeleeCollision::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation,
                                                       const float FrameDeltaTime, const FAnimNotifyEventReference& EventReference)
 {
-	if (ThisCombatInterface != nullptr)
+	AActor* Owner = MeshComp->GetOwner();
+	if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(Owner))
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, "NotifyTick");
+		TArray<AActor*> OverlappingActors;
+		CombatInterface->GetActiveWeaponMesh()->GetOverlappingActors(OverlappingActors);
+		for (AActor* OverlapActor : OverlappingActors)
+		{
+			if (OverlapActor == Owner) continue;
+			if (!OverlapActor->Implements<UCombatInterface>()) continue;
+
+
+			// Send a gameplay event to the owner of this anim notify state, so they can respond to the hit
+			FGameplayEventData GameplayEventData;
+			GameplayEventData.Target = OverlapActor;
+			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Owner, FTangiGameplayTags::Gameplay_Event_Montage_ActivateAbility, GameplayEventData);
+		}
 	}
+
 	Super::NotifyTick(MeshComp, Animation, FrameDeltaTime, EventReference);
-}
-
-void UAnimNotifyState_TrackMeleeCollision::NotifyBegin(USkeletalMeshComponent* Mesh, UAnimSequenceBase* Animation,
-                                                       const float Duration, const FAnimNotifyEventReference& EventReference)
-{
-	ThisCombatInterface = Cast<ICombatInterface>(Mesh->GetOwner());
-	Super::NotifyBegin(Mesh, Animation, Duration, EventReference);
-}
-
-void UAnimNotifyState_TrackMeleeCollision::NotifyEnd(USkeletalMeshComponent* Mesh, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
-{
-	ThisCombatInterface = nullptr;
-	Super::NotifyEnd(Mesh, Animation, EventReference);
 }

@@ -21,5 +21,5 @@ class TANGI_API ICombatInterface
 {
 	GENERATED_BODY()
 public:
-	virtual USkeletalMeshComponent* GetActiveWeaponMesh() = 0;
+	virtual UStaticMeshComponent* GetActiveWeaponMesh() = 0;
 };

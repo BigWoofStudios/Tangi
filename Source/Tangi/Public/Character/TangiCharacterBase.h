@@ -24,7 +24,7 @@ class TANGI_API ATangiCharacterBase : public ACharacter, public IAbilitySystemIn
 public:
 	ATangiCharacterBase();
 
-	virtual USkeletalMeshComponent* GetActiveWeaponMesh() override;
+	virtual UStaticMeshComponent* GetActiveWeaponMesh() override;
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent; }
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void DeathTagChanged(const FGameplayTag CallbackTag, const int32 NewCount);
@@ -33,6 +33,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|Ability")
 	TObjectPtr<UTangiAbilityTagMapping> TagRelationshipMapping;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UStaticMeshComponent* SecondWeaponMesh;
+	
 protected:
 	virtual void BeginPlay() override;
 	virtual void InitAbilityActorInfo();
@@ -63,6 +66,7 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Combat|Montages")
 	TObjectPtr<UAnimMontage> HitReactMontage = nullptr;
+
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Death
