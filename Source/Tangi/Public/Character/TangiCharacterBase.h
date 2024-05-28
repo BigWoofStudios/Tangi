@@ -6,6 +6,7 @@
 #include "AbilitySystemInterface.h"
 #include "GameplayTagContainer.h"
 #include "MotionWarpingComponent.h"
+#include "CharacterTrajectoryComponent.h"
 #include "Combat/CombatInterface.h"
 #include "GameFramework/Character.h"
 #include "TangiCharacterBase.generated.h"
@@ -35,6 +36,12 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	UStaticMeshComponent* SecondWeaponMesh;
+
+	UPROPERTY(BlueprintReadOnly)
+	UMotionWarpingComponent* MotionWarping = nullptr;
+
+	UPROPERTY(BlueprintReadOnly)
+	UCharacterTrajectoryComponent* CharacterTrajectory = nullptr;
 	
 protected:
 	virtual void BeginPlay() override;
@@ -57,9 +64,6 @@ protected:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "GAS|Attribute")
 	TSubclassOf<UGameplayEffect> DefaultSecondaryAttributes = nullptr;
 
-	UPROPERTY(BlueprintReadOnly)
-	UMotionWarpingComponent* MotionWarping = nullptr;
-	
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "GAS|Ability", meta=(Description="These abilities will be granted on startup / when the ASC is associated."))
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities = {};

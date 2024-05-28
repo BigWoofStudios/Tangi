@@ -15,6 +15,9 @@ ATangiCharacterBase::ATangiCharacterBase()
 
 	MotionWarping = CreateDefaultSubobject<UMotionWarpingComponent>("MotionWarping");
 	AddOwnedComponent(MotionWarping);
+
+	CharacterTrajectory = CreateDefaultSubobject<UCharacterTrajectoryComponent>("CharacterTrajectory");
+	AddOwnedComponent(CharacterTrajectory);
 	
 	SecondWeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>("SecondWeaponMesh");
 	SecondWeaponMesh->CanCharacterStepUpOn = ECB_No;

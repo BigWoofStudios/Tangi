@@ -9,21 +9,11 @@ void UTangiAnimInstance::NativeInitializeAnimation()
 	Character = Cast<ATangiCharacterBase>(GetOwningActor());
 }
 
-void UTangiAnimInstance::NativeBeginPlay()
-{
-	Super::NativeBeginPlay();
-
-	checkf(Character, TEXT(""));
-}
-
 void UTangiAnimInstance::NativeThreadSafeUpdateAnimation(const float DeltaTime)
 {
 	Super::NativeThreadSafeUpdateAnimation(DeltaTime);
-	
-	if (!IsValid(Character))
-	{
-		return;
-	}
 
-	// TODO: Refresh data here on worker thread
+	if (!IsValid(Character)) return;
+	
+	CharacterTrajectory = Character->CharacterTrajectory;
 }

@@ -16,11 +16,13 @@ class TANGI_API UTangiAnimInstance : public UAnimInstance
 	GENERATED_BODY()
 public:
 	virtual void NativeInitializeAnimation() override;
-	virtual void NativeBeginPlay() override;
 	virtual void NativeThreadSafeUpdateAnimation(float DeltaTime) override;
 	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State", Transient)
 	TObjectPtr<ATangiCharacterBase> Character;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State", Transient)
+	TObjectPtr<UCharacterTrajectoryComponent> CharacterTrajectory;
 };
 
