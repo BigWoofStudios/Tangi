@@ -40,7 +40,7 @@ UTangiAbilitySystemComponent* ATangiPlayerController::GetTangiAbilitySystemCompo
     	return TangiAbilitySystemComponent;
 }
 
-void ATangiPlayerController::ShowDamageNumber_Implementation(const float DamageAmount, ACharacter* TargetCharacter)
+void ATangiPlayerController::ShowDamageNumber_Implementation(const float DamageAmount, ACharacter* TargetCharacter, const bool bCriticalHit)
 {
 	if (IsValid(TargetCharacter) && DamageTextComponentClass && IsLocalController())
 	{
@@ -48,7 +48,7 @@ void ATangiPlayerController::ShowDamageNumber_Implementation(const float DamageA
 		DamageText->RegisterComponent();
 		DamageText->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 		DamageText->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
-		DamageText->SetDamageText(DamageAmount);
+		DamageText->SetDamageText(DamageAmount, bCriticalHit);
 	}
 }
 

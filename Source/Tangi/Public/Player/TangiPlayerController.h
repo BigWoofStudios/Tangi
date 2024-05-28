@@ -30,7 +30,7 @@ public:
 	UTangiAbilitySystemComponent* GetTangiAbilitySystemComponent();
 
 	UFUNCTION(Client, Reliable)
-	void ShowDamageNumber(const float DamageAmount, ACharacter* TargetCharacter);
+	void ShowDamageNumber(const float DamageAmount, ACharacter* TargetCharacter, const bool bCriticalHit);
 
 protected:
 	virtual void BeginPlay() override;

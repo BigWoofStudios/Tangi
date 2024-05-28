@@ -6,6 +6,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "GameplayEffectExtension.h"
 #include "TangiGameplayTags.h"
+#include "AbilitySystem/TangiAbilitySystemLibrary.h"
 #include "GameFramework/Character.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/TangiPlayerController.h"
@@ -15,19 +16,27 @@ UTangiAttributeSet::UTangiAttributeSet()
 	TagToAttribute.Add(FTangiGameplayTags::Attribute_Vital_Health, GetHealthAttribute);
 	TagToAttribute.Add(FTangiGameplayTags::Attribute_Vital_Endurance, GetEnduranceAttribute);
 	TagToAttribute.Add(FTangiGameplayTags::Attribute_Vital_Oxygen, GetOxygenAttribute);
+
+	TagToAttribute.Add(FTangiGameplayTags::Attribute_Secondary_MaxHealth, GetMaxHealthAttribute);
+	TagToAttribute.Add(FTangiGameplayTags::Attribute_Secondary_MaxEndurance, GetMaxEnduranceAttribute);
+	TagToAttribute.Add(FTangiGameplayTags::Attribute_Secondary_MaxOxygen, GetMaxOxygenAttribute);
+	TagToAttribute.Add(FTangiGameplayTags::Attribute_Secondary_CriticalHitChance, GetCriticalHitChanceAttribute);
 }
 
 void UTangiAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
+	// Vital
 	DOREPLIFETIME_CONDITION_NOTIFY(UTangiAttributeSet, Health, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UTangiAttributeSet, Endurance, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UTangiAttributeSet, Oxygen, COND_None, REPNOTIFY_Always);
 
+	// Secondary
 	DOREPLIFETIME_CONDITION_NOTIFY(UTangiAttributeSet, MaxHealth, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UTangiAttributeSet, MaxEndurance, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UTangiAttributeSet, MaxOxygen, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UTangiAttributeSet, CriticalHitChance, COND_None, REPNOTIFY_Always);
 }
 
 void UTangiAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
@@ -55,7 +64,9 @@ void UTangiAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallb
 	{
 		const float LocalIncomingDamage = GetIncomingDamage();
 		SetIncomingDamage(0.f);
-
+		
+		const bool bCriticalHit = UTangiAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
+		
 		if (LocalIncomingDamage > 0.f)
 		{
 			// TODO: Can check for things like blocked or parried hit
@@ -63,7 +74,6 @@ void UTangiAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallb
 			const float NewHealth = GetHealth() - LocalIncomingDamage;
 			SetHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
 
-			
 			if (NewHealth <= 0.f)
 			{
 				TagContainer.AddTag(FTangiGameplayTags::GameplayAbility_Death);
@@ -76,7 +86,7 @@ void UTangiAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallb
 			}
 		}
 		
-		ShowFloatingText(Props, LocalIncomingDamage);
+		ShowFloatingText(Props, LocalIncomingDamage, bCriticalHit);
 	}
 }
 
@@ -110,18 +120,18 @@ void UTangiAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackDat
 	}
 }
 
-void UTangiAttributeSet::ShowFloatingText(const FEffectProperties& Props, const float Damage)
+void UTangiAttributeSet::ShowFloatingText(const FEffectProperties& Props, const float Damage, const bool bCriticalHit)
 {
 	// TODO: Get FloatingText working on damage 
 	if (Props.SourceCharacter != Props.TargetCharacter)
 	{
 		if (ATangiPlayerController *SourcePlayerController = Cast<ATangiPlayerController>(Props.SourceCharacter->Controller))
 		{
-			SourcePlayerController->ShowDamageNumber(Damage, Props.TargetCharacter);
+			SourcePlayerController->ShowDamageNumber(Damage, Props.TargetCharacter, bCriticalHit);
 		}
 		else if (ATangiPlayerController *TargetPlayerController = Cast<ATangiPlayerController>(Props.TargetCharacter->Controller))
 		{
-			TargetPlayerController->ShowDamageNumber(Damage, Props.TargetCharacter);
+			TargetPlayerController->ShowDamageNumber(Damage, Props.TargetCharacter, bCriticalHit);
 		}
 	}
 }
@@ -130,38 +140,17 @@ void UTangiAttributeSet::ShowFloatingText(const FEffectProperties& Props, const 
 // Vital Attributes
 // -----------------------------------------------------------------------------------------------------------------
 #pragma region Vital Attributes
-void UTangiAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) const
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UTangiAttributeSet, Health, OldHealth);
-}
-
-void UTangiAttributeSet::OnRep_Endurance(const FGameplayAttributeData& OldEndurance) const
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UTangiAttributeSet, Endurance, OldEndurance);
-}
-
-void UTangiAttributeSet::OnRep_Oxygen(const FGameplayAttributeData& OldOxygen) const
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UTangiAttributeSet, Oxygen, OldOxygen);
-}
+void UTangiAttributeSet::OnRep_Health(const FGameplayAttributeData& OldValue) const {GAMEPLAYATTRIBUTE_REPNOTIFY(UTangiAttributeSet, Health, OldValue);}
+void UTangiAttributeSet::OnRep_Endurance(const FGameplayAttributeData& OldValue) const {GAMEPLAYATTRIBUTE_REPNOTIFY(UTangiAttributeSet, Endurance, OldValue);}
+void UTangiAttributeSet::OnRep_Oxygen(const FGameplayAttributeData& OldValue) const {GAMEPLAYATTRIBUTE_REPNOTIFY(UTangiAttributeSet, Oxygen, OldValue);}
 #pragma endregion
 
 // -----------------------------------------------------------------------------------------------------------------
 // Secondary Attributes
 // -----------------------------------------------------------------------------------------------------------------
 #pragma region Secondary Attributes
-void UTangiAttributeSet::OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth) const
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UTangiAttributeSet, MaxHealth, OldMaxHealth);
-}
-
-void UTangiAttributeSet::OnRep_MaxEndurance(const FGameplayAttributeData& OldMaxEndurance) const
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UTangiAttributeSet, MaxEndurance, OldMaxEndurance);
-}
-
-void UTangiAttributeSet::OnRep_MaxOxygen(const FGameplayAttributeData& OldMaxOxygen) const
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UTangiAttributeSet, MaxOxygen, OldMaxOxygen);
-}
+void UTangiAttributeSet::OnRep_MaxHealth(const FGameplayAttributeData& OldValue) const {GAMEPLAYATTRIBUTE_REPNOTIFY(UTangiAttributeSet, MaxHealth, OldValue);}
+void UTangiAttributeSet::OnRep_MaxEndurance(const FGameplayAttributeData& OldValue) const {GAMEPLAYATTRIBUTE_REPNOTIFY(UTangiAttributeSet, MaxEndurance, OldValue);}
+void UTangiAttributeSet::OnRep_MaxOxygen(const FGameplayAttributeData& OldValue) const {GAMEPLAYATTRIBUTE_REPNOTIFY(UTangiAttributeSet, MaxOxygen, OldValue);}
+void UTangiAttributeSet::OnRep_CriticalHitChance(const FGameplayAttributeData& OldValue) const {GAMEPLAYATTRIBUTE_REPNOTIFY(UTangiAttributeSet, CriticalHitChance, OldValue);}
 #pragma endregion

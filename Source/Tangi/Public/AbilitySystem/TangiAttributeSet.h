@@ -55,8 +55,8 @@ public:
 	
 private:
 	static void SetEffectProperties(const FGameplayEffectModCallbackData &Data, FEffectProperties &Props);
-	static void ShowFloatingText(const FEffectProperties &Props, const float Damage);
-	
+	static void ShowFloatingText(const FEffectProperties &Props, const float Damage, const bool bCriticalHit);
+
 // -----------------------------------------------------------------------------------------------------------------
 // Vital Attributes
 // -----------------------------------------------------------------------------------------------------------------
@@ -67,22 +67,33 @@ public:
 	ATTRIBUTE_ACCESSORS(UTangiAttributeSet, Oxygen);
 
 protected:
-	UFUNCTION()
-	void OnRep_Health(const FGameplayAttributeData &OldHealth) const;
-	UFUNCTION()
-	void OnRep_Endurance(const FGameplayAttributeData &OldEndurance) const;
-	UFUNCTION()
-	void OnRep_Oxygen(const FGameplayAttributeData &OldOxygen) const;
-	
+	UFUNCTION() void OnRep_Endurance(const FGameplayAttributeData &OldValue) const;
+	UFUNCTION() void OnRep_Health(const FGameplayAttributeData &OldValue) const;
+	UFUNCTION() void OnRep_Oxygen(const FGameplayAttributeData &OldValue) const;
+
 private:
-	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_Health, Category = "Attribute|Vital")
-	FGameplayAttributeData Health;
 	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_Endurance, Category = "Attribute|Vital")
 	FGameplayAttributeData Endurance;
 	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_Oxygen, Category = "Attribute|Vital")
 	FGameplayAttributeData Oxygen;
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_Health, Category = "Attribute|Vital")
+	FGameplayAttributeData Health;
 #pragma endregion
 
+// -----------------------------------------------------------------------------------------------------------------
+// Primary Attributes
+// -----------------------------------------------------------------------------------------------------------------
+#pragma region Primary Attributes
+// TODO: What should the primary attributes be?
+// public:
+// 	ATTRIBUTE_ACCESSORS(UTangiAttributeSet, Todo);
+// protected:
+// 	UFUNCTION() void OnRep_Todo(const FGameplayAttributeData &OldValue) const;
+// private:
+// 	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_Todo, Category = "Attribute|Primary")
+// 	FGameplayAttributeData Todo;
+#pragma endregion
+	
 // -----------------------------------------------------------------------------------------------------------------
 // Secondary Attributes
 // -----------------------------------------------------------------------------------------------------------------
@@ -91,22 +102,23 @@ public:
 	ATTRIBUTE_ACCESSORS(UTangiAttributeSet, MaxHealth);
 	ATTRIBUTE_ACCESSORS(UTangiAttributeSet, MaxEndurance);
 	ATTRIBUTE_ACCESSORS(UTangiAttributeSet, MaxOxygen);
+	ATTRIBUTE_ACCESSORS(UTangiAttributeSet, CriticalHitChance);
 
 protected:
-	UFUNCTION()
-	void OnRep_MaxHealth(const FGameplayAttributeData &OldMaxHealth) const;
-	UFUNCTION()
-	void OnRep_MaxEndurance(const FGameplayAttributeData &OldMaxEndurance) const;
-	UFUNCTION()
-	void OnRep_MaxOxygen(const FGameplayAttributeData &OldMaxOxygen) const;
+	UFUNCTION() void OnRep_MaxHealth(const FGameplayAttributeData &OldValue) const;
+	UFUNCTION() void OnRep_MaxEndurance(const FGameplayAttributeData &OldValue) const;
+	UFUNCTION() void OnRep_MaxOxygen(const FGameplayAttributeData &OldValue) const;
+	UFUNCTION() void OnRep_CriticalHitChance(const FGameplayAttributeData &OldValue) const;
 	
 private:
-	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_MaxHealth, Category = "Attribute|Vital")
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_MaxHealth, Category = "Attribute|Secondary")
 	FGameplayAttributeData MaxHealth;
-	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_MaxEndurance, Category = "Attribute|Vital")
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_MaxEndurance, Category = "Attribute|Secondary")
 	FGameplayAttributeData MaxEndurance;
-	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_MaxOxygen, Category = "Attribute|Vital")
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_MaxOxygen, Category = "Attribute|Secondary")
 	FGameplayAttributeData MaxOxygen;
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_CriticalHitChance, Category = "Attribute|Secondary")
+	FGameplayAttributeData CriticalHitChance;
 #pragma endregion
 
 // -----------------------------------------------------------------------------------------------------------------

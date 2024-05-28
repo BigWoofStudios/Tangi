@@ -19,16 +19,11 @@ ATangiCharacterBase::ATangiCharacterBase()
 	CharacterTrajectory = CreateDefaultSubobject<UCharacterTrajectoryComponent>("CharacterTrajectory");
 	AddOwnedComponent(CharacterTrajectory);
 	
-	SecondWeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>("SecondWeaponMesh");
-	SecondWeaponMesh->CanCharacterStepUpOn = ECB_No;
-	SecondWeaponMesh->SetCollisionResponseToAllChannels(ECR_Overlap);
-	SecondWeaponMesh->SetGenerateOverlapEvents(true);
-	SecondWeaponMesh->SetupAttachment(GetRootComponent());
-}
-
-UStaticMeshComponent* ATangiCharacterBase::GetActiveWeaponMesh()
-{
-	return SecondWeaponMesh;
+	TestWeapon = CreateDefaultSubobject<UStaticMeshComponent>("OneHandedWeapon");
+	TestWeapon->CanCharacterStepUpOn = ECB_No;
+	TestWeapon->SetCollisionResponseToAllChannels(ECR_Overlap);
+	TestWeapon->SetGenerateOverlapEvents(true);
+	TestWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, "OneHandedWeapon");
 }
 
 void ATangiCharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -39,11 +34,7 @@ void ATangiCharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	Parameters.bIsPushBased = true;
 	Parameters.RepNotifyCondition = REPNOTIFY_OnChanged;
 	DOREPLIFETIME_WITH_PARAMS_FAST(ThisClass, bIsDead, Parameters);
-}
-
-void ATangiCharacterBase::DeathTagChanged(const FGameplayTag CallbackTag, const int32 NewCount)
-{
-	SetIsDead(NewCount > 0);
+	DOREPLIFETIME_WITH_PARAMS_FAST(ThisClass, bIsHitReacting, Parameters);
 }
 
 void ATangiCharacterBase::BeginPlay()
@@ -53,6 +44,10 @@ void ATangiCharacterBase::BeginPlay()
 	{
 		GetAbilitySystemComponent()->RegisterGameplayTagEvent(FTangiGameplayTags::Status_IsDead, EGameplayTagEventType::NewOrRemoved).AddUObject(
 			this, &ATangiCharacterBase::DeathTagChanged
+		);
+		
+		GetAbilitySystemComponent()->RegisterGameplayTagEvent(FTangiGameplayTags::Status_IsHitReacting, EGameplayTagEventType::NewOrRemoved).AddUObject(
+			this, &ATangiCharacterBase::HitReactTagChanged
 		);
 	}
 }
@@ -91,9 +86,42 @@ void ATangiCharacterBase::AddCharacterAbilities() const
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
+// Hit React
+// ---------------------------------------------------------------------------------------------------------------------
+#pragma region Hit React
+void ATangiCharacterBase::HitReactTagChanged(const FGameplayTag, const int32 NewCount)
+{
+	SetIsHitReacting(NewCount > 0);
+}
+
+void ATangiCharacterBase::SetIsHitReacting(const bool bNewIsHitReacting)
+{
+	if (HasAuthority())
+	{
+		bIsHitReacting = bNewIsHitReacting;
+		MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, bIsHitReacting, this)
+	}
+	else
+	{
+		ServerSetIsHitReacting(bNewIsHitReacting);
+	}
+}
+
+void ATangiCharacterBase::ServerSetIsHitReacting_Implementation(const bool bNewIsHitReacting)
+{
+	SetIsHitReacting(bNewIsHitReacting);
+}
+#pragma endregion
+
+// ---------------------------------------------------------------------------------------------------------------------
 // Death
 // ---------------------------------------------------------------------------------------------------------------------
 #pragma region Death
+void ATangiCharacterBase::DeathTagChanged(const FGameplayTag, const int32 NewCount)
+{
+	SetIsDead(NewCount > 0);
+}
+
 void ATangiCharacterBase::SetIsDead(const bool bNewIsDead)
 {
 	if (HasAuthority())

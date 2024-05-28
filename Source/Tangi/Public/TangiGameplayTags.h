@@ -63,6 +63,7 @@ namespace FTangiGameplayTags
 	// -----------------------------------------------------------------------------------------------------------------
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status);
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_IsDead);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_IsHitReacting);
 
 	// -----------------------------------------------------------------------------------------------------------------
 	// Vital Attributes
@@ -74,9 +75,11 @@ namespace FTangiGameplayTags
 	// -----------------------------------------------------------------------------------------------------------------
 	// Primary Attributes
 	// -----------------------------------------------------------------------------------------------------------------
-	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Primary_Whenua);
-	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Primary_Tangata);
-	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Primary_Atua);
+	// TODO: What should the primary attributes be?
+	// TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Primary_Utu);
+	// TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Primary_Whenua);
+	// TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Primary_Tangata);
+	// TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Primary_Atua);
 
 	// -----------------------------------------------------------------------------------------------------------------
 	// Secondary Attributes
@@ -84,15 +87,7 @@ namespace FTangiGameplayTags
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Secondary_MaxHealth);
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Secondary_MaxEndurance);
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Secondary_MaxOxygen);
-
-	// Positive Utu:
-	// - When a family hosts a feast or provides help, the recipients are expected to reciprocate in the future, creating a cycle of generosity and mutual support.
-	// - Acts of kindness and hospitality are repaid, strengthening community ties and fostering goodwill.
-	//
-	// Negative Utu:
-	// - In cases of offense or injury, utu can involve seeking reparation or retaliation to address the wrong. This might include demanding compensation, returning stolen goods, or, in severe cases, seeking vengeance.
-	// - Traditionally, negative utu could lead to cycles of retribution, but contemporary understandings emphasize reconciliation and restorative justice.
-	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Primary_Utu);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Secondary_CriticalHitChance);
 
 	// -----------------------------------------------------------------------------------------------------------------
 	// Movement Moves

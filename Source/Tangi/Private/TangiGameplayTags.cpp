@@ -60,6 +60,8 @@ namespace FTangiGameplayTags
 	// -----------------------------------------------------------------------------------------------------------------
 	UE_DEFINE_GAMEPLAY_TAG(Status, FName{TEXTVIEW("Status")});
 	UE_DEFINE_GAMEPLAY_TAG(Status_IsDead, FName{TEXTVIEW("Status.IsDead")});
+	UE_DEFINE_GAMEPLAY_TAG(Status_IsHitReacting, FName{TEXTVIEW("Status.IsHitReacting")});
+	
 
 	// -----------------------------------------------------------------------------------------------------------------
 	// Vital Attributes
@@ -71,22 +73,23 @@ namespace FTangiGameplayTags
 	// -----------------------------------------------------------------------------------------------------------------
 	// Primary Attributes
 	// -----------------------------------------------------------------------------------------------------------------
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attribute_Primary_Whenua, FName{TEXTVIEW("Attribute.Primary.Whenua")},
-		"This refers to the mana associated with land and territories; the power and authority derived from the ancestral connections to the land.")
-	
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attribute_Primary_Tangata, FName{TEXTVIEW("Attribute.Primary.Tangata")},
-		"This pertains to the mana of people, reflecting their personal achievements, status, and influence.")
-	
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attribute_Primary_Atua, FName{TEXTVIEW("Attribute.Primary.Atua")},
-		"This is the mana derived from the gods, representing the spiritual aspect and divine authority.")
+	// TODO: What should the primary attributes be?
+	// // The positive or negative reputation one has.
+	// UE_DEFINE_GAMEPLAY_TAG(Attribute_Primary_Utu, FName{TEXTVIEW("Attribute.Primary.Utu")});
+	// // This refers to the mana associated with land and territories; the power and authority derived from the ancestral connections to the land.
+	// UE_DEFINE_GAMEPLAY_TAG(Attribute_Primary_Whenua, FName{TEXTVIEW("Attribute.Primary.Whenua")});
+	// // This pertains to the mana of people, reflecting their personal achievements, status, and influence.
+	// UE_DEFINE_GAMEPLAY_TAG(Attribute_Primary_Tangata, FName{TEXTVIEW("Attribute.Primary.Tangata")})
+	// // This is the mana derived from the gods, representing the spiritual aspect and divine authority.
+	// UE_DEFINE_GAMEPLAY_TAG(Attribute_Primary_Atua, FName{TEXTVIEW("Attribute.Primary.Atua")})
 
 	// -----------------------------------------------------------------------------------------------------------------
 	// Secondary Attributes
 	// -----------------------------------------------------------------------------------------------------------------
 	UE_DEFINE_GAMEPLAY_TAG(Attribute_Secondary_MaxHealth, FName{TEXTVIEW("Attribute.Secondary.MaxHealth")});
 	UE_DEFINE_GAMEPLAY_TAG(Attribute_Secondary_MaxEndurance, FName{TEXTVIEW("Attribute.Secondary.MaxEndurance")});
-	UE_DEFINE_GAMEPLAY_TAG(Attribute_Secondary_MaxOxygen, FName{TEXTVIEW("Aedttribute.Secondary.MaxOxygen")});
-	UE_DEFINE_GAMEPLAY_TAG(Attribute_Primary_Utu, FName{TEXTVIEW("Attribute.Primary.Utu")});
+	UE_DEFINE_GAMEPLAY_TAG(Attribute_Secondary_MaxOxygen, FName{TEXTVIEW("Attribute.Secondary.MaxOxygen")});
+	UE_DEFINE_GAMEPLAY_TAG(Attribute_Secondary_CriticalHitChance, FName{TEXTVIEW("Attribute.Secondary.CriticalHitChance")});
 
 	// -----------------------------------------------------------------------------------------------------------------
 	// Movement Moves
