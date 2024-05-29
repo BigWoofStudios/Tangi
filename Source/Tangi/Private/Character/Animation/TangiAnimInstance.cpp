@@ -113,15 +113,7 @@ void UTangiAnimInstance::RefreshFalling()
 void UTangiAnimInstance::RefreshStance()
 {
 	PreviousStance = Stance;
-
-	if (Character->bIsCrouched)
-	{
-		Stance = CrouchingStance;
-	}
-	else
-	{
-		Stance = StandingStance;
-	}
+	Stance = Character->bIsCrouched ? CrouchingStance : StandingStance;
 }
 #pragma endregion
 
@@ -131,7 +123,7 @@ void UTangiAnimInstance::RefreshStance()
 #pragma region Swimming
 void UTangiAnimInstance::RefreshSwimming()
 {
-	bSwimming = Character->bSwimming;
-	bUnderwater = Character->bUnderwater;
+	bSwimming = Character->GetSwimming();
+	bUnderwater = Character->GetUnderwater();
 }
 #pragma endregion 

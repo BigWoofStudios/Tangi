@@ -9,6 +9,7 @@
 #include "CharacterTrajectoryComponent.h"
 #include "Combat/CombatInterface.h"
 #include "GameFramework/Character.h"
+#include "HAL/CriticalSection.h"
 #include "TangiCharacterBase.generated.h"
 
 class UTangiAbilityTagMapping;
@@ -78,12 +79,19 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "GAS|Ability", meta=(Description="These abilities will be granted on startup / when the ASC is associated."))
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities = {};
 	
+	// Critical section to ensure thread safety
+	mutable FCriticalSection ConditionCriticalSection;
+	
 // ---------------------------------------------------------------------------------------------------------------------
 // Hit React
 // ---------------------------------------------------------------------------------------------------------------------
 #pragma region Hit React
 public:
-	UFUNCTION() FORCEINLINE bool GetIsHitReacting() const { return bHitReacting; }
+	UFUNCTION(BlueprintPure, meta=(BlueprintThreadSafe)) uint8 GetHitReacting() const
+	{
+		FScopeLock Lock(&ConditionCriticalSection);
+		return bHitReacting;
+	}
 	virtual void HitReactTagChanged(const FGameplayTag CallbackTag, const int32 NewCount);
 	
 private:
@@ -97,7 +105,6 @@ private:
 	uint8 bHitReacting: 1 = 0;
 
 	void SetHitReacting(const bool NewValue);
-
 	UFUNCTION(Server, Reliable) void ServerSetHitReacting(const bool NewValue);
 #pragma endregion
 	
@@ -106,7 +113,11 @@ private:
 // ---------------------------------------------------------------------------------------------------------------------
 #pragma region Death
 public:
-	UFUNCTION() FORCEINLINE bool GetIsDead() const { return bDead; }
+	UFUNCTION(BlueprintPure, meta=(BlueprintThreadSafe)) uint8 GetDead() const
+	{
+		FScopeLock Lock(&ConditionCriticalSection);
+		return bDead;
+	}
 	virtual void DeathTagChanged(const FGameplayTag CallbackTag, const int32 NewCount);
 	
 private:
@@ -120,7 +131,6 @@ private:
 	uint8 bDead: 1 = 0;
 
 	void SetDead(const bool NewValue);
-
 	UFUNCTION(Server, Reliable) void ServerSetDead(const bool NewValue);
 #pragma endregion
 
@@ -129,19 +139,32 @@ private:
 // ---------------------------------------------------------------------------------------------------------------------
 #pragma region Swimming
 public:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated, Category = "State|Swimming", Transient)
-	uint8 bSwimming: 1 = 0;
+	UFUNCTION(BlueprintPure, meta=(BlueprintThreadSafe)) uint8 GetSwimming() const
+	{
+		FScopeLock Lock(&ConditionCriticalSection);
+		return bSwimming;
+	}
+	UFUNCTION(BlueprintPure, meta=(BlueprintThreadSafe)) uint8 GetUnderwater() const {
+		FScopeLock Lock(&ConditionCriticalSection);
+		return bUnderwater;
+	}
+	
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "State|Swimming|Effect")
+	TSubclassOf<UGameplayEffect> GE_HoldBreath = nullptr;
+	
 	void SetSwimming(const bool NewValue);
 	UFUNCTION(Server, Reliable) void ServerSetSwimming(const bool NewValue);
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated, Category = "State|Swimming", Transient)
-	uint8 bUnderwater: 1 = 0;
 	void SetUnderwater(const bool NewValue);
 	UFUNCTION(Server, Reliable) void ServerSetUnderwater(const bool NewValue);
-
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "State|Swimming|Effect")
-	TSubclassOf<UGameplayEffect> GE_HoldBreath = nullptr;
-private:
+	
+	UPROPERTY(VisibleAnywhere, Replicated, Category = "State|Swimming", Transient)
+	uint8 bUnderwater: 1 = 0;
+	
+	UPROPERTY(VisibleAnywhere, Replicated, Category = "State|Swimming", Transient)
+	uint8 bSwimming: 1 = 0;
+	
 	UFUNCTION() void RefreshSwimming();
 #pragma endregion 
 };
