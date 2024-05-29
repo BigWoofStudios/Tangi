@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "TangiGameplayEffectContext.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "UI/WidgetController/OverlayWidgetController.h"
 #include "TangiAbilitySystemLibrary.generated.h"
 
+struct FGameplayEffectContextHandle;
 /**
  * 
  */

@@ -3,7 +3,7 @@
 
 #include "Character/Animation/TangiAnimInstance.h"
 
-#include "KismetAnimationLibrary.h"
+#include "TangiMath.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PhysicsVolume.h"
@@ -69,8 +69,8 @@ void UTangiAnimInstance::RefreshAcceleration()
 void UTangiAnimInstance::RefreshLocomotionAngle()
 {
 	const FRotator CharacterRotation = Character->GetActorRotation();
-	LocomotionAngleVelocity = UKismetAnimationLibrary::CalculateDirection(Velocity2D, CharacterRotation);
-	LocomotionAngleAcceleration = UKismetAnimationLibrary::CalculateDirection(Acceleration2D, CharacterRotation);
+	LocomotionAngleVelocity = UTangiMath::CalculateDirection(Velocity2D, CharacterRotation);
+	LocomotionAngleAcceleration = UTangiMath::CalculateDirection(Acceleration2D, CharacterRotation);
 	
 	PreviousYaw = Yaw;
 	Yaw = CharacterRotation.Yaw;
@@ -131,37 +131,7 @@ void UTangiAnimInstance::RefreshStance()
 #pragma region Swimming
 void UTangiAnimInstance::RefreshSwimming()
 {
-	bPreviousSwimming = bSwimming;
-	bPreviousUnderwater = bUnderwater;
-
-	const APhysicsVolume* CurrentVolume = Character->GetPhysicsVolume();
-	const bool bIsInWater = CurrentVolume->bWaterVolume;
-	bSwimming = bIsInWater && CharacterMovementComponent->IsSwimming();
-	if (bSwimming)
-	{
-		const FVector CapsuleTop = Character->GetCapsuleComponent()->GetComponentLocation() + FVector(0.0f, 0.0f, Character->GetCapsuleComponent()->GetScaledCapsuleHalfHeight());
-		const float WaterSurfaceZ = CurrentVolume->GetActorLocation().Z + CurrentVolume->GetBounds().BoxExtent.Z;
-
-		bUnderwater = CapsuleTop.Z <= WaterSurfaceZ;
-	}
-	else
-	{
-		bUnderwater = 0;
-	}
-	
-	if (bUnderwater && !bPreviousUnderwater) // Character just dove underwater
-	{
-		UnderwaterStart = GetWorld()->GetTimeSeconds();
-		UnderwaterDuration = 0.f;
-	}
-	else if (bUnderwater && bPreviousUnderwater) // Character is actively underwater
-	{
-		UnderwaterDuration = GetWorld()->GetTimeSeconds() - UnderwaterStart;
-	}
-	else // Character is not underwater
-	{
-		UnderwaterStart = 0.f;
-		UnderwaterDuration = 0.f;
-	}
+	bSwimming = Character->bSwimming;
+	bUnderwater = Character->bUnderwater;
 }
 #pragma endregion 

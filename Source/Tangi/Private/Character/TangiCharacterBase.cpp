@@ -3,8 +3,12 @@
 
 #include "Character/TangiCharacterBase.h"
 
+#include "AbilitySystemGlobals.h"
 #include "TangiGameplayTags.h"
 #include "AbilitySystem/TangiAbilitySystemComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/PhysicsVolume.h"
 #include "Net/UnrealNetwork.h"
 
 ATangiCharacterBase::ATangiCharacterBase()
@@ -34,8 +38,37 @@ void ATangiCharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	Parameters.bIsPushBased = true;
 	Parameters.RepNotifyCondition = REPNOTIFY_OnChanged;
 	
-	DOREPLIFETIME_WITH_PARAMS_FAST(ThisClass, bIsDead, Parameters);
-	DOREPLIFETIME_WITH_PARAMS_FAST(ThisClass, bIsHitReacting, Parameters);
+	DOREPLIFETIME_WITH_PARAMS_FAST(ThisClass, bDead, Parameters);
+	DOREPLIFETIME_WITH_PARAMS_FAST(ThisClass, bHitReacting, Parameters);
+	DOREPLIFETIME_WITH_PARAMS_FAST(ThisClass, bSwimming, Parameters);
+	DOREPLIFETIME_WITH_PARAMS_FAST(ThisClass, bUnderwater, Parameters);
+}
+
+void ATangiCharacterBase::OnMovementModeChanged(const EMovementMode PrevMovementMode, const uint8 PreviousCustomMode)
+{
+	Super::OnMovementModeChanged(PrevMovementMode, PreviousCustomMode);
+
+	// Note:
+	// Falling movement mode is actually also jumping because it doesn't take into account the Z velocity, so
+	// because of this a character is considered falling when accelerating upwards and therefore the movement mode gets
+	// set to Falling. This will hopefully be configurable in the new Mover2.0 plugin (Character Motion Component) but
+	// is it currently experimental and has bugs which make it unusable as of UE v5.4.1
+	if (GetAbilitySystemComponent())
+	{
+		for (const TTuple<unsigned char, FGameplayTag> Pair : FTangiGameplayTags::MovementModeTagMap)
+		{
+			if (GetAbilitySystemComponent()->HasMatchingGameplayTag(Pair.Value))
+			{
+				GetAbilitySystemComponent()->RemoveLooseGameplayTag(Pair.Value);
+				GetAbilitySystemComponent()->RemoveReplicatedLooseGameplayTag(Pair.Value);
+			}
+		}
+		if (const FGameplayTag* FoundTag = FTangiGameplayTags::MovementModeTagMap.Find(GetCharacterMovement()->MovementMode))
+		{
+			GetAbilitySystemComponent()->AddLooseGameplayTag(*FoundTag);
+			GetAbilitySystemComponent()->AddReplicatedLooseGameplayTag(*FoundTag);
+		}
+	}
 }
 
 void ATangiCharacterBase::BeginPlay()
@@ -51,6 +84,14 @@ void ATangiCharacterBase::BeginPlay()
 			this, &ATangiCharacterBase::HitReactTagChanged
 		);
 	}
+}
+
+void ATangiCharacterBase::Tick(const float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	// Update certain state data on tick using fast push networking 
+	RefreshSwimming();
 }
 
 void ATangiCharacterBase::InitAbilityActorInfo() { /* Used in inherited classes. */ }
@@ -80,10 +121,10 @@ void ATangiCharacterBase::AddCharacterAbilities() const
 {
 	if (!HasAuthority()) return;
 	
-	UTangiAbilitySystemComponent *VeilAbilitySystemComponent = CastChecked<UTangiAbilitySystemComponent>(AbilitySystemComponent);
+	UTangiAbilitySystemComponent *TangiAbilitySystemComponent = CastChecked<UTangiAbilitySystemComponent>(AbilitySystemComponent);
 	
 	// Add the default startup abilities for this character
-	VeilAbilitySystemComponent->AddStartupAbilities(StartupAbilities);
+	TangiAbilitySystemComponent->AddStartupAbilities(StartupAbilities);
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -92,25 +133,28 @@ void ATangiCharacterBase::AddCharacterAbilities() const
 #pragma region Hit React
 void ATangiCharacterBase::HitReactTagChanged(const FGameplayTag, const int32 NewCount)
 {
-	SetIsHitReacting(NewCount > 0);
+	SetHitReacting(NewCount > 0);
 }
 
-void ATangiCharacterBase::SetIsHitReacting(const bool bNewIsHitReacting)
+void ATangiCharacterBase::SetHitReacting(const bool NewValue)
 {
 	if (HasAuthority())
 	{
-		bIsHitReacting = bNewIsHitReacting;
-		MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, bIsHitReacting, this)
+		if (bHitReacting != NewValue)
+		{
+			bHitReacting = NewValue;
+			MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, bHitReacting, this)
+		}
 	}
 	else
 	{
-		ServerSetIsHitReacting(bNewIsHitReacting);
+		ServerSetHitReacting(NewValue);
 	}
 }
 
-void ATangiCharacterBase::ServerSetIsHitReacting_Implementation(const bool bNewIsHitReacting)
+void ATangiCharacterBase::ServerSetHitReacting_Implementation(const bool NewValue)
 {
-	SetIsHitReacting(bNewIsHitReacting);
+	SetHitReacting(NewValue);
 }
 #pragma endregion
 
@@ -120,24 +164,107 @@ void ATangiCharacterBase::ServerSetIsHitReacting_Implementation(const bool bNewI
 #pragma region Death
 void ATangiCharacterBase::DeathTagChanged(const FGameplayTag, const int32 NewCount)
 {
-	SetIsDead(NewCount > 0);
+	SetDead(NewCount > 0);
 }
 
-void ATangiCharacterBase::SetIsDead(const bool bNewIsDead)
+void ATangiCharacterBase::SetDead(const bool NewValue)
 {
 	if (HasAuthority())
 	{
-		bIsDead = bNewIsDead;
-		MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, bIsDead, this)
+		if (bDead != NewValue)
+		{
+			bDead = NewValue;
+			MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, bDead, this)
+		}
 	}
 	else
 	{
-		ServerSetIsDead(bNewIsDead);
+		ServerSetDead(NewValue);
 	}
 }
 
-void ATangiCharacterBase::ServerSetIsDead_Implementation(const bool bNewIsDead)
+void ATangiCharacterBase::ServerSetDead_Implementation(const bool NewValue)
 {
-	SetIsDead(bNewIsDead);
+	SetDead(NewValue);
+}
+#pragma endregion
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Swimming
+// ---------------------------------------------------------------------------------------------------------------------
+#pragma region Swimming
+void ATangiCharacterBase::SetSwimming(const bool NewValue)
+{
+	if (HasAuthority())
+	{
+		if (bSwimming != NewValue)
+		{
+			bSwimming = NewValue;
+			MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, bSwimming, this);
+		}
+	}
+	else
+	{
+		ServerSetSwimming(NewValue);
+	}
+}
+
+void ATangiCharacterBase::ServerSetSwimming_Implementation(const bool NewValue)
+{
+	SetSwimming(NewValue);
+}
+
+void ATangiCharacterBase::SetUnderwater(const bool NewValue)
+{
+	if (HasAuthority())
+	{
+		if (bUnderwater != NewValue)
+		{
+			bUnderwater = NewValue;
+			MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, bUnderwater, this);
+		}
+	}
+	else
+	{
+		ServerSetUnderwater(NewValue);
+	}
+}
+
+void ATangiCharacterBase::ServerSetUnderwater_Implementation(const bool NewValue)
+{
+	SetUnderwater(NewValue);
+}
+
+void ATangiCharacterBase::RefreshSwimming()
+{
+	const APhysicsVolume* CurrentVolume = GetPhysicsVolume();
+	const bool bIsInWater = CurrentVolume->bWaterVolume;
+	SetSwimming(bIsInWater && GetCharacterMovement()->IsSwimming());
+
+	bool bNewUnderwater = false;
+	if (bSwimming)
+	{
+		const FVector CapsuleTop = GetCapsuleComponent()->GetComponentLocation() + FVector(0.0f, 0.0f, GetCapsuleComponent()->GetScaledCapsuleHalfHeight());
+		const float WaterSurfaceZ = CurrentVolume->GetActorLocation().Z + CurrentVolume->GetBounds().BoxExtent.Z;
+
+		bNewUnderwater = CapsuleTop.Z <= WaterSurfaceZ;
+	}
+	
+	SetUnderwater(bNewUnderwater);
+
+	// If the character is underwater, activate the ability
+	if (GetAbilitySystemComponent() && HasAuthority())
+	{
+		const FGameplayTagContainer TagContainer = FGameplayTagContainer{FTangiGameplayTags::GameplayAbility_HoldBreath};
+		
+		if (bUnderwater)
+		{
+			GetAbilitySystemComponent()->TryActivateAbilitiesByTag(TagContainer);
+		}
+		else
+		{
+			GetAbilitySystemComponent()->CancelAbilities(&TagContainer);
+		}
+	}
 }
 #pragma endregion 

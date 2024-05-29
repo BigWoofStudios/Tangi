@@ -6,6 +6,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "TangiGameplayTags.h"
 #include "TangiMath.h"
 #include "GameFramework/Character.h"
 #include "Input/TangiInputComponent.h"
@@ -75,6 +76,8 @@ void ATangiPlayerController::SetupInputComponent()
 	UTangiInputComponent* TangiInputComponent = CastChecked<UTangiInputComponent>(InputComponent);
 
 	TangiInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ATangiPlayerController::MoveTriggered);
+	TangiInputComponent->BindAction(MoveAction, ETriggerEvent::Completed, this, &ATangiPlayerController::MoveStopped);
+	TangiInputComponent->BindAction(MoveAction, ETriggerEvent::Canceled, this, &ATangiPlayerController::MoveStopped);
 	TangiInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ATangiPlayerController::LookTriggered);
 	TangiInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &ATangiPlayerController::CrouchStarted);
 	TangiInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ATangiPlayerController::JumpStarted);
@@ -104,7 +107,19 @@ void ATangiPlayerController::MoveTriggered(const FInputActionValue& ActionValue)
 {
 	APawn* ControlledPawn = GetPawn();
 	if (!IsValid(ControlledPawn)) return;
-
+	if (GetTangiAbilitySystemComponent())
+	{
+		// Don't allow dead players to move
+		if (TangiAbilitySystemComponent->HasMatchingGameplayTag(FTangiGameplayTags::Status_IsDead)) return;
+		
+		// Give the ASC the InputTag_Move GameplayTag when they are applying movement input
+		if (!TangiAbilitySystemComponent->HasMatchingGameplayTag(FTangiGameplayTags::InputTag_Move))
+		{
+			TangiAbilitySystemComponent->AddLooseGameplayTag(FTangiGameplayTags::InputTag_Move);
+			TangiAbilitySystemComponent->AddReplicatedLooseGameplayTag(FTangiGameplayTags::InputTag_Move);
+		}
+	}
+	
 	const FVector2D InputVector = ActionValue.Get<FVector2D>();
 	
 	// Scale and clamp the input vector between 0 and 1
@@ -114,7 +129,17 @@ void ATangiPlayerController::MoveTriggered(const FInputActionValue& ActionValue)
 
 	ControlledPawn->AddMovementInput(ForwardDirection * Value.Y + RightDirection * Value.X);
 }
-
+void ATangiPlayerController::MoveStopped(const FInputActionValue&)
+{
+	if (GetTangiAbilitySystemComponent())
+	{
+		if (TangiAbilitySystemComponent->HasMatchingGameplayTag(FTangiGameplayTags::InputTag_Move))
+		{
+			TangiAbilitySystemComponent->RemoveReplicatedLooseGameplayTag(FTangiGameplayTags::InputTag_Move);
+			TangiAbilitySystemComponent->RemoveLooseGameplayTag(FTangiGameplayTags::InputTag_Move);
+		}
+	}
+}
 void ATangiPlayerController::LookTriggered(const FInputActionValue& ActionValue)
 {
 	if (const APawn* ControlledPawn = GetPawn(); !IsValid(ControlledPawn)) return;

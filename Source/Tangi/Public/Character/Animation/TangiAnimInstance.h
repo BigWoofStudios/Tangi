@@ -138,19 +138,7 @@ protected:
 	uint8 bSwimming: 1 = 0;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State|Swimming", Transient)
-	uint8 bPreviousSwimming: 1 = 0;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State|Swimming", Transient, meta=(Description="Absolute time of when the character started swimming underwater. Used to compute total time spent underwater."))
-	float UnderwaterStart = 0.f;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State|Swimming", Transient, meta=(Description="The amount of absolute time the character has spent underwater."))
-	float UnderwaterDuration = 0.f;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State|Swimming", Transient)
 	uint8 bUnderwater: 1 = 0;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State|Swimming", Transient)
-	uint8 bPreviousUnderwater: 1 = 0;
 	
 	UFUNCTION() void RefreshSwimming();
 #pragma endregion

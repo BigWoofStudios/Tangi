@@ -28,4 +28,16 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Veil|Math|Vector", Meta = (AutoCreateRefTerm = "Direction", ReturnDisplayName = "Angle"))
 	static double DirectionToAngleXY(const FVector& InDirection);
+
+	/**
+	 * A copy from UKismetAnimationLibrary function to prevent the need to add the module. If it turns out that this
+	 * project uses more functions from this library, it will make more sense to remove this function and add the module.
+	 * 
+	 * Returns degree of the angle between Velocity and Rotation forward vector
+	 * The range of return will be from [-180, 180]. Useful for feeding directional blendspaces.
+	 * @param	Velocity		The velocity to use as direction relative to BaseRotation
+	 * @param	BaseRotation	The base rotation, e.g. of a pawn
+	 */
+	UFUNCTION(BlueprintPure, Category="Veil|Math|Animation|Utilities")
+	static float CalculateDirection(const FVector& Velocity, const FRotator& BaseRotation);
 };

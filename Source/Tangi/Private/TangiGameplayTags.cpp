@@ -38,6 +38,7 @@ namespace FTangiGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_Death, FName{TEXTVIEW("GameplayAbility.Death")});
 	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_HitReact, FName{TEXTVIEW("GameplayAbility.HitReact")});
 	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_MeleeAttack, FName{TEXTVIEW("GameplayAbility.MeleeAttack")});
+	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_HoldBreath, FName{TEXTVIEW("GameplayAbility.HoldBreath")});
 	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_Sprint, FName{TEXTVIEW("GameplayAbility.Sprint")});
 	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_HealthRegeneration, FName{TEXTVIEW("GameplayAbility.Passive.HealthRegeneration")});
 	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_EnduranceRegeneration, FName{TEXTVIEW("GameplayAbility.Passive.EnduranceRegeneration")});
@@ -61,7 +62,8 @@ namespace FTangiGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Status, FName{TEXTVIEW("Status")});
 	UE_DEFINE_GAMEPLAY_TAG(Status_IsDead, FName{TEXTVIEW("Status.IsDead")});
 	UE_DEFINE_GAMEPLAY_TAG(Status_IsHitReacting, FName{TEXTVIEW("Status.IsHitReacting")});
-	
+	UE_DEFINE_GAMEPLAY_TAG(Status_IsUnderwater, FName{TEXTVIEW("Status.IsUnderwater")});
+	UE_DEFINE_GAMEPLAY_TAG(Status_IsDrowning, FName{TEXTVIEW("Status.IsDrowning")});
 
 	// -----------------------------------------------------------------------------------------------------------------
 	// Vital Attributes

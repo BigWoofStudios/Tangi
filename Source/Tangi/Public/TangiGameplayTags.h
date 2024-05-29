@@ -41,6 +41,7 @@ namespace FTangiGameplayTags
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_Death);
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_HitReact);
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_MeleeAttack);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_HoldBreath);
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_Sprint);
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_HealthRegeneration);
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_EnduranceRegeneration);
@@ -64,6 +65,8 @@ namespace FTangiGameplayTags
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status);
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_IsDead);
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_IsHitReacting);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_IsUnderwater);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_IsDrowning);
 
 	// -----------------------------------------------------------------------------------------------------------------
 	// Vital Attributes

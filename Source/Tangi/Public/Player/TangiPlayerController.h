@@ -62,7 +62,8 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category="Input|Action")
 	TObjectPtr<UInputAction> MoveAction;
 	void MoveTriggered(const FInputActionValue& ActionValue);
-
+	void MoveStopped(const FInputActionValue& ActionValue);
+	
 	UPROPERTY(EditDefaultsOnly, Category="Input|Action")
 	TObjectPtr<UInputAction> LookAction;
 	void LookTriggered(const FInputActionValue& ActionValue);

@@ -25,17 +25,19 @@ class TANGI_API ATangiCharacterBase : public ACharacter, public IAbilitySystemIn
 public:
 	ATangiCharacterBase();
 	
+	virtual void Tick(const float DeltaSeconds) override;
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent; }
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual void OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode) override;
 	
 #pragma region Combat Interface
 	virtual UStaticMeshComponent* GetActiveWeaponMesh() override { return TestWeapon; }
 	virtual UAnimMontage* GetDeathMontage() override { return DeathMontage; }
 	virtual TArray<USoundBase*> GetDeathSounds() override { return DeathSounds; }
-	virtual bool GetIsDead() override { return bIsDead; }
+	virtual bool GetIsDead() override { return bDead; }
 	virtual UAnimMontage* GetHitReactMontage() override { return HitReactMontage; }
 	virtual TArray<USoundBase*> GetHitReactSounds() override { return HitReactSounds; }
-	virtual bool GetIsHitReacting() override { return bIsHitReacting; }
+	virtual bool GetIsHitReacting() override { return bHitReacting; }
 #pragma endregion 
 	
 	// If set, this table is used to look up tag relationships for activate and cancel
@@ -81,7 +83,7 @@ private:
 // ---------------------------------------------------------------------------------------------------------------------
 #pragma region Hit React
 public:
-	UFUNCTION() FORCEINLINE bool GetIsHitReacting() const { return bIsHitReacting; }
+	UFUNCTION() FORCEINLINE bool GetIsHitReacting() const { return bHitReacting; }
 	virtual void HitReactTagChanged(const FGameplayTag CallbackTag, const int32 NewCount);
 	
 private:
@@ -92,11 +94,11 @@ private:
 	TArray<USoundBase*> HitReactSounds = {};
 	
 	UPROPERTY(VisibleAnywhere, Replicated, Category = "Combat|Hit React")
-	uint8 bIsHitReacting: 1 = 0;
+	uint8 bHitReacting: 1 = 0;
 
-	void SetIsHitReacting(const bool bNewIsHitReacting);
+	void SetHitReacting(const bool NewValue);
 
-	UFUNCTION(Server, Reliable) void ServerSetIsHitReacting(const bool bNewIsHitReacting);
+	UFUNCTION(Server, Reliable) void ServerSetHitReacting(const bool NewValue);
 #pragma endregion
 	
 // ---------------------------------------------------------------------------------------------------------------------
@@ -104,7 +106,7 @@ private:
 // ---------------------------------------------------------------------------------------------------------------------
 #pragma region Death
 public:
-	UFUNCTION() FORCEINLINE bool GetIsDead() const { return bIsDead; }
+	UFUNCTION() FORCEINLINE bool GetIsDead() const { return bDead; }
 	virtual void DeathTagChanged(const FGameplayTag CallbackTag, const int32 NewCount);
 	
 private:
@@ -115,10 +117,31 @@ private:
 	TArray<USoundBase*> DeathSounds = {};
 	
 	UPROPERTY(VisibleAnywhere, Replicated, Category = "Combat|Death")
-	uint8 bIsDead: 1 = 0;
+	uint8 bDead: 1 = 0;
 
-	void SetIsDead(const bool bNewIsDead);
+	void SetDead(const bool NewValue);
 
-	UFUNCTION(Server, Reliable) void ServerSetIsDead(bool bNewIsDead);
+	UFUNCTION(Server, Reliable) void ServerSetDead(const bool NewValue);
 #pragma endregion
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Swimming
+// ---------------------------------------------------------------------------------------------------------------------
+#pragma region Swimming
+public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated, Category = "State|Swimming", Transient)
+	uint8 bSwimming: 1 = 0;
+	void SetSwimming(const bool NewValue);
+	UFUNCTION(Server, Reliable) void ServerSetSwimming(const bool NewValue);
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated, Category = "State|Swimming", Transient)
+	uint8 bUnderwater: 1 = 0;
+	void SetUnderwater(const bool NewValue);
+	UFUNCTION(Server, Reliable) void ServerSetUnderwater(const bool NewValue);
+
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "State|Swimming|Effect")
+	TSubclassOf<UGameplayEffect> GE_HoldBreath = nullptr;
+private:
+	UFUNCTION() void RefreshSwimming();
+#pragma endregion 
 };

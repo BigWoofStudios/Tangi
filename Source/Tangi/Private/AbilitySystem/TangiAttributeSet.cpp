@@ -58,7 +58,17 @@ void UTangiAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallb
 	// Clamp attributes that have a defined max attribute
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute()) SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
 	if (Data.EvaluatedData.Attribute == GetEnduranceAttribute()) SetEndurance(FMath::Clamp(GetEndurance(), 0.f, GetMaxEndurance()));
-	if (Data.EvaluatedData.Attribute == GetOxygenAttribute()) SetOxygen(FMath::Clamp(GetOxygen(), 0.f, GetMaxOxygen()));
+	if (Data.EvaluatedData.Attribute == GetOxygenAttribute())
+	{
+		SetOxygen(FMath::Clamp(GetOxygen(), 0.f, GetMaxOxygen()));
+
+		// TODO: Handle drowning ability which will handle adding incoming damage and applying drowning status
+		// if (GetOxygen() <= 0.f) {
+		//	FGameplayTagContainer TagContainer;
+		//	TagContainer.AddTagFast(FTangiGameplayTags::GameplayAbility_Drown);
+		//	Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+		// }
+	}
 
 	if (Data.EvaluatedData.Attribute == GetIncomingDamageAttribute())
 	{
@@ -76,12 +86,12 @@ void UTangiAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallb
 
 			if (NewHealth <= 0.f)
 			{
-				TagContainer.AddTag(FTangiGameplayTags::GameplayAbility_Death);
+				TagContainer.AddTagFast(FTangiGameplayTags::GameplayAbility_Death);
 				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
 			}
 			else
 			{
-				TagContainer.AddTag(FTangiGameplayTags::GameplayAbility_HitReact);
+				TagContainer.AddTagFast(FTangiGameplayTags::GameplayAbility_HitReact);
 				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
 			}
 		}
