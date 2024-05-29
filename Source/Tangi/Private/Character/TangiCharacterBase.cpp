@@ -6,6 +6,8 @@
 #include "AbilitySystemGlobals.h"
 #include "TangiGameplayTags.h"
 #include "AbilitySystem/TangiAbilitySystemComponent.h"
+#include "AbilitySystem/Effect/TangiGameplayEffect.h"
+#include "AbilitySystem/ExecCalc/ExecCalc_FallDamage.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PhysicsVolume.h"
@@ -84,6 +86,8 @@ void ATangiCharacterBase::BeginPlay()
 			this, &ATangiCharacterBase::HitReactTagChanged
 		);
 	}
+	
+	LandedDelegate.AddDynamic(this, &ATangiCharacterBase::ApplyFallDamage);
 }
 
 void ATangiCharacterBase::Tick(const float DeltaSeconds)
@@ -125,6 +129,14 @@ void ATangiCharacterBase::AddCharacterAbilities() const
 	
 	// Add the default startup abilities for this character
 	TangiAbilitySystemComponent->AddStartupAbilities(StartupAbilities);
+}
+
+void ATangiCharacterBase::ApplyFallDamage_Implementation(const FHitResult&)
+{
+	if (AbilitySystemComponent && GE_FallDamage)
+	{
+		ApplyEffectToSelf(GE_FallDamage, GetCharacterMovement()->Velocity.Z);
+	}
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -222,6 +234,21 @@ void ATangiCharacterBase::SetUnderwater(const bool NewValue)
 		{
 			bUnderwater = NewValue;
 			MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, bUnderwater, this);
+			
+			// If the character is underwater, activate the ability
+			if (GetAbilitySystemComponent())
+			{
+				const FGameplayTagContainer TagContainer = FGameplayTagContainer{FTangiGameplayTags::GameplayAbility_HoldBreath};
+		
+				if (bUnderwater && !GetAbilitySystemComponent()->HasMatchingGameplayTag(FTangiGameplayTags::Status_IsUnderwater))
+				{
+					GetAbilitySystemComponent()->TryActivateAbilitiesByTag(TagContainer);
+				}
+				else if (!bUnderwater && GetAbilitySystemComponent()->HasMatchingGameplayTag(FTangiGameplayTags::Status_IsUnderwater))
+				{
+					GetAbilitySystemComponent()->CancelAbilities(&TagContainer);
+				}
+			}
 		}
 	}
 	else
@@ -251,20 +278,5 @@ void ATangiCharacterBase::RefreshSwimming()
 	}
 	
 	SetUnderwater(bNewUnderwater);
-
-	// If the character is underwater, activate the ability
-	if (GetAbilitySystemComponent() && HasAuthority())
-	{
-		const FGameplayTagContainer TagContainer = FGameplayTagContainer{FTangiGameplayTags::GameplayAbility_HoldBreath};
-		
-		if (bUnderwater)
-		{
-			GetAbilitySystemComponent()->TryActivateAbilitiesByTag(TagContainer);
-		}
-		else
-		{
-			GetAbilitySystemComponent()->CancelAbilities(&TagContainer);
-		}
-	}
 }
 #pragma endregion 

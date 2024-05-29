@@ -78,6 +78,12 @@ protected:
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "GAS|Ability", meta=(Description="These abilities will be granted on startup / when the ASC is associated."))
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities = {};
+
+	UPROPERTY(EditDefaultsOnly, Category = "GAS|Effect")
+	TSubclassOf<UGameplayEffect> GE_FallDamage = nullptr;
+
+	UFUNCTION(Server, Reliable)
+	void ApplyFallDamage(const FHitResult& Hit);
 	
 	// Critical section to ensure thread safety
 	mutable FCriticalSection ConditionCriticalSection;
