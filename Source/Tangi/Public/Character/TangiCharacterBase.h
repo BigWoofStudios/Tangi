@@ -76,7 +76,6 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "GAS|Ability", meta=(Description="These abilities will be granted on startup / when the ASC is associated."))
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities = {};
 	
-	
 // ---------------------------------------------------------------------------------------------------------------------
 // Hit React
 // ---------------------------------------------------------------------------------------------------------------------

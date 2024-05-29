@@ -33,6 +33,7 @@ void ATangiCharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	
 	Parameters.bIsPushBased = true;
 	Parameters.RepNotifyCondition = REPNOTIFY_OnChanged;
+	
 	DOREPLIFETIME_WITH_PARAMS_FAST(ThisClass, bIsDead, Parameters);
 	DOREPLIFETIME_WITH_PARAMS_FAST(ThisClass, bIsHitReacting, Parameters);
 }

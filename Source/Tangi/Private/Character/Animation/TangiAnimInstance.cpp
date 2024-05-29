@@ -3,6 +3,7 @@
 
 #include "Character/Animation/TangiAnimInstance.h"
 
+#include "KismetAnimationLibrary.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PhysicsVolume.h"
@@ -10,7 +11,12 @@
 void UTangiAnimInstance::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
-	Character = Cast<ATangiCharacterBase>(GetOwningActor());
+	if (ATangiCharacterBase* TangiCharacterBase = Cast<ATangiCharacterBase>(GetOwningActor()))
+	{
+		Character = TangiCharacterBase;
+		CharacterTrajectory = Character->CharacterTrajectory;
+		CharacterMovementComponent = Character->GetCharacterMovement();
+	}
 }
 
 void UTangiAnimInstance::NativeThreadSafeUpdateAnimation(const float DeltaTime)
@@ -19,12 +25,13 @@ void UTangiAnimInstance::NativeThreadSafeUpdateAnimation(const float DeltaTime)
 
 	if (!IsValid(Character)) return;
 	
-	CharacterTrajectory = Character->CharacterTrajectory;
-
 	RefreshStance();
 	RefreshSwimming();
-	RefreshVelocity();
 	RefreshFalling();
+	
+	RefreshVelocity();
+	RefreshAcceleration();
+	RefreshLocomotionAngle();
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -33,8 +40,43 @@ void UTangiAnimInstance::NativeThreadSafeUpdateAnimation(const float DeltaTime)
 #pragma region Velocity
 void UTangiAnimInstance::RefreshVelocity()
 {
-	PreviousVelocityXY = VelocityXY;
-	VelocityXY = FVector(Character->GetCharacterMovement()->Velocity.X, Character->GetCharacterMovement()->Velocity.Y, 0.f);
+	PreviousVelocity2D = Velocity2D;
+	PreviousVelocity = Velocity;
+	
+	Velocity = CharacterMovementComponent->Velocity;
+	Velocity2D = Velocity * FVector(1.f, 1.f, 0.f);
+}
+#pragma endregion
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Acceleration
+// ---------------------------------------------------------------------------------------------------------------------
+#pragma region Acceleration
+void UTangiAnimInstance::RefreshAcceleration()
+{
+	PreviousAcceleration2D = Acceleration2D;
+	PreviousAcceleration = Acceleration;
+	
+	Acceleration = CharacterMovementComponent->GetCurrentAcceleration();
+	Acceleration2D = Acceleration * FVector(1.f, 1.f, 0.f);
+}
+#pragma endregion
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Locomotion Angle
+// ---------------------------------------------------------------------------------------------------------------------
+#pragma region Locomotion Angle
+void UTangiAnimInstance::RefreshLocomotionAngle()
+{
+	const FRotator CharacterRotation = Character->GetActorRotation();
+	LocomotionAngleVelocity = UKismetAnimationLibrary::CalculateDirection(Velocity2D, CharacterRotation);
+	LocomotionAngleAcceleration = UKismetAnimationLibrary::CalculateDirection(Acceleration2D, CharacterRotation);
+	
+	PreviousYaw = Yaw;
+	Yaw = CharacterRotation.Yaw;
+	YawDelta = FMath::IsNearlyZero(PreviousYaw) ? 0.f : Yaw / PreviousYaw;
+	
+	bPivoting = FVector::DotProduct(Velocity2D.GetSafeNormal(), Acceleration2D.GetSafeNormal()) < UE_SMALL_NUMBER;
 }
 #pragma endregion
 
@@ -45,7 +87,7 @@ void UTangiAnimInstance::RefreshVelocity()
 void UTangiAnimInstance::RefreshFalling()
 {
 	bPreviousFalling = bFalling;
-	bFalling = Character->GetCharacterMovement()->IsFalling() && Character->GetCharacterMovement()->Velocity.Z < UE_SMALL_NUMBER;
+	bFalling = CharacterMovementComponent->IsFalling() && CharacterMovementComponent->Velocity.Z < UE_SMALL_NUMBER;
 	
 	if (bFalling && !bPreviousFalling) // Character just started falling
 	{
@@ -94,7 +136,7 @@ void UTangiAnimInstance::RefreshSwimming()
 
 	const APhysicsVolume* CurrentVolume = Character->GetPhysicsVolume();
 	const bool bIsInWater = CurrentVolume->bWaterVolume;
-	bSwimming = bIsInWater && Character->GetCharacterMovement()->IsSwimming();
+	bSwimming = bIsInWater && CharacterMovementComponent->IsSwimming();
 	if (bSwimming)
 	{
 		const FVector CapsuleTop = Character->GetCapsuleComponent()->GetComponentLocation() + FVector(0.0f, 0.0f, Character->GetCapsuleComponent()->GetScaledCapsuleHalfHeight());
@@ -105,6 +147,21 @@ void UTangiAnimInstance::RefreshSwimming()
 	else
 	{
 		bUnderwater = 0;
+	}
+	
+	if (bUnderwater && !bPreviousUnderwater) // Character just dove underwater
+	{
+		UnderwaterStart = GetWorld()->GetTimeSeconds();
+		UnderwaterDuration = 0.f;
+	}
+	else if (bUnderwater && bPreviousUnderwater) // Character is actively underwater
+	{
+		UnderwaterDuration = GetWorld()->GetTimeSeconds() - UnderwaterStart;
+	}
+	else // Character is not underwater
+	{
+		UnderwaterStart = 0.f;
+		UnderwaterDuration = 0.f;
 	}
 }
 #pragma endregion 

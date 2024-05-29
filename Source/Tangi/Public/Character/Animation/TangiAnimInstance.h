@@ -26,10 +26,13 @@ public:
 	virtual void NativeThreadSafeUpdateAnimation(float DeltaTime) override;
 	
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State", Transient)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", Transient)
 	TObjectPtr<ATangiCharacterBase> Character;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State", Transient)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", Transient)
+	TObjectPtr<UCharacterMovementComponent> CharacterMovementComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", Transient)
 	TObjectPtr<UCharacterTrajectoryComponent> CharacterTrajectory;
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -37,33 +40,81 @@ protected:
 // ---------------------------------------------------------------------------------------------------------------------
 #pragma region Falling
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State|Velocity", Transient)
-	FVector VelocityXY = FVector::Zero();
+	FVector Velocity = FVector::Zero();
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State|Velocity", Transient)
-	FVector PreviousVelocityXY = FVector::Zero();
-
-	UFUNCTION()
-	void RefreshVelocity();
-#pragma endregion
+	FVector PreviousVelocity = FVector::Zero();
 	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State|Velocity", Transient)
+	FVector Velocity2D = FVector::Zero();
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State|Velocity", Transient)
+	FVector PreviousVelocity2D = FVector::Zero();
+
+	UFUNCTION() void RefreshVelocity();
+#pragma endregion
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Acceleration
+// ---------------------------------------------------------------------------------------------------------------------
+#pragma region Acceleration
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State|Acceleration", Transient)
+	FVector Acceleration = FVector::Zero();
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State|Acceleration", Transient)
+	FVector PreviousAcceleration = FVector::Zero();
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State|Acceleration", Transient)
+	FVector Acceleration2D = FVector::Zero();
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State|Acceleration", Transient)
+	FVector PreviousAcceleration2D = FVector::Zero();
+
+	UFUNCTION() void RefreshAcceleration();
+#pragma endregion
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Locomotion Angle
+// ---------------------------------------------------------------------------------------------------------------------
+#pragma region Locomotion Angle
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State|Locomotion Angle", Transient, meta=(Description="Bit flag for Chooser plugin."))
+	uint8 bPivoting: 1 = 0;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State|Locomotion Angle", Transient, meta=(Description="Used for Orientation Warping."))
+	float LocomotionAngleAcceleration = 0.f;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State|Locomotion Angle", Transient, meta=(Description="Used for Orientation Warping."))
+	float LocomotionAngleVelocity = 0.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State|Locomotion Angle", Transient, meta=(Description="Used to compute Yaw Delta for additive leans."))
+	float Yaw = 0.f;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State|Locomotion Angle", Transient, meta=(Description="Used to compute Yaw Delta for additive leans."))
+	float PreviousYaw = 0.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State|Locomotion Angle", Transient, meta=(Description="Used for additive leans."))
+	float YawDelta = 0.f;
+	
+	UFUNCTION() void RefreshLocomotionAngle();
+#pragma endregion
+
 // ---------------------------------------------------------------------------------------------------------------------
 // Falling
 // ---------------------------------------------------------------------------------------------------------------------
 #pragma region Falling
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State|Falling", Transient)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State|Falling", Transient, meta=(Description="Absolute time of when the character started falling. Used to compute total time spent falling."))
 	float FallStart = 0.f;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State|Falling", Transient)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State|Falling", Transient, meta=(Description="The amount of absolute time the character has spent falling."))
 	float FallDuration = 0.f;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State|Falling", Transient)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State|Falling", Transient, meta=(Description="Bit flag for Choose plugin."))
 	uint8 bFalling: 1 = 0;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State|Falling", Transient)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State|Falling", Transient, meta=(Description="Bit flag to compute if the player is actively falling."))
 	uint8 bPreviousFalling: 1 = 0;
 
-	UFUNCTION()
-	void RefreshFalling();
+	UFUNCTION() void RefreshFalling();
 #pragma endregion
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -76,8 +127,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State|Stance", Transient)
 	TEnumAsByte<ECharacterStance> PreviousStance = StandingStance;
 
-	UFUNCTION()
-	void RefreshStance();
+	UFUNCTION() void RefreshStance();
 #pragma endregion
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -90,14 +140,19 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State|Swimming", Transient)
 	uint8 bPreviousSwimming: 1 = 0;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State|Swimming", Transient, meta=(Description="Absolute time of when the character started swimming underwater. Used to compute total time spent underwater."))
+	float UnderwaterStart = 0.f;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State|Swimming", Transient, meta=(Description="The amount of absolute time the character has spent underwater."))
+	float UnderwaterDuration = 0.f;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State|Swimming", Transient)
 	uint8 bUnderwater: 1 = 0;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State|Swimming", Transient)
 	uint8 bPreviousUnderwater: 1 = 0;
 	
-	UFUNCTION()
-	void RefreshSwimming();
+	UFUNCTION() void RefreshSwimming();
 #pragma endregion
 };
 

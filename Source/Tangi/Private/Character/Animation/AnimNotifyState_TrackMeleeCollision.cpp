@@ -31,11 +31,16 @@ void UAnimNotifyState_TrackMeleeCollision::NotifyTick(USkeletalMeshComponent* Me
 	{
 		TArray<AActor*> OverlappingActors;
 		CombatInterface->GetActiveWeaponMesh()->GetOverlappingActors(OverlappingActors);
+
+		TSet<AActor*> EventSentToActors = {};
 		for (AActor* OverlapActor : OverlappingActors)
 		{
 			if (OverlapActor == Owner) continue;
 			if (!OverlapActor->Implements<UCombatInterface>()) continue;
+			if (EventSentToActors.Contains(OverlapActor)) continue;
 
+			EventSentToActors.Add(OverlapActor);
+			
 			// Send a gameplay event to the owner of this anim notify state, so they can respond to the hit
 			FGameplayEventData GameplayEventData;
 			GameplayEventData.Target = OverlapActor;
