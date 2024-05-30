@@ -11,12 +11,16 @@ void UExecCalc_FallDamage::Execute_Implementation(const FGameplayEffectCustomExe
 {
 	float Damage = 0.f;
 	const FGameplayEffectSpec& Spec = ExecutionParams.GetOwningSpec();
-	if (float EffectLevel = Spec.GetLevel(); EffectLevel <= -1000.f)
+	const float VelocityZ = Spec.GetLevel();
+	if (VelocityZ <= -850.f)
 	{
-		EffectLevel *= -1;
-		Damage += FMath::Pow(EffectLevel / 50.f, FMath::Max(1.f, EffectLevel / 3000));
+		// VelocityZ: -1000 () =>    4.2dmg
+		// VelocityZ: -3000 () =>   65.4dmg
+		// VelocityZ: -6000 () =>  369.7dmg
+		// VelocityZ: -9000 () => 1018.8dmg
+		Damage += FMath::Pow(VelocityZ / 200.0f * -1, 2.5f) * 0.075f;
 	}
-	
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, "VelocityZ: " + FString::SanitizeFloat(VelocityZ) + "\nDamage: " + FString::SanitizeFloat(Damage));
 	const FGameplayModifierEvaluatedData EvaluatedData(UTangiAttributeSet::GetIncomingDamageAttribute(), EGameplayModOp::Additive, Damage);
 	OutExecutionOutput.AddOutputModifier(EvaluatedData);
 }

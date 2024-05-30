@@ -125,11 +125,9 @@ void ATangiPlayerController::MoveTriggered(const FInputActionValue& ActionValue)
 		}
 	}
 	
-	const FVector2D InputVector = ActionValue.Get<FVector2D>();
-	
 	// Scale and clamp the input vector between 0 and 1
-	const FVector2D Value = UTangiMath::ClampMagnitude012D(InputVector);
-	const FVector ForwardDirection = UTangiMath::AngleToDirectionXY(UE_REAL_TO_FLOAT(ControlledPawn->GetActorRotation().Yaw));
+	const FVector2D Value = ActionValue.Get<FVector2D>().GetSafeNormal();
+	const FVector ForwardDirection = UTangiMath::RadianToDirectionXY(FMath::DegreesToRadians(ControlledPawn->GetActorRotation().Yaw));
 	const FVector RightDirection = UTangiMath::PerpendicularCounterClockwiseXY(ForwardDirection);
 
 	ControlledPawn->AddMovementInput(ForwardDirection * Value.Y + RightDirection * Value.X);
