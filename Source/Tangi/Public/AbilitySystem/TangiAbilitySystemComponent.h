@@ -53,8 +53,7 @@ protected:
 
 private:
 	// If set, this table is used to look up tag relationships for activate and cancel
-	UPROPERTY()
-	TObjectPtr<UTangiAbilityTagMapping> TagRelationshipMapping;
+	UPROPERTY() TObjectPtr<UTangiAbilityTagMapping> TagRelationshipMapping;
 	
 	// Handles to abilities that had their input pressed this frame.
 	TArray<FGameplayAbilitySpecHandle> InputPressedSpecHandles;
