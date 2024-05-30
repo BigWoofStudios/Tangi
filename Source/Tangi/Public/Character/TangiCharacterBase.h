@@ -27,9 +27,9 @@ public:
 	ATangiCharacterBase();
 	
 	virtual void Tick(const float DeltaSeconds) override;
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent; }
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode) override;
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent; }
 	
 #pragma region Combat Interface
 	virtual UStaticMeshComponent* GetActiveWeaponMesh() override { return TestWeapon; }
@@ -62,18 +62,17 @@ protected:
 	void AddCharacterAbilities() const;
 	void ApplyEffectToSelf(const TSubclassOf<UGameplayEffect>& GameplayEffectClass, const float Level) const;
 
-	UPROPERTY()
-	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent = nullptr;
-	UPROPERTY()
-	TObjectPtr<UAttributeSet> AttributeSet = nullptr;
-
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "GAS|Attribute")
-	TSubclassOf<UGameplayEffect> DefaultVitalAttributes = nullptr;
-
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "GAS|Attribute")
-	TSubclassOf<UGameplayEffect> DefaultSecondaryAttributes = nullptr;
+	// These should be initialized in subclasses
+	UPROPERTY() TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent = nullptr;
+	UPROPERTY() TObjectPtr<UAttributeSet> AttributeSet = nullptr;
 
 private:
+	UPROPERTY(EditDefaultsOnly, Category = "GAS|Attribute")
+	TSubclassOf<UGameplayEffect> DefaultVitalAttributes = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category = "GAS|Attribute")
+	TSubclassOf<UGameplayEffect> DefaultSecondaryAttributes = nullptr;
+	
 	UPROPERTY(EditDefaultsOnly, Category = "GAS|Ability", meta=(Description="These abilities will be granted on startup / when the ASC is associated."))
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities = {};
 
@@ -96,9 +95,10 @@ public:
 		FScopeLock Lock(&ConditionCriticalSection);
 		return bHitReacting;
 	}
-	virtual void HitReactTagChanged(const FGameplayTag CallbackTag, const int32 NewCount);
 	
 private:
+	virtual void HitReactTagChanged(const FGameplayTag CallbackTag, const int32 NewCount);
+	
 	UPROPERTY(EditDefaultsOnly, Category = "Combat|Hit React")
 	TObjectPtr<UAnimMontage> HitReactMontage = nullptr;
 
@@ -122,9 +122,10 @@ public:
 		FScopeLock Lock(&ConditionCriticalSection);
 		return bDead;
 	}
-	virtual void DeathTagChanged(const FGameplayTag CallbackTag, const int32 NewCount);
 	
 private:
+	virtual void DeathTagChanged(const FGameplayTag CallbackTag, const int32 NewCount);
+	
 	UPROPERTY(EditDefaultsOnly, Category = "Combat|Death")
 	TObjectPtr<UAnimMontage> DeathMontage = nullptr;
 

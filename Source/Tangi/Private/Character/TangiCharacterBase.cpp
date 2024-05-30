@@ -15,7 +15,7 @@
 
 ATangiCharacterBase::ATangiCharacterBase()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 	ACharacter::SetReplicateMovement(true);
 	SetReplicates(true);
 

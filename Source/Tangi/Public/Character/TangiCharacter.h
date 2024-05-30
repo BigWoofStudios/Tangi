@@ -31,7 +31,6 @@ public:
 	ATangiPlayerState* GetTangiPlayerState();
 	UTangiAbilitySystemComponent* GetTangiAbilitySystemComponent();
 
-
 private:
 	UPROPERTY() ATangiPlayerState* TangiPlayerState = nullptr;
 	UPROPERTY() ATangiPlayerController* TangiPlayerController = nullptr;
