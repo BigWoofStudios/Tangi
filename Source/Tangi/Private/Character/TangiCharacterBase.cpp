@@ -86,8 +86,6 @@ void ATangiCharacterBase::BeginPlay()
 			this, &ATangiCharacterBase::HitReactTagChanged
 		);
 	}
-	
-	LandedDelegate.AddDynamic(this, &ATangiCharacterBase::ApplyFallDamage);
 }
 
 void ATangiCharacterBase::Tick(const float DeltaSeconds)
@@ -121,19 +119,27 @@ void ATangiCharacterBase::InitializeDefaultAttributes()
 	ApplyEffectToSelf(DefaultVitalAttributes, 1.f);
 }
 
-void ATangiCharacterBase::AddCharacterAbilities() const
+void ATangiCharacterBase::PossessedBy(AController* NewController)
 {
-	if (!HasAuthority()) return;
+	Super::PossessedBy(NewController);
 	
-	UTangiAbilitySystemComponent *TangiAbilitySystemComponent = CastChecked<UTangiAbilitySystemComponent>(AbilitySystemComponent);
-	
-	// Add the default startup abilities for this character
-	TangiAbilitySystemComponent->AddStartupAbilities(StartupAbilities);
+	LandedDelegate.AddDynamic(this, &ATangiCharacterBase::ApplyFallDamage);
 }
 
-void ATangiCharacterBase::ApplyFallDamage_Implementation(const FHitResult&)
+void ATangiCharacterBase::AddCharacterAbilities() const
 {
-	if (AbilitySystemComponent && GE_FallDamage)
+	if (HasAuthority())
+	{
+		UTangiAbilitySystemComponent *TangiAbilitySystemComponent = CastChecked<UTangiAbilitySystemComponent>(AbilitySystemComponent);
+	
+		// Add the default startup abilities for this character
+		TangiAbilitySystemComponent->AddStartupAbilities(StartupAbilities);
+	}
+}
+
+void ATangiCharacterBase::ApplyFallDamage(const FHitResult&)
+{
+	if (AbilitySystemComponent && GE_FallDamage && HasAuthority())
 	{
 		ApplyEffectToSelf(GE_FallDamage, GetCharacterMovement()->Velocity.Z);
 	}

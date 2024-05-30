@@ -59,6 +59,9 @@ protected:
 	virtual void InitAbilityActorInfo();
 	virtual void InitializeDefaultAttributes();
 	
+	// Called on server
+	virtual void PossessedBy(AController* NewController) override;
+	
 	void AddCharacterAbilities() const;
 	void ApplyEffectToSelf(const TSubclassOf<UGameplayEffect>& GameplayEffectClass, const float Level) const;
 
@@ -79,7 +82,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "GAS|Effect")
 	TSubclassOf<UGameplayEffect> GE_FallDamage = nullptr;
 
-	UFUNCTION(Server, Reliable)
+	UFUNCTION()
 	void ApplyFallDamage(const FHitResult& Hit);
 	
 	// Critical section to ensure thread safety
