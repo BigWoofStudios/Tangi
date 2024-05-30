@@ -100,7 +100,7 @@ bool UTangiGameplayAbility::DoesAbilitySatisfyTagRequirements(const UAbilitySyst
 			if (OptionalRelevantTags && AbilitySystemComponentTags.HasTag(FTangiGameplayTags::Status_IsDead))
 			{
 				// TODO: If player is dead and was rejected due to blocking tags, give that feedback
-				OptionalRelevantTags->AddTag(FTangiGameplayTags::GamplayAbility_ActivateFail_IsDead);
+				OptionalRelevantTags->AddTag(FTangiGameplayTags::GameplayAbility_Activation_Fail_IsDead);
 			}
 
 			bBlocked = true;
