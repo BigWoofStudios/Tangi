@@ -20,8 +20,8 @@ UOverlayWidgetController* ATangiHUD::GetOverlayWidgetController(const FWidgetCon
 
 void ATangiHUD::InitOverlay(APlayerController* PlayerController, APlayerState* PlayerState, UAbilitySystemComponent* AbilitySystemComponent, UAttributeSet* AttributeSet)
 {
-	checkf(OverlayWidgetClass, TEXT("Overlay Widget Class uninitialized, please fill out BP_VeilHUD"));
-	checkf(OverlayWidgetControllerClass, TEXT("Overlay Widget Controller Class uninitialized, please fill out BP_VeilHUD"));
+	checkf(OverlayWidgetClass, TEXT("Overlay Widget Class uninitialized, please fill out BP_TangiHUD"));
+	checkf(OverlayWidgetControllerClass, TEXT("Overlay Widget Controller Class uninitialized, please fill out BP_TangiHUD"));
 
 	const FWidgetControllerParams WidgetControllerParams(PlayerController, PlayerState, AbilitySystemComponent, AttributeSet);
 

@@ -13,8 +13,8 @@ UOverlayWidgetController* UTangiAbilitySystemLibrary::GetOverlayWidgetController
 	APlayerController *PlayerController = WorldContextObject->GetWorld()->GetFirstPlayerController();
 	if (!PlayerController) return nullptr;
 	
-	ATangiHUD *VeilHUD = Cast<ATangiHUD>(PlayerController->GetHUD());
-	if (!VeilHUD) return nullptr;
+	ATangiHUD *TangiHUD = Cast<ATangiHUD>(PlayerController->GetHUD());
+	if (!TangiHUD) return nullptr;
 	
 	ATangiPlayerState *PlayerState = PlayerController->GetPlayerState<ATangiPlayerState>();
 	if (!PlayerState) return nullptr;
@@ -23,7 +23,7 @@ UOverlayWidgetController* UTangiAbilitySystemLibrary::GetOverlayWidgetController
 	UAttributeSet *AttributeSet = PlayerState->GetAttributeSet();
 	const FWidgetControllerParams WidgetControllerParams(PlayerController, PlayerState, AbilitySystemComponent, AttributeSet);
 	
-	return VeilHUD->GetOverlayWidgetController(WidgetControllerParams);
+	return TangiHUD->GetOverlayWidgetController(WidgetControllerParams);
 }
 
 bool UTangiAbilitySystemLibrary::IsCriticalHit(const FGameplayEffectContextHandle& EffectContextHandle)

@@ -14,19 +14,19 @@ class TANGI_API UTangiMath : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 public:
-	UFUNCTION(BlueprintPure, Category = "Veil|Math|Vector", DisplayName = "Clamp Magnitude 01 2D", Meta = (AutoCreateRefTerm = "Vector", ReturnDisplayName = "Vector"))
+	UFUNCTION(BlueprintPure, Category = "Tangi|Math|Vector", DisplayName = "Clamp Magnitude 01 2D", Meta = (AutoCreateRefTerm = "Vector", ReturnDisplayName = "Vector"))
 	static FVector2D ClampMagnitude012D(const FVector2D& InVector);
 	
-	UFUNCTION(BlueprintPure, Category = "Veil|Math|Vector", Meta = (ReturnDisplayName = "Direction"))
+	UFUNCTION(BlueprintPure, Category = "Tangi|Math|Vector", Meta = (ReturnDisplayName = "Direction"))
 	static FVector AngleToDirectionXY(const float InAngle);
 
-	UFUNCTION(BlueprintPure, Category = "Veil|Math|Vector", Meta = (ReturnDisplayName = "Direction"))
+	UFUNCTION(BlueprintPure, Category = "Tangi|Math|Vector", Meta = (ReturnDisplayName = "Direction"))
 	static FVector RadianToDirectionXY(const float InRadian);
 	
-	UFUNCTION(BlueprintPure, Category = "Veil|Math|Vector", Meta = (AutoCreateRefTerm = "Vector", ReturnDisplayName = "Vector"))
+	UFUNCTION(BlueprintPure, Category = "Tangi|Math|Vector", Meta = (AutoCreateRefTerm = "Vector", ReturnDisplayName = "Vector"))
 	static FVector PerpendicularCounterClockwiseXY(const FVector& InVector);
 
-	UFUNCTION(BlueprintPure, Category = "Veil|Math|Vector", Meta = (AutoCreateRefTerm = "Direction", ReturnDisplayName = "Angle"))
+	UFUNCTION(BlueprintPure, Category = "Tangi|Math|Vector", Meta = (AutoCreateRefTerm = "Direction", ReturnDisplayName = "Angle"))
 	static double DirectionToAngleXY(const FVector& InDirection);
 
 	/**
@@ -38,6 +38,6 @@ public:
 	 * @param	Velocity		The velocity to use as direction relative to BaseRotation
 	 * @param	BaseRotation	The base rotation, e.g. of a pawn
 	 */
-	UFUNCTION(BlueprintPure, Category="Veil|Math|Animation|Utilities")
+	UFUNCTION(BlueprintPure, Category="Tangi|Math|Animation|Utilities")
 	static float CalculateDirection(const FVector& Velocity, const FRotator& BaseRotation);
 };

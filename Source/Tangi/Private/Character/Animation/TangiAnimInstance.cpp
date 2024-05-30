@@ -4,9 +4,7 @@
 #include "Character/Animation/TangiAnimInstance.h"
 
 #include "TangiMath.h"
-#include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "GameFramework/PhysicsVolume.h"
 
 void UTangiAnimInstance::NativeInitializeAnimation()
 {

@@ -131,9 +131,9 @@ protected:
 #pragma endregion
 
 // ---------------------------------------------------------------------------------------------------------------------
-// Movement Mode (Different Environments)
+// Swimming
 // ---------------------------------------------------------------------------------------------------------------------
-#pragma region Movement Mode
+#pragma region Swimming
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State|Swimming", Transient)
 	uint8 bSwimming: 1 = 0;
 	

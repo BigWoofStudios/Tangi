@@ -13,7 +13,6 @@ void UTangiLinkedAnimInstance::NativeInitializeAnimation()
 	Super::NativeInitializeAnimation();
 	
 	Parent = Cast<UTangiAnimInstance>(GetSkelMeshComponent()->GetAnimInstance());
-	Character = Cast<ATangiCharacter>(GetOwningActor());
 }
 
 void UTangiLinkedAnimInstance::NativeBeginPlay()

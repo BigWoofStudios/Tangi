@@ -64,6 +64,7 @@ namespace FTangiGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Status_IsHitReacting, FName{TEXTVIEW("Status.IsHitReacting")});
 	UE_DEFINE_GAMEPLAY_TAG(Status_IsUnderwater, FName{TEXTVIEW("Status.IsUnderwater")});
 	UE_DEFINE_GAMEPLAY_TAG(Status_IsDrowning, FName{TEXTVIEW("Status.IsDrowning")});
+	UE_DEFINE_GAMEPLAY_TAG(Status_IsSprinting, FName{TEXTVIEW("Status.IsSprinting")});
 
 	// -----------------------------------------------------------------------------------------------------------------
 	// Vital Attributes

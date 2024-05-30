@@ -7,13 +7,13 @@
 
 // Explicitly not adding the `F` in front because it isn't a USTRUCT, but rather internal to this file only.
 // ReSharper disable once CppUE4CodingStandardNamingViolationWarning
-struct VeilDamageStatics
+struct TangiDamageStatics
 {
 	FGameplayEffectAttributeCaptureDefinition CriticalHitChanceDef;
 	
 	TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition> TagsToCaptureDefs;
 
-	VeilDamageStatics()
+	TangiDamageStatics()
 	{
 		CriticalHitChanceDef = FGameplayEffectAttributeCaptureDefinition(UTangiAttributeSet::GetCriticalHitChanceAttribute(), EGameplayEffectAttributeCaptureSource::Source, false);
 		
@@ -21,9 +21,9 @@ struct VeilDamageStatics
 	}
 };
 
-static const VeilDamageStatics& DamageStatics()
+static const TangiDamageStatics& DamageStatics()
 {
-	static VeilDamageStatics DStatics;
+	static TangiDamageStatics DStatics;
 	return DStatics;
 }
 

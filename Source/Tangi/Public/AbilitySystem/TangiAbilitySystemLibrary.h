@@ -16,12 +16,12 @@ class TANGI_API UTangiAbilitySystemLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 public:
-	UFUNCTION(BlueprintPure, Category = "Auroras Veil Ability System Library | Widget Controller")
+	UFUNCTION(BlueprintPure, Category = "Auroras Tangi Ability System Library | Widget Controller")
 	static UOverlayWidgetController *GetOverlayWidgetController(const UObject *WorldContextObject);
 	
-	UFUNCTION(BlueprintPure, Category = "Auroras Veil Ability System Library | Gameplay Effect")
+	UFUNCTION(BlueprintPure, Category = "Auroras Tangi Ability System Library | Gameplay Effect")
 	static bool IsCriticalHit(const FGameplayEffectContextHandle& EffectContextHandle);
 	
-	UFUNCTION(BlueprintCallable, Category = "Auroras Veil Ability System Library | Gameplay Effect")
+	UFUNCTION(BlueprintCallable, Category = "Auroras Tangi Ability System Library | Gameplay Effect")
 	static void SetIsCriticalHit(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, const bool bInIsCriticalHit);
 };

@@ -9,9 +9,9 @@ UTangiAssetManager& UTangiAssetManager::Get()
 {
 	check(GEngine);
 	
-	UTangiAssetManager* VeilAssetManager = Cast<UTangiAssetManager>(GEngine->AssetManager);
+	UTangiAssetManager* TangiAssetManager = Cast<UTangiAssetManager>(GEngine->AssetManager);
 
-	return *VeilAssetManager;
+	return *TangiAssetManager;
 }
 
 void UTangiAssetManager::StartInitialLoading()

@@ -23,9 +23,9 @@ ATangiPlayerController::ATangiPlayerController()
 
 void ATangiPlayerController::PostProcessInput(const float DeltaTime, const bool bGamePaused)
 {
-	if (UTangiAbilitySystemComponent* VeilASC = GetTangiAbilitySystemComponent())
+	if (UTangiAbilitySystemComponent* TangiASC = GetTangiAbilitySystemComponent())
 	{
-		VeilASC->ProcessAbilityInput(DeltaTime, bGamePaused);
+		TangiASC->ProcessAbilityInput(DeltaTime, bGamePaused);
 	}
 
 	Super::PostProcessInput(DeltaTime, bGamePaused);
@@ -75,16 +75,21 @@ void ATangiPlayerController::SetupInputComponent()
 	Super::SetupInputComponent();
 	UTangiInputComponent* TangiInputComponent = CastChecked<UTangiInputComponent>(InputComponent);
 
-	TangiInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ATangiPlayerController::MoveTriggered);
-	TangiInputComponent->BindAction(MoveAction, ETriggerEvent::Completed, this, &ATangiPlayerController::MoveStopped);
-	TangiInputComponent->BindAction(MoveAction, ETriggerEvent::Canceled, this, &ATangiPlayerController::MoveStopped);
-	TangiInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ATangiPlayerController::LookTriggered);
-	TangiInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &ATangiPlayerController::CrouchStarted);
-	TangiInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ATangiPlayerController::JumpStarted);
-	TangiInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &ATangiPlayerController::InteractStarted);
-	TangiInputComponent->BindAction(InteractAction, ETriggerEvent::Completed, this, &ATangiPlayerController::InteractEnded);
+	TangiInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ThisClass::MoveTriggered);
+	TangiInputComponent->BindAction(MoveAction, ETriggerEvent::Completed, this, &ThisClass::MoveStopped);
+	TangiInputComponent->BindAction(MoveAction, ETriggerEvent::Canceled, this, &ThisClass::MoveStopped);
+	TangiInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ThisClass::LookTriggered);
+	TangiInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &ThisClass::CrouchStarted);
+	TangiInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ThisClass::JumpStarted);
+	TangiInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &ThisClass::InteractStarted);
+	TangiInputComponent->BindAction(InteractAction, ETriggerEvent::Completed, this, &ThisClass::InteractEnded);
 	
-	TangiInputComponent->BindAbilityActions(InputConfig, this, &ATangiPlayerController::AbilityInputTagPressed, &ATangiPlayerController::AbilityInputTagReleased);
+	TangiInputComponent->BindAbilityActions(InputConfig, this, &ThisClass::AbilityInputTagPressed, &ThisClass::AbilityInputTagReleased);
+}
+
+void ATangiPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 }
 
 void ATangiPlayerController::AbilityInputTagPressed(const FGameplayTag InputTag)

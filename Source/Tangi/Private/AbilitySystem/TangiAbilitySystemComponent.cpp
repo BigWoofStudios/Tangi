@@ -30,9 +30,9 @@ void UTangiAbilitySystemComponent::AddStartupAbilities(const TArray<TSubclassOf<
 	for (const TSubclassOf<UGameplayAbility> AbilityClass : StartupAbilities)
 	{
 		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass, 1);
-		if (const UTangiGameplayAbility* VeilGameplayAbility = Cast<UTangiGameplayAbility>(AbilitySpec.Ability))
+		if (const UTangiGameplayAbility* TangiGameplayAbility = Cast<UTangiGameplayAbility>(AbilitySpec.Ability))
 		{
-			AbilitySpec.DynamicAbilityTags.AddTag(VeilGameplayAbility->StartupInputTag);
+			AbilitySpec.DynamicAbilityTags.AddTag(TangiGameplayAbility->StartupInputTag);
 			GiveAbility(AbilitySpec);
 		}
 	}
@@ -84,9 +84,9 @@ void UTangiAbilitySystemComponent::ProcessAbilityInput(const float DeltaTime, co
 		{
 			if (AbilitySpec->Ability && !AbilitySpec->IsActive())
 			{
-				const UTangiGameplayAbility* VeilAbilityCDO = CastChecked<UTangiGameplayAbility>(AbilitySpec->Ability);
+				const UTangiGameplayAbility* TangiAbilityCDO = CastChecked<UTangiGameplayAbility>(AbilitySpec->Ability);
 
-				if (VeilAbilityCDO->GetActivationPolicy() == ETangiAbilityActivationPolicy::WhileInputActive)
+				if (TangiAbilityCDO->GetActivationPolicy() == ETangiAbilityActivationPolicy::WhileInputActive)
 				{
 					AbilitiesToActivate.AddUnique(AbilitySpec->Handle);
 				}
@@ -110,9 +110,9 @@ void UTangiAbilitySystemComponent::ProcessAbilityInput(const float DeltaTime, co
 				}
 				else
 				{
-					const UTangiGameplayAbility* VeilAbilityCDO = CastChecked<UTangiGameplayAbility>(AbilitySpec->Ability);
+					const UTangiGameplayAbility* TangiAbilityCDO = CastChecked<UTangiGameplayAbility>(AbilitySpec->Ability);
 
-					if (VeilAbilityCDO->GetActivationPolicy() == ETangiAbilityActivationPolicy::OnInputTriggered)
+					if (TangiAbilityCDO->GetActivationPolicy() == ETangiAbilityActivationPolicy::OnInputTriggered)
 					{
 						AbilitiesToActivate.AddUnique(AbilitySpec->Handle);
 					}
@@ -123,12 +123,12 @@ void UTangiAbilitySystemComponent::ProcessAbilityInput(const float DeltaTime, co
 
 	// Try to activate all the abilities that are from presses and holds.
 	// We do it all at once so that held inputs don't activate the ability
-	// and then also send a input event to the ability because of the press.
-	for (FGameplayAbilitySpecHandle AbilitySpecHandle : AbilitiesToActivate)
+	// and then also send an input event to the ability because of the press.
+	for (const FGameplayAbilitySpecHandle AbilitySpecHandle : AbilitiesToActivate)
 	{
 		// Batching the RPCs: ServerActivateAbility, ServerSetReplicatedTargetData, and ServerEndAbility
 		// Cache of the data that is being sent, then provided it is possible to batch
-		// call the batch RPC when FScopedServerAbilityRPCBatcher goes out of scope.
+		// call the batch RPC when "FScopedServerAbilityRPCBatcher" goes out of scope.
 		FScopedServerAbilityRPCBatcher(this, AbilitySpecHandle);
 		TryActivateAbility(AbilitySpecHandle);
 	}
@@ -185,36 +185,64 @@ void UTangiAbilitySystemComponent::ClientEffectApplied_Implementation(UAbilitySy
 	EffectAssetTags.Broadcast(TagContainer);
 }
 
-void UTangiAbilitySystemComponent::TryActivateAbilitiesOnSpawn()
-{
-	ABILITYLIST_SCOPE_LOCK();
-	for (const FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
-	{
-		const UTangiGameplayAbility* VeilAbilityCDO = CastChecked<UTangiGameplayAbility>(AbilitySpec.Ability);
-		VeilAbilityCDO->TryActivateAbilityOnSpawn(AbilityActorInfo.Get(), AbilitySpec);
-	}
-}
-
 void UTangiAbilitySystemComponent::AbilitySpecInputPressed(FGameplayAbilitySpec& Spec)
 {
 	Super::AbilitySpecInputPressed(Spec);
+
+	// We don't support UGameplayAbility::bReplicateInputDirectly.
+	// Use replicated events instead so that the WaitInputPress ability task works.
+	if (Spec.IsActive())
+	{
+		// Invoke the InputPressed event. This is not replicated here. If someone is listening, they may replicate the InputPressed event to the server.
+		InvokeReplicatedEvent(EAbilityGenericReplicatedEvent::InputPressed, Spec.Handle, Spec.ActivationInfo.GetActivationPredictionKey());
+	}
 }
 
 void UTangiAbilitySystemComponent::AbilitySpecInputReleased(FGameplayAbilitySpec& Spec)
 {
 	Super::AbilitySpecInputReleased(Spec);
+
+	// We don't support UGameplayAbility::bReplicateInputDirectly.
+	// Use replicated events instead so that the WaitInputRelease ability task works.
+	if (Spec.IsActive())
+	{
+		// Invoke the InputReleased event. This is not replicated here. If someone is listening, they may replicate the InputReleased event to the server.
+		InvokeReplicatedEvent(EAbilityGenericReplicatedEvent::InputReleased, Spec.Handle, Spec.ActivationInfo.GetActivationPredictionKey());
+	}
 }
 
 void UTangiAbilitySystemComponent::ApplyAbilityBlockAndCancelTags(const FGameplayTagContainer& AbilityTags,
 	UGameplayAbility* RequestingAbility, bool bEnableBlockTags, const FGameplayTagContainer& BlockTags,
 	bool bExecuteCancelTags, const FGameplayTagContainer& CancelTags)
 {
-	Super::ApplyAbilityBlockAndCancelTags(AbilityTags, RequestingAbility, bEnableBlockTags, BlockTags,
-	                                      bExecuteCancelTags, CancelTags);
+	FGameplayTagContainer ModifiedBlockTags = BlockTags;
+	FGameplayTagContainer ModifiedCancelTags = CancelTags;
+
+	if (TagRelationshipMapping)
+	{
+		// Use the mapping to expand the ability tags into block and cancel tag
+		TagRelationshipMapping->GetAbilityTagsToBlockAndCancel(AbilityTags, &ModifiedBlockTags, &ModifiedCancelTags);
+	}
+
+	Super::ApplyAbilityBlockAndCancelTags(AbilityTags, RequestingAbility, bEnableBlockTags, ModifiedBlockTags, bExecuteCancelTags, ModifiedCancelTags);
+
+	//@TODO: Apply any special logic like blocking input or movement
 }
 
 void UTangiAbilitySystemComponent::HandleChangeAbilityCanBeCanceled(const FGameplayTagContainer& AbilityTags,
 	UGameplayAbility* RequestingAbility, bool bCanBeCanceled)
 {
 	Super::HandleChangeAbilityCanBeCanceled(AbilityTags, RequestingAbility, bCanBeCanceled);
+
+	//@TODO: Apply any special logic like blocking input or movement
+}
+
+void UTangiAbilitySystemComponent::TryActivateAbilitiesOnSpawn()
+{
+	ABILITYLIST_SCOPE_LOCK();
+	for (const FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
+	{
+		const UTangiGameplayAbility* TangiAbilityCDO = CastChecked<UTangiGameplayAbility>(AbilitySpec.Ability);
+		TangiAbilityCDO->TryActivateAbilityOnSpawn(AbilityActorInfo.Get(), AbilitySpec);
+	}
 }

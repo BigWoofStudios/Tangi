@@ -265,8 +265,7 @@ void ATangiCharacterBase::ServerSetUnderwater_Implementation(const bool NewValue
 void ATangiCharacterBase::RefreshSwimming()
 {
 	const APhysicsVolume* CurrentVolume = GetPhysicsVolume();
-	const bool bIsInWater = CurrentVolume->bWaterVolume;
-	SetSwimming(bIsInWater && GetCharacterMovement()->IsSwimming());
+	SetSwimming(CurrentVolume->bWaterVolume && GetCharacterMovement()->IsSwimming());
 
 	bool bNewUnderwater = false;
 	if (bSwimming)

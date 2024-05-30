@@ -26,7 +26,7 @@ public:
 
 	virtual void PostProcessInput(const float DeltaTime, const bool bGamePaused) override;
 
-	UFUNCTION(BlueprintCallable, Category = "Veil|PlayerController")
+	UFUNCTION(BlueprintCallable, Category = "Tangi|PlayerController")
 	UTangiAbilitySystemComponent* GetTangiAbilitySystemComponent();
 
 	UFUNCTION(Client, Reliable)
@@ -48,6 +48,7 @@ private:
 #pragma region Input
 protected:
 	virtual void SetupInputComponent() override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
 private:
 	void AbilityInputTagPressed(const FGameplayTag InputTag);

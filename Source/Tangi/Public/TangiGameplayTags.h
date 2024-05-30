@@ -67,6 +67,7 @@ namespace FTangiGameplayTags
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_IsHitReacting);
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_IsUnderwater);
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_IsDrowning);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_IsSprinting);
 
 	// -----------------------------------------------------------------------------------------------------------------
 	// Vital Attributes
