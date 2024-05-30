@@ -49,9 +49,14 @@ namespace FTangiGameplayTags
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_Aim);
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_Block);
 	
-	//~ Failed to activate tags
-	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GamplayAbility_ActivateFail_IsDead);
-
+	// https://github.com/tranek/GASDocumentation?tab=readme-ov-file#4642-activation-failed-tags
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_Activation_Fail_BlockedByTags);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_Activation_Fail_CantAffordCost);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_Activation_Fail_IsDead);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_Activation_Fail_MissingTags);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_Activation_Fail_Networking);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_Activation_Fail_OnCooldown);
+	
 	//~ Costs
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_Cost);
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_Cost_Sprint);

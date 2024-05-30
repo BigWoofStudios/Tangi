@@ -46,9 +46,14 @@ namespace FTangiGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_Aim, FName{TEXTVIEW("GameplayAbility.Aim")});
 	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_Block, FName{TEXTVIEW("GameplayAbility.Block")});
 	
-	//~ Failed to activate tags
-	UE_DEFINE_GAMEPLAY_TAG(GamplayAbility_ActivateFail_IsDead, FName{TEXTVIEW("GameplayAbility.ActivateFail.IsDead")});
-
+	// https://github.com/tranek/GASDocumentation?tab=readme-ov-file#4642-activation-failed-tags
+	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_Activation_Fail_BlockedByTags, FName{"GameplayAbility.Activation.Fail.BlockedByTags"});
+	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_Activation_Fail_CantAffordCost, FName{"GameplayAbility.Activation.Fail.CantAffordCost"});
+	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_Activation_Fail_IsDead, FName{"GameplayAbility.Activation.Fail.IsDead"});
+	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_Activation_Fail_MissingTags, FName{"GameplayAbility.Activation.Fail.MissingTags"});
+	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_Activation_Fail_Networking, FName{"GameplayAbility.Activation.Fail.Networking"});
+	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_Activation_Fail_OnCooldown, FName{"GameplayAbility.Activation.Fail.OnCooldown"});
+		
 	//~ Costs
 	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_Cost, FName{TEXTVIEW("GameplayAbility.Cost")});
 	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_Cost_Sprint, FName{TEXTVIEW("GameplayAbility.Cost.Sprint")});
