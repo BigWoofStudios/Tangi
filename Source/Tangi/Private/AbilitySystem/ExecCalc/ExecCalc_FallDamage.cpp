@@ -20,7 +20,7 @@ void UExecCalc_FallDamage::Execute_Implementation(const FGameplayEffectCustomExe
 		// VelocityZ: -9000 () => 1018.8dmg
 		Damage += FMath::Pow(VelocityZ / 200.0f * -1, 2.5f) * 0.075f;
 	}
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, "VelocityZ: " + FString::SanitizeFloat(VelocityZ) + "\nDamage: " + FString::SanitizeFloat(Damage));
+	
 	const FGameplayModifierEvaluatedData EvaluatedData(UTangiAttributeSet::GetIncomingDamageAttribute(), EGameplayModOp::Additive, Damage);
 	OutExecutionOutput.AddOutputModifier(EvaluatedData);
 }
