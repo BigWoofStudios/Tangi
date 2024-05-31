@@ -78,6 +78,8 @@ private:
 	FGameplayAttributeData Oxygen;
 	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_Health, Category = "Attribute|Vital")
 	FGameplayAttributeData Health;
+
+	void HandleIsFullVitalTags();
 #pragma endregion
 
 // -----------------------------------------------------------------------------------------------------------------

@@ -72,9 +72,14 @@ protected:
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "GAS|Attribute")
 	TSubclassOf<UGameplayEffect> DefaultVitalAttributes = nullptr;
-
 	UPROPERTY(EditDefaultsOnly, Category = "GAS|Attribute")
 	TSubclassOf<UGameplayEffect> DefaultSecondaryAttributes = nullptr;
+	UPROPERTY(EditDefaultsOnly, Category = "GAS|Regeneration")
+	TSubclassOf<UGameplayEffect> RegenerateHealthEffect = nullptr;
+	UPROPERTY(EditDefaultsOnly, Category = "GAS|Regeneration")
+	TSubclassOf<UGameplayEffect> RegenerateEnduranceEffect = nullptr;
+	UPROPERTY(EditDefaultsOnly, Category = "GAS|Regeneration")
+	TSubclassOf<UGameplayEffect> RegenerateOxygenEffect = nullptr;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "GAS|Ability", meta=(Description="These abilities will be granted on startup / when the ASC is associated."))
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities = {};

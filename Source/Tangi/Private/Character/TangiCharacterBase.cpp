@@ -122,6 +122,9 @@ void ATangiCharacterBase::InitializeDefaultAttributes()
 	// TODO: Load this from saved game??
 	ApplyEffectToSelf(DefaultSecondaryAttributes, 1.f);
 	ApplyEffectToSelf(DefaultVitalAttributes, 1.f);
+	ApplyEffectToSelf(RegenerateHealthEffect, 1.f);
+	ApplyEffectToSelf(RegenerateEnduranceEffect, 1.f);
+	ApplyEffectToSelf(RegenerateOxygenEffect, 1.f);
 }
 
 void ATangiCharacterBase::PossessedBy(AController* NewController)
