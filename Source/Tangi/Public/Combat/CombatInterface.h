@@ -32,4 +32,7 @@ public:
 	UFUNCTION(BlueprintCallable) virtual bool GetIsDead() = 0;
 	UFUNCTION(BlueprintCallable) virtual UAnimMontage* GetDeathMontage() = 0;
 	UFUNCTION(BlueprintCallable) virtual TArray<USoundBase*> GetDeathSounds() = 0;
+
+	// Attack
+	UFUNCTION(BlueprintCallable) virtual UAnimMontage* GetMeleeAttackMontage() = 0;
 };

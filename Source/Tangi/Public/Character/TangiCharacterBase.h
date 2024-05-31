@@ -39,6 +39,7 @@ public:
 	virtual UAnimMontage* GetHitReactMontage() override { return HitReactMontage; }
 	virtual TArray<USoundBase*> GetHitReactSounds() override { return HitReactSounds; }
 	virtual bool GetIsHitReacting() override { return bHitReacting; }
+	virtual UAnimMontage* GetMeleeAttackMontage() override { return nullptr; }
 #pragma endregion 
 	
 	// If set, this table is used to look up tag relationships for activate and cancel
