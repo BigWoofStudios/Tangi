@@ -17,6 +17,9 @@ public:
 	virtual void BroadcastInitialValues() override;
 	virtual void BindCallbacksToDependencies() override;
 
+	UPROPERTY(BlueprintAssignable, Category = "GAS|Tags")
+	FOnGameplayTagChangedSignature OnUnderwaterChanged;
+	
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
 	FOnAttributeChangedSignature OnHealthChanged;
 
@@ -34,4 +37,7 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
 	FOnAttributeChangedSignature OnMaxOxygenChanged;
+
+private:
+	void UnderwaterTagChanged(const FGameplayTag, const int32 NewCount);
 };

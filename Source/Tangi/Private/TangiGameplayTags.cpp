@@ -42,6 +42,7 @@ namespace FTangiGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_Sprint, FName{TEXTVIEW("GameplayAbility.Sprint")});
 	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_HealthRegeneration, FName{TEXTVIEW("GameplayAbility.Passive.HealthRegeneration")});
 	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_EnduranceRegeneration, FName{TEXTVIEW("GameplayAbility.Passive.EnduranceRegeneration")});
+	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_OxygenRegeneration, FName{TEXTVIEW("GameplayAbility.Passive.OxygenRegeneration")});
 
 	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_Aim, FName{TEXTVIEW("GameplayAbility.Aim")});
 	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_Block, FName{TEXTVIEW("GameplayAbility.Block")});

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "TangiWidgetController.generated.h"
 
 class ATangiPlayerController;
@@ -35,6 +36,8 @@ struct FWidgetControllerParams
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedSignature, float, NewValue);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnGameplayTagChangedSignature, const FGameplayTag, GameplayTag, const int32, NewCount);
+
 
 /**
  * The base widget controller class

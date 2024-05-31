@@ -3,6 +3,7 @@
 
 #include "UI/WidgetController/OverlayWidgetController.h"
 
+#include "TangiGameplayTags.h"
 #include "AbilitySystem/TangiAttributeSet.h"
 
 void UOverlayWidgetController::BroadcastInitialValues()
@@ -15,10 +16,16 @@ void UOverlayWidgetController::BroadcastInitialValues()
 	
 	OnOxygenChanged.Broadcast(GetTangiAttributeSet()->GetOxygen());
 	OnMaxOxygenChanged.Broadcast(GetTangiAttributeSet()->GetMaxOxygen());
+
+	UnderwaterTagChanged(FTangiGameplayTags::Status_IsUnderwater, AbilitySystemComponent->GetGameplayTagCount(FTangiGameplayTags::Status_IsUnderwater));
 }
 
 void UOverlayWidgetController::BindCallbacksToDependencies()
 {
+	AbilitySystemComponent->RegisterGameplayTagEvent(FTangiGameplayTags::Status_IsUnderwater, EGameplayTagEventType::NewOrRemoved).AddUObject(
+		this, &UOverlayWidgetController::UnderwaterTagChanged
+	);
+	
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
 	GetTangiAttributeSet()->GetHealthAttribute()).AddLambda([this](const FOnAttributeChangeData &Data)
 	{ OnHealthChanged.Broadcast(Data.NewValue); });
@@ -42,4 +49,9 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
 	GetTangiAttributeSet()->GetMaxOxygenAttribute()).AddLambda([this](const FOnAttributeChangeData &Data)
 	{ OnMaxOxygenChanged.Broadcast(Data.NewValue); });
+}
+
+void UOverlayWidgetController::UnderwaterTagChanged(const FGameplayTag GameplayTag, const int32 NewCount)
+{
+	OnUnderwaterChanged.Broadcast(GameplayTag, NewCount);
 }

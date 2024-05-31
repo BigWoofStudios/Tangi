@@ -45,6 +45,7 @@ namespace FTangiGameplayTags
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_Sprint);
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_HealthRegeneration);
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_EnduranceRegeneration);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_OxygenRegeneration);
 
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_Aim);
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_Block);
