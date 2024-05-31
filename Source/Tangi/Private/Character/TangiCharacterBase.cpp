@@ -284,4 +284,4 @@ void ATangiCharacterBase::RefreshSwimming()
 	
 	SetUnderwater(bNewUnderwater);
 }
-#pragma endregion 
+#pragma endregion
