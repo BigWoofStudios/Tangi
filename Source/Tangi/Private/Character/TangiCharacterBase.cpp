@@ -111,8 +111,8 @@ void ATangiCharacterBase::ApplyEffectToSelf(const TSubclassOf<UGameplayEffect>& 
 
 void ATangiCharacterBase::InitializeDefaultAttributes()
 {
-	checkf(DefaultVitalAttributes, TEXT("TangiCharacterBase required a DefaultVitalAttributes to be set. Please check the BP implementation."));
-	checkf(DefaultSecondaryAttributes, TEXT("TangiCharacterBase required a DefaultSecondaryAttributes to be set. Please check the BP implementation."));
+	checkf(DefaultVitalAttributes, TEXT("TangiCharacterBase requires a DefaultVitalAttributes to be set. Please check the BP implementation."));
+	checkf(DefaultSecondaryAttributes, TEXT("TangiCharacterBase requires a DefaultSecondaryAttributes to be set. Please check the BP implementation."));
 
 	// TODO: Load this from saved game??
 	ApplyEffectToSelf(DefaultSecondaryAttributes, 1.f);
@@ -149,62 +149,48 @@ void ATangiCharacterBase::ApplyFallDamage(const FHitResult&)
 // Hit React
 // ---------------------------------------------------------------------------------------------------------------------
 #pragma region Hit React
-void ATangiCharacterBase::HitReactTagChanged(const FGameplayTag, const int32 NewCount)
-{
-	SetHitReacting(NewCount > 0);
-}
+void ATangiCharacterBase::HitReactTagChanged(const FGameplayTag, const int32 NewCount) { SetHitReacting(NewCount > 0); }
 
 void ATangiCharacterBase::SetHitReacting(const bool NewValue)
 {
-	if (HasAuthority())
-	{
-		if (bHitReacting != NewValue)
-		{
-			bHitReacting = NewValue;
-			MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, bHitReacting, this)
-		}
-	}
-	else
+	if (!HasAuthority())
 	{
 		ServerSetHitReacting(NewValue);
+		return;
+	}
+
+	if (bHitReacting != NewValue)
+	{
+		bHitReacting = NewValue;
+		MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, bHitReacting, this)
 	}
 }
 
-void ATangiCharacterBase::ServerSetHitReacting_Implementation(const bool NewValue)
-{
-	SetHitReacting(NewValue);
-}
+void ATangiCharacterBase::ServerSetHitReacting_Implementation(const bool NewValue) { SetHitReacting(NewValue); }
 #pragma endregion
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Death
 // ---------------------------------------------------------------------------------------------------------------------
 #pragma region Death
-void ATangiCharacterBase::DeathTagChanged(const FGameplayTag, const int32 NewCount)
-{
-	SetDead(NewCount > 0);
-}
+void ATangiCharacterBase::DeathTagChanged(const FGameplayTag, const int32 NewCount) { SetDead(NewCount > 0); }
 
 void ATangiCharacterBase::SetDead(const bool NewValue)
 {
-	if (HasAuthority())
-	{
-		if (bDead != NewValue)
-		{
-			bDead = NewValue;
-			MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, bDead, this)
-		}
-	}
-	else
+	if (!HasAuthority())
 	{
 		ServerSetDead(NewValue);
+		return;
+	}
+
+	if (bDead != NewValue)
+	{
+		bDead = NewValue;
+		MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, bDead, this)
 	}
 }
 
-void ATangiCharacterBase::ServerSetDead_Implementation(const bool NewValue)
-{
-	SetDead(NewValue);
-}
+void ATangiCharacterBase::ServerSetDead_Implementation(const bool NewValue) { SetDead(NewValue); }
 #pragma endregion
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -213,63 +199,50 @@ void ATangiCharacterBase::ServerSetDead_Implementation(const bool NewValue)
 #pragma region Swimming
 void ATangiCharacterBase::SetSwimming(const bool NewValue)
 {
-	if (HasAuthority())
+	if (!HasAuthority())
 	{
-		if (bSwimming != NewValue)
-		{
-			bSwimming = NewValue;
-			MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, bSwimming, this);
-		}
+		UE_LOG(LogTemp, Warning, TEXT("SetSwimming must be called from the server!"));
+		return;
 	}
-	else
+	
+	if (bSwimming != NewValue)
 	{
-		ServerSetSwimming(NewValue);
+		bSwimming = NewValue;
+		MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, bSwimming, this);
 	}
-}
-
-void ATangiCharacterBase::ServerSetSwimming_Implementation(const bool NewValue)
-{
-	SetSwimming(NewValue);
 }
 
 void ATangiCharacterBase::SetUnderwater(const bool NewValue)
 {
-	if (HasAuthority())
+	if (!HasAuthority())
 	{
-		if (bUnderwater != NewValue)
-		{
-			bUnderwater = NewValue;
-			MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, bUnderwater, this);
-			
-			// If the character is underwater, activate the ability
-			if (GetAbilitySystemComponent())
-			{
-				const FGameplayTagContainer TagContainer = FGameplayTagContainer{FTangiGameplayTags::GameplayAbility_HoldBreath};
-		
-				if (bUnderwater && !GetAbilitySystemComponent()->HasMatchingGameplayTag(FTangiGameplayTags::Status_IsUnderwater))
-				{
-					GetAbilitySystemComponent()->TryActivateAbilitiesByTag(TagContainer);
-				}
-				else if (!bUnderwater && GetAbilitySystemComponent()->HasMatchingGameplayTag(FTangiGameplayTags::Status_IsUnderwater))
-				{
-					GetAbilitySystemComponent()->CancelAbilities(&TagContainer);
-				}
-			}
-		}
+		UE_LOG(LogTemp, Warning, TEXT("SetUnderwater must be called from the server!"));
+		return;
 	}
-	else
-	{
-		ServerSetUnderwater(NewValue);
-	}
-}
+	
+	if (bUnderwater != NewValue)
+    {
+    	bUnderwater = NewValue;
+    	MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, bUnderwater, this);
 
-void ATangiCharacterBase::ServerSetUnderwater_Implementation(const bool NewValue)
-{
-	SetUnderwater(NewValue);
+    	// If the character is underwater, activate the ability
+    	const FGameplayTagContainer TagContainer = FGameplayTagContainer{FTangiGameplayTags::GameplayAbility_HoldBreath};
+
+    	if (bUnderwater)
+    	{
+    		GetAbilitySystemComponent()->TryActivateAbilitiesByTag(TagContainer);
+    	}
+    	else
+    	{
+    		GetAbilitySystemComponent()->CancelAbilities(&TagContainer);
+    	}
+    }
 }
 
 void ATangiCharacterBase::RefreshSwimming()
 {
+	if (!HasAuthority()) return;
+	
 	const APhysicsVolume* CurrentVolume = GetPhysicsVolume();
 	SetSwimming(CurrentVolume->bWaterVolume && GetCharacterMovement()->IsSwimming());
 

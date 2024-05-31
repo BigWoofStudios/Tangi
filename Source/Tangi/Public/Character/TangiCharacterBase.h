@@ -82,8 +82,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "GAS|Effect")
 	TSubclassOf<UGameplayEffect> GE_FallDamage = nullptr;
 
-	UFUNCTION()
-	void ApplyFallDamage(const FHitResult& Hit);
+	UFUNCTION() void ApplyFallDamage(const FHitResult& Hit);
 	
 	// Critical section to ensure thread safety
 	mutable FCriticalSection ConditionCriticalSection;
@@ -161,18 +160,16 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "State|Swimming|Effect")
 	TSubclassOf<UGameplayEffect> GE_HoldBreath = nullptr;
 	
-	void SetSwimming(const bool NewValue);
-	UFUNCTION(Server, Reliable) void ServerSetSwimming(const bool NewValue);
-	
-	void SetUnderwater(const bool NewValue);
-	UFUNCTION(Server, Reliable) void ServerSetUnderwater(const bool NewValue);
-	
 	UPROPERTY(VisibleAnywhere, Replicated, Category = "State|Swimming", Transient)
 	uint8 bUnderwater: 1 = 0;
 	
 	UPROPERTY(VisibleAnywhere, Replicated, Category = "State|Swimming", Transient)
 	uint8 bSwimming: 1 = 0;
 	
-	UFUNCTION() void RefreshSwimming();
+	void SetSwimming(const bool NewValue);
+	void SetUnderwater(const bool NewValue);
+
+	// Refresh functions are used during tick to update internal state
+	void RefreshSwimming();
 #pragma endregion 
 };

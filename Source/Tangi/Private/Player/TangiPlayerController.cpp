@@ -34,11 +34,11 @@ void ATangiPlayerController::PostProcessInput(const float DeltaTime, const bool 
 UTangiAbilitySystemComponent* ATangiPlayerController::GetTangiAbilitySystemComponent()
 {
 	if (TangiAbilitySystemComponent == nullptr)
-    	{
-    		TangiAbilitySystemComponent = Cast<UTangiAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn<APawn>()));
-    	}
-    
-    	return TangiAbilitySystemComponent;
+    {
+    	TangiAbilitySystemComponent = Cast<UTangiAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn<APawn>()));
+    }
+
+    return TangiAbilitySystemComponent;
 }
 
 void ATangiPlayerController::ShowDamageNumber_Implementation(const float DamageAmount, ACharacter* TargetCharacter, const bool bCriticalHit)
@@ -55,15 +55,17 @@ void ATangiPlayerController::ShowDamageNumber_Implementation(const float DamageA
 
 void ATangiPlayerController::BeginPlay()
 {
-	SetInputMode(FInputModeGameOnly());
-	Super::BeginPlay();
-
 	checkf(TangiContext, TEXT("TangiPlayerController requires an Input Mapping Context. Please check the BP for this member."));
-
+	
+	Super::BeginPlay();
+	
+	SetInputMode(FInputModeGameOnly());
+	
 	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 	{
 		Subsystem->AddMappingContext(TangiContext, 0);
 	}
+	
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -110,8 +112,7 @@ void ATangiPlayerController::AbilityInputTagReleased(const FGameplayTag InputTag
 
 void ATangiPlayerController::MoveTriggered(const FInputActionValue& ActionValue)
 {
-	APawn* ControlledPawn = GetPawn();
-	if (!IsValid(ControlledPawn)) return;
+	if (!IsValid(GetPawn())) return;
 	if (GetTangiAbilitySystemComponent())
 	{
 		// Don't allow dead players to move
@@ -127,10 +128,10 @@ void ATangiPlayerController::MoveTriggered(const FInputActionValue& ActionValue)
 	
 	// Scale and clamp the input vector between 0 and 1
 	const FVector2D Value = ActionValue.Get<FVector2D>().GetSafeNormal();
-	const FVector ForwardDirection = UTangiMath::RadianToDirectionXY(FMath::DegreesToRadians(ControlledPawn->GetActorRotation().Yaw));
+	const FVector ForwardDirection = UTangiMath::RadianToDirectionXY(FMath::DegreesToRadians(GetPawn()->GetActorRotation().Yaw));
 	const FVector RightDirection = UTangiMath::PerpendicularCounterClockwiseXY(ForwardDirection);
 
-	ControlledPawn->AddMovementInput(ForwardDirection * Value.Y + RightDirection * Value.X);
+	GetPawn()->AddMovementInput(ForwardDirection * Value.Y + RightDirection * Value.X);
 }
 void ATangiPlayerController::MoveStopped(const FInputActionValue&)
 {
