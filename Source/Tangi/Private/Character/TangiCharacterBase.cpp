@@ -71,6 +71,11 @@ void ATangiCharacterBase::OnMovementModeChanged(const EMovementMode PrevMovement
 			GetAbilitySystemComponent()->AddReplicatedLooseGameplayTag(*FoundTag);
 		}
 	}
+
+	if (GetCharacterMovement()->MovementMode == MOVE_Swimming || GetCharacterMovement()->MovementMode == MOVE_Falling)
+	{
+		UnCrouch();
+	}
 }
 
 void ATangiCharacterBase::BeginPlay()
@@ -162,7 +167,8 @@ void ATangiCharacterBase::SetHitReacting(const bool NewValue)
 	if (bHitReacting != NewValue)
 	{
 		bHitReacting = NewValue;
-		MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, bHitReacting, this)
+		MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, bHitReacting, this);
+		UnCrouch();
 	}
 }
 
@@ -186,7 +192,8 @@ void ATangiCharacterBase::SetDead(const bool NewValue)
 	if (bDead != NewValue)
 	{
 		bDead = NewValue;
-		MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, bDead, this)
+		MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, bDead, this);
+		UnCrouch();
 	}
 }
 

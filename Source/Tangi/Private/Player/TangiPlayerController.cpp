@@ -65,7 +65,6 @@ void ATangiPlayerController::BeginPlay()
 	{
 		Subsystem->AddMappingContext(TangiContext, 0);
 	}
-	
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -157,7 +156,19 @@ void ATangiPlayerController::CrouchStarted(const FInputActionValue&)
 {
 	ACharacter* ControlledCharacter = GetCharacter();
 	if (!IsValid(ControlledCharacter)) return;
-	// TODO
+	if (GetTangiAbilitySystemComponent()->HasMatchingGameplayTag(FTangiGameplayTags::Movement_Mode_Falling) ||
+		GetTangiAbilitySystemComponent()->HasMatchingGameplayTag(FTangiGameplayTags::Movement_Mode_Swimming))
+	{
+		return;
+	}
+	if (ControlledCharacter->bIsCrouched)
+	{
+		ControlledCharacter->UnCrouch();
+	}
+	else
+	{
+		ControlledCharacter->Crouch();
+	}
 }
 
 void ATangiPlayerController::JumpStarted(const FInputActionValue& ActionValue)
