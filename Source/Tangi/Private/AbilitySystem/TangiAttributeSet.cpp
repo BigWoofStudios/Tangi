@@ -208,21 +208,18 @@ void UTangiAttributeSet::OxygenPostGameplayEffect() const
 	// Handle tags associated with this attribute
 	UAbilitySystemComponent *ASC = GetOwningAbilitySystemComponent();
 	if (!ASC) return;
-	if (GetOxygen() <= 0.f && ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_IsUnderwater) && !ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_Attribute_Health_IsDead))
+	if (GetOxygen() <= 0.f && ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_IsUnderwater))
 	{
 		if (!ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsDrowning))
 		{
 			ASC->AddLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsDrowning);
 			ASC->AddReplicatedLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsDrowning);
-			ASC->TryActivateAbilitiesByTag(FGameplayTagContainer(FTangiGameplayTags::GameplayAbility_Drown));
 		}
 	}
 	else if (ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsDrowning))
 	{
 		ASC->RemoveLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsDrowning);
 		ASC->RemoveReplicatedLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsDrowning);
-		const FGameplayTagContainer Container = FGameplayTagContainer(FTangiGameplayTags::GameplayAbility_Drown);
-		ASC->CancelAbilities(&Container);
 	}
 	
 	if (GetOxygen() >= GetMaxOxygen())
