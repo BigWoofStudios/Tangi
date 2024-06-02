@@ -79,7 +79,9 @@ private:
 	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_Health, Category = "Attribute|Vital")
 	FGameplayAttributeData Health;
 
-	void HandleVitalTagStatus() const;
+	void HealthPostGameplayEffect();
+	void OxygenPostGameplayEffect();
+	void EndurancePostGameplayEffect();
 #pragma endregion
 
 // -----------------------------------------------------------------------------------------------------------------
@@ -133,5 +135,7 @@ public:
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Attribute|Meta")
 	FGameplayAttributeData IncomingDamage;
+	
+	void DamagePostGameplayEffect(const FEffectProperties& Props);
 #pragma endregion
 };

@@ -55,41 +55,10 @@ void UTangiAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallb
 	FEffectProperties Props;
 	SetEffectProperties(Data, Props);
 
-	// Clamp attributes that have a defined max attribute
-	if (Data.EvaluatedData.Attribute == GetHealthAttribute()) SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
-	if (Data.EvaluatedData.Attribute == GetEnduranceAttribute()) SetEndurance(FMath::Clamp(GetEndurance(), 0.f, GetMaxEndurance()));
-	if (Data.EvaluatedData.Attribute == GetOxygenAttribute()) SetOxygen(FMath::Clamp(GetOxygen(), 0.f, GetMaxOxygen()));
-
-	if (Data.EvaluatedData.Attribute == GetIncomingDamageAttribute())
-	{
-		const float LocalIncomingDamage = GetIncomingDamage();
-		SetIncomingDamage(0.f);
-		
-		const bool bCriticalHit = UTangiAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
-		
-		if (LocalIncomingDamage > 0.f)
-		{
-			// TODO: Can check for things like blocked or parried hit
-			FGameplayTagContainer TagContainer;
-			const float NewHealth = GetHealth() - LocalIncomingDamage;
-			SetHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
-
-			if (NewHealth <= 0.f)
-			{
-				TagContainer.AddTagFast(FTangiGameplayTags::GameplayAbility_Death);
-				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
-			}
-			else
-			{
-				TagContainer.AddTagFast(FTangiGameplayTags::GameplayAbility_HitReact);
-				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
-			}
-		}
-		
-		ShowFloatingText(Props, LocalIncomingDamage, bCriticalHit);
-	}
-
-	HandleVitalTagStatus();
+	if (GetIncomingDamageAttribute() == Data.EvaluatedData.Attribute) DamagePostGameplayEffect(Props);
+	if (TSet{GetHealthAttribute(), GetMaxHealthAttribute()}.Contains(Data.EvaluatedData.Attribute)) HealthPostGameplayEffect();
+	if (TSet{GetEnduranceAttribute(), GetMaxEnduranceAttribute()}.Contains(Data.EvaluatedData.Attribute)) EndurancePostGameplayEffect();
+	if (TSet{GetOxygenAttribute(), GetMaxOxygenAttribute()}.Contains(Data.EvaluatedData.Attribute)) OxygenPostGameplayEffect();
 }
 
 void UTangiAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props)
@@ -146,12 +115,15 @@ void UTangiAttributeSet::OnRep_Health(const FGameplayAttributeData& OldValue) co
 void UTangiAttributeSet::OnRep_Endurance(const FGameplayAttributeData& OldValue) const {GAMEPLAYATTRIBUTE_REPNOTIFY(UTangiAttributeSet, Endurance, OldValue);}
 void UTangiAttributeSet::OnRep_Oxygen(const FGameplayAttributeData& OldValue) const {GAMEPLAYATTRIBUTE_REPNOTIFY(UTangiAttributeSet, Oxygen, OldValue);}
 
-void UTangiAttributeSet::HandleVitalTagStatus() const
+void UTangiAttributeSet::HealthPostGameplayEffect()
 {
+	// Clamp value
+	SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
+
+	// Handle tags associated with this attribute
 	UAbilitySystemComponent *ASC = GetOwningAbilitySystemComponent();
 	if (!ASC) return;
 
-#pragma region Health
 	if (GetHealth() <= 0.f)
 	{
 		if (!ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_Attribute_Health_IsDead))
@@ -179,9 +151,17 @@ void UTangiAttributeSet::HandleVitalTagStatus() const
 		ASC->RemoveLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Health_IsFull);
 		ASC->RemoveReplicatedLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Health_IsFull);
 	}
-#pragma endregion 
-	
-#pragma region Endurance
+}
+
+void UTangiAttributeSet::EndurancePostGameplayEffect() 
+{
+	// Clamp value
+	SetEndurance(FMath::Clamp(GetEndurance(), 0.f, GetMaxEndurance()));
+
+	// Handle tags associated with this attribute
+	UAbilitySystemComponent *ASC = GetOwningAbilitySystemComponent();
+	if (!ASC) return;
+
 	if (GetEndurance() <= 0.f)
 	{
 		if (!ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_Attribute_Endurance_IsExhausted))
@@ -209,9 +189,16 @@ void UTangiAttributeSet::HandleVitalTagStatus() const
 		ASC->RemoveLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Endurance_IsFull);
 		ASC->RemoveReplicatedLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Endurance_IsFull);
 	}
-#pragma endregion
+}
 
-#pragma region Oxygen
+void UTangiAttributeSet::OxygenPostGameplayEffect()
+{
+	// Clamp value
+	SetOxygen(FMath::Clamp(GetOxygen(), 0.f, GetMaxOxygen()));
+
+	// Handle tags associated with this attribute
+	UAbilitySystemComponent *ASC = GetOwningAbilitySystemComponent();
+	if (!ASC) return;
 	if (GetOxygen() <= 0.f && ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_IsUnderwater) && !ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_Attribute_Health_IsDead))
 	{
 		if (!ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsDrowning))
@@ -242,7 +229,6 @@ void UTangiAttributeSet::HandleVitalTagStatus() const
 		ASC->RemoveLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsFull);
 		ASC->RemoveReplicatedLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsFull);
 	}
-#pragma endregion
 }
 #pragma endregion
 
@@ -254,4 +240,33 @@ void UTangiAttributeSet::OnRep_MaxHealth(const FGameplayAttributeData& OldValue)
 void UTangiAttributeSet::OnRep_MaxEndurance(const FGameplayAttributeData& OldValue) const {GAMEPLAYATTRIBUTE_REPNOTIFY(UTangiAttributeSet, MaxEndurance, OldValue);}
 void UTangiAttributeSet::OnRep_MaxOxygen(const FGameplayAttributeData& OldValue) const {GAMEPLAYATTRIBUTE_REPNOTIFY(UTangiAttributeSet, MaxOxygen, OldValue);}
 void UTangiAttributeSet::OnRep_CriticalHitChance(const FGameplayAttributeData& OldValue) const {GAMEPLAYATTRIBUTE_REPNOTIFY(UTangiAttributeSet, CriticalHitChance, OldValue);}
+
+void UTangiAttributeSet::DamagePostGameplayEffect(const FEffectProperties& Props)
+{
+	const float LocalIncomingDamage = GetIncomingDamage();
+	SetIncomingDamage(0.f);
+		
+	const bool bCriticalHit = UTangiAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
+		
+	if (LocalIncomingDamage > 0.f)
+	{
+		// TODO: Can check for things like blocked or parried hit
+		FGameplayTagContainer TagContainer;
+		const float NewHealth = GetHealth() - LocalIncomingDamage;
+		SetHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
+
+		if (NewHealth <= 0.f)
+		{
+			TagContainer.AddTagFast(FTangiGameplayTags::GameplayAbility_Death);
+			Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+		}
+		else
+		{
+			TagContainer.AddTagFast(FTangiGameplayTags::GameplayAbility_HitReact);
+			Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+		}
+	}
+		
+	ShowFloatingText(Props, LocalIncomingDamage, bCriticalHit);
+}
 #pragma endregion
