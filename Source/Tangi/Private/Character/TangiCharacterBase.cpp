@@ -81,16 +81,7 @@ void ATangiCharacterBase::OnMovementModeChanged(const EMovementMode PrevMovement
 void ATangiCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
-	if (GetAbilitySystemComponent())
-	{
-		GetAbilitySystemComponent()->RegisterGameplayTagEvent(FTangiGameplayTags::Status_IsDead, EGameplayTagEventType::NewOrRemoved).AddUObject(
-			this, &ATangiCharacterBase::DeathTagChanged
-		);
-		
-		GetAbilitySystemComponent()->RegisterGameplayTagEvent(FTangiGameplayTags::Status_IsHitReacting, EGameplayTagEventType::NewOrRemoved).AddUObject(
-			this, &ATangiCharacterBase::HitReactTagChanged
-		);
-	}
+	
 }
 
 void ATangiCharacterBase::Tick(const float DeltaSeconds)
@@ -132,6 +123,16 @@ void ATangiCharacterBase::PossessedBy(AController* NewController)
 	Super::PossessedBy(NewController);
 	
 	LandedDelegate.AddDynamic(this, &ATangiCharacterBase::ApplyFallDamage);
+	if (GetAbilitySystemComponent())
+	{
+		GetAbilitySystemComponent()->RegisterGameplayTagEvent(FTangiGameplayTags::Status_Attribute_Health_IsDead, EGameplayTagEventType::NewOrRemoved).AddUObject(
+			this, &ATangiCharacterBase::DeathTagChanged
+		);
+		
+		GetAbilitySystemComponent()->RegisterGameplayTagEvent(FTangiGameplayTags::Status_IsHitReacting, EGameplayTagEventType::NewOrRemoved).AddUObject(
+			this, &ATangiCharacterBase::HitReactTagChanged
+		);
+	}
 }
 
 void ATangiCharacterBase::AddCharacterAbilities() const
@@ -200,6 +201,7 @@ void ATangiCharacterBase::SetDead(const bool NewValue)
 	}
 }
 
+
 void ATangiCharacterBase::ServerSetDead_Implementation(const bool NewValue) { SetDead(NewValue); }
 #pragma endregion
 
@@ -207,6 +209,7 @@ void ATangiCharacterBase::ServerSetDead_Implementation(const bool NewValue) { Se
 // Swimming
 // ---------------------------------------------------------------------------------------------------------------------
 #pragma region Swimming
+
 void ATangiCharacterBase::SetSwimming(const bool NewValue)
 {
 	if (!HasAuthority())
@@ -231,22 +234,30 @@ void ATangiCharacterBase::SetUnderwater(const bool NewValue)
 	}
 	
 	if (bUnderwater != NewValue)
-    {
-    	bUnderwater = NewValue;
-    	MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, bUnderwater, this);
+	{
+		bUnderwater = NewValue;
+		MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, bUnderwater, this);
 
-    	// If the character is underwater, activate the ability
-    	const FGameplayTagContainer TagContainer = FGameplayTagContainer{FTangiGameplayTags::GameplayAbility_HoldBreath};
-
-    	if (bUnderwater)
-    	{
-    		GetAbilitySystemComponent()->TryActivateAbilitiesByTag(TagContainer);
-    	}
-    	else
-    	{
-    		GetAbilitySystemComponent()->CancelAbilities(&TagContainer);
-    	}
-    }
+		if (UAbilitySystemComponent* ASC = GetAbilitySystemComponent())
+		{
+			if (bUnderwater)
+			{
+				if (!ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_IsUnderwater))
+				{
+					ASC->AddLooseGameplayTag(FTangiGameplayTags::Status_IsUnderwater);
+					ASC->AddReplicatedLooseGameplayTag(FTangiGameplayTags::Status_IsUnderwater);
+					ASC->TryActivateAbilitiesByTag(FGameplayTagContainer(FTangiGameplayTags::GameplayAbility_HoldBreath));
+				}
+			}
+			else
+			{
+				ASC->RemoveLooseGameplayTag(FTangiGameplayTags::Status_IsUnderwater);
+				ASC->RemoveReplicatedLooseGameplayTag(FTangiGameplayTags::Status_IsUnderwater);
+				const FGameplayTagContainer Container = FGameplayTagContainer(FTangiGameplayTags::GameplayAbility_HoldBreath);
+				ASC->CancelAbilities(&Container);
+			}
+		}
+	}
 }
 
 void ATangiCharacterBase::RefreshSwimming()

@@ -115,7 +115,7 @@ void ATangiPlayerController::MoveTriggered(const FInputActionValue& ActionValue)
 	if (GetTangiAbilitySystemComponent())
 	{
 		// Don't allow dead players to move
-		if (TangiAbilitySystemComponent->HasMatchingGameplayTag(FTangiGameplayTags::Status_IsDead)) return;
+		if (TangiAbilitySystemComponent->HasMatchingGameplayTag(FTangiGameplayTags::Status_Attribute_Health_IsDead)) return;
 		
 		// Give the ASC the InputTag_Move GameplayTag when they are applying movement input
 		if (!TangiAbilitySystemComponent->HasMatchingGameplayTag(FTangiGameplayTags::InputTag_Move))
@@ -161,6 +161,7 @@ void ATangiPlayerController::CrouchStarted(const FInputActionValue&)
 	{
 		return;
 	}
+	
 	if (ControlledCharacter->bIsCrouched)
 	{
 		ControlledCharacter->UnCrouch();

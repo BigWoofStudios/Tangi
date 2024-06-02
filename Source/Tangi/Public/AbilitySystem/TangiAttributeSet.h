@@ -79,7 +79,7 @@ private:
 	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_Health, Category = "Attribute|Vital")
 	FGameplayAttributeData Health;
 
-	void HandleIsFullVitalTags();
+	void HandleVitalTagStatus() const;
 #pragma endregion
 
 // -----------------------------------------------------------------------------------------------------------------

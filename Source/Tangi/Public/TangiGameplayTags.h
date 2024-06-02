@@ -39,9 +39,10 @@ namespace FTangiGameplayTags
 	
 	//~ Common
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_Death);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_Drown);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_HoldBreath);
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_HitReact);
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_MeleeAttack);
-	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_HoldBreath);
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_Sprint);
 
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayAbility_Aim);
@@ -66,17 +67,19 @@ namespace FTangiGameplayTags
 	// Statuses
 	// -----------------------------------------------------------------------------------------------------------------
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status);
-	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_IsDead);
+	
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_IsHitReacting);
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_IsUnderwater);
-	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_IsDrowning);
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_IsSprinting);
-	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_IsRegenerating_Health);
-	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_IsRegenerating_Endurance);
-	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_IsRegenerating_Oxygen);
-	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_IsFullHealth);
-	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_IsFullEndurance);
-	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_IsFullOxygen);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Attribute_Health_IsRegenerating);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Attribute_Health_IsFull);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Attribute_Health_IsDead);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Attribute_Endurance_IsRegenerating);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Attribute_Endurance_IsFull);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Attribute_Endurance_IsExhausted);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Attribute_Oxygen_IsRegenerating);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Attribute_Oxygen_IsFull);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Attribute_Oxygen_IsDrowning);
 
 	// -----------------------------------------------------------------------------------------------------------------
 	// Vital Attributes

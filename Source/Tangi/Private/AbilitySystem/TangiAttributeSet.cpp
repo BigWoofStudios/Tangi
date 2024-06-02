@@ -58,17 +58,7 @@ void UTangiAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallb
 	// Clamp attributes that have a defined max attribute
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute()) SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
 	if (Data.EvaluatedData.Attribute == GetEnduranceAttribute()) SetEndurance(FMath::Clamp(GetEndurance(), 0.f, GetMaxEndurance()));
-	if (Data.EvaluatedData.Attribute == GetOxygenAttribute())
-	{
-		SetOxygen(FMath::Clamp(GetOxygen(), 0.f, GetMaxOxygen()));
-
-		// TODO: Handle drowning ability which will handle adding incoming damage and applying drowning status
-		// if (GetOxygen() <= 0.f) {
-		//	FGameplayTagContainer TagContainer;
-		//	TagContainer.AddTagFast(FTangiGameplayTags::GameplayAbility_Drown);
-		//	Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
-		// }
-	}
+	if (Data.EvaluatedData.Attribute == GetOxygenAttribute()) SetOxygen(FMath::Clamp(GetOxygen(), 0.f, GetMaxOxygen()));
 
 	if (Data.EvaluatedData.Attribute == GetIncomingDamageAttribute())
 	{
@@ -99,7 +89,7 @@ void UTangiAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallb
 		ShowFloatingText(Props, LocalIncomingDamage, bCriticalHit);
 	}
 
-	HandleIsFullVitalTags();
+	HandleVitalTagStatus();
 }
 
 void UTangiAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props)
@@ -156,67 +146,103 @@ void UTangiAttributeSet::OnRep_Health(const FGameplayAttributeData& OldValue) co
 void UTangiAttributeSet::OnRep_Endurance(const FGameplayAttributeData& OldValue) const {GAMEPLAYATTRIBUTE_REPNOTIFY(UTangiAttributeSet, Endurance, OldValue);}
 void UTangiAttributeSet::OnRep_Oxygen(const FGameplayAttributeData& OldValue) const {GAMEPLAYATTRIBUTE_REPNOTIFY(UTangiAttributeSet, Oxygen, OldValue);}
 
-void UTangiAttributeSet::HandleIsFullVitalTags()
+void UTangiAttributeSet::HandleVitalTagStatus() const
 {
 	UAbilitySystemComponent *ASC = GetOwningAbilitySystemComponent();
 	if (!ASC) return;
 
-	//~ Health
-	const bool bHasHealthFullTag = ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_IsFullHealth);
-	if (GetHealth() >= GetMaxHealth())
+#pragma region Health
+	if (GetHealth() <= 0.f)
 	{
-		if (!bHasHealthFullTag)
+		if (!ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_Attribute_Health_IsDead))
 		{
-			ASC->AddReplicatedLooseGameplayTag(FTangiGameplayTags::Status_IsFullHealth);
-			ASC->AddLooseGameplayTag(FTangiGameplayTags::Status_IsFullHealth);
+			ASC->AddLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Health_IsDead);
+			ASC->AddReplicatedLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Health_IsDead);
 		}
 	}
 	else
 	{
-		if (bHasHealthFullTag)
-		{
-			ASC->RemoveReplicatedLooseGameplayTag(FTangiGameplayTags::Status_IsFullHealth);
-			ASC->RemoveLooseGameplayTag(FTangiGameplayTags::Status_IsFullHealth);
-		}
+		ASC->RemoveLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Health_IsDead);
+		ASC->RemoveReplicatedLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Health_IsDead);
 	}
 	
-	//~ Endurance
-	const bool bHasEnduranceFullTag = ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_IsFullEndurance);
-	if (GetEndurance() >= GetMaxEndurance())
+	if (GetHealth() >= GetMaxHealth())
 	{
-		if (!bHasEnduranceFullTag)
+		if (!ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_Attribute_Health_IsFull))
 		{
-			ASC->AddReplicatedLooseGameplayTag(FTangiGameplayTags::Status_IsFullEndurance);
-			ASC->AddLooseGameplayTag(FTangiGameplayTags::Status_IsFullEndurance);
+			ASC->AddLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Health_IsFull);
+			ASC->AddReplicatedLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Health_IsFull);
 		}
 	}
 	else
 	{
-		if (bHasEnduranceFullTag)
+		ASC->RemoveLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Health_IsFull);
+		ASC->RemoveReplicatedLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Health_IsFull);
+	}
+#pragma endregion 
+	
+#pragma region Endurance
+	if (GetEndurance() <= 0.f)
+	{
+		if (!ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_Attribute_Endurance_IsExhausted))
 		{
-			ASC->RemoveReplicatedLooseGameplayTag(FTangiGameplayTags::Status_IsFullEndurance);
-			ASC->RemoveLooseGameplayTag(FTangiGameplayTags::Status_IsFullEndurance);
+			ASC->AddLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Endurance_IsExhausted);
+			ASC->AddReplicatedLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Endurance_IsExhausted);
 		}
+	}
+	else
+	{
+		ASC->RemoveLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Endurance_IsExhausted);
+		ASC->RemoveReplicatedLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Endurance_IsExhausted);
 	}
 
-	//~ Oxygen
-	const bool bHasOxygenFullTag = ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_IsFullOxygen);
-	if (GetOxygen() >= GetMaxOxygen())
+	if (GetEndurance() >= GetMaxEndurance())
 	{
-		if (!bHasOxygenFullTag)
+		if (!ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_Attribute_Endurance_IsFull))
 		{
-			ASC->AddReplicatedLooseGameplayTag(FTangiGameplayTags::Status_IsFullOxygen);
-			ASC->AddLooseGameplayTag(FTangiGameplayTags::Status_IsFullOxygen);
+			ASC->AddLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Endurance_IsFull);
+			ASC->AddReplicatedLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Endurance_IsFull);
 		}
 	}
 	else
 	{
-		if (bHasOxygenFullTag)
+		ASC->RemoveLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Endurance_IsFull);
+		ASC->RemoveReplicatedLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Endurance_IsFull);
+	}
+#pragma endregion
+
+#pragma region Oxygen
+	if (GetOxygen() <= 0.f && ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_IsUnderwater) && !ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_Attribute_Health_IsDead))
+	{
+		if (!ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsDrowning))
 		{
-			ASC->RemoveReplicatedLooseGameplayTag(FTangiGameplayTags::Status_IsFullOxygen);
-			ASC->RemoveLooseGameplayTag(FTangiGameplayTags::Status_IsFullOxygen);
+			ASC->AddLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsDrowning);
+			ASC->AddReplicatedLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsDrowning);
+			ASC->TryActivateAbilitiesByTag(FGameplayTagContainer(FTangiGameplayTags::GameplayAbility_Drown));
 		}
 	}
+	else
+	{
+		ASC->RemoveLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsDrowning);
+		ASC->RemoveReplicatedLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsDrowning);
+		const FGameplayTagContainer Container = FGameplayTagContainer(FTangiGameplayTags::GameplayAbility_Drown);
+		ASC->CancelAbilities(&Container);
+	}
+	
+	if (GetOxygen() >= GetMaxOxygen())
+	{
+		if (!ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsFull))
+		{
+			ASC->AddLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsFull);
+			ASC->AddReplicatedLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsFull);
+		}
+	}
+	else
+	{
+		ASC->RemoveLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsFull);
+		ASC->RemoveReplicatedLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsFull);
+	}
+#pragma endregion
 }
 #pragma endregion
 

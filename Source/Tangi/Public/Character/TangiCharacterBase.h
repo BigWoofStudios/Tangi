@@ -163,8 +163,8 @@ public:
 	}
 	
 private:
-	UPROPERTY(EditDefaultsOnly, Category = "State|Swimming|Effect")
-	TSubclassOf<UGameplayEffect> GE_HoldBreath = nullptr;
+	UPROPERTY(VisibleAnywhere, Replicated, Category = "State|Swimming", Transient)
+	uint8 bDrowning: 1 = 0;
 	
 	UPROPERTY(VisibleAnywhere, Replicated, Category = "State|Swimming", Transient)
 	uint8 bUnderwater: 1 = 0;

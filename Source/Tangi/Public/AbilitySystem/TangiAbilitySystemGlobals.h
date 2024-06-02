@@ -13,5 +13,6 @@ UCLASS()
 class TANGI_API UTangiAbilitySystemGlobals : public UAbilitySystemGlobals
 {
 	GENERATED_BODY()
+	UTangiAbilitySystemGlobals();
 	virtual FGameplayEffectContext* AllocGameplayEffectContext() const override;
 };

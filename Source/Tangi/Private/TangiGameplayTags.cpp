@@ -36,9 +36,10 @@ namespace FTangiGameplayTags
 
 	//~ Common
 	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_Death, FName{TEXT("GameplayAbility.Death")});
+	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_Drown, FName{TEXT("GameplayAbility.Drown")});
+	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_HoldBreath, FName{TEXT("GameplayAbility.HoldBreath")});
 	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_HitReact, FName{TEXT("GameplayAbility.HitReact")});
 	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_MeleeAttack, FName{TEXT("GameplayAbility.MeleeAttack")});
-	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_HoldBreath, FName{TEXT("GameplayAbility.HoldBreath")});
 	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_Sprint, FName{TEXT("GameplayAbility.Sprint")});
 
 	UE_DEFINE_GAMEPLAY_TAG(GameplayAbility_Aim, FName{TEXT("GameplayAbility.Aim")});
@@ -63,17 +64,18 @@ namespace FTangiGameplayTags
 	// Statuses
 	// -----------------------------------------------------------------------------------------------------------------
 	UE_DEFINE_GAMEPLAY_TAG(Status, FName{TEXT("Status")});
-	UE_DEFINE_GAMEPLAY_TAG(Status_IsDead, FName{TEXT("Status.IsDead")});
 	UE_DEFINE_GAMEPLAY_TAG(Status_IsHitReacting, FName{TEXT("Status.IsHitReacting")});
-	UE_DEFINE_GAMEPLAY_TAG(Status_IsUnderwater, FName{TEXT("Status.IsUnderwater")});
-	UE_DEFINE_GAMEPLAY_TAG(Status_IsDrowning, FName{TEXT("Status.IsDrowning")});
 	UE_DEFINE_GAMEPLAY_TAG(Status_IsSprinting, FName{TEXT("Status.IsSprinting")});
-	UE_DEFINE_GAMEPLAY_TAG(Status_IsRegenerating_Health, FName{TEXT("Status.IsRegenerating.Health")});
-	UE_DEFINE_GAMEPLAY_TAG(Status_IsRegenerating_Endurance, FName{TEXT("Status.IsRegenerating.Endurance")});
-	UE_DEFINE_GAMEPLAY_TAG(Status_IsRegenerating_Oxygen, FName{TEXT("Status.IsRegenerating.Oxygen")});
-	UE_DEFINE_GAMEPLAY_TAG(Status_IsFullHealth, FName{TEXT("Status.IsFullHealth")});
-	UE_DEFINE_GAMEPLAY_TAG(Status_IsFullEndurance, FName{TEXT("Status.IsFullEndurance")});
-	UE_DEFINE_GAMEPLAY_TAG(Status_IsFullOxygen, FName{TEXT("Status.IsFullOxygen")});
+	UE_DEFINE_GAMEPLAY_TAG(Status_IsUnderwater, FName{TEXT("Status.IsUnderwater")});
+	UE_DEFINE_GAMEPLAY_TAG(Status_Attribute_Health_IsRegenerating, FName{TEXT("Status.Attribute.Health.IsRegenerating")});
+	UE_DEFINE_GAMEPLAY_TAG(Status_Attribute_Health_IsFull, FName{TEXT("Status.Attribute.Health.IsFull")});
+	UE_DEFINE_GAMEPLAY_TAG(Status_Attribute_Health_IsDead, FName{TEXT("Status.Attribute.Health.IsDead")});
+	UE_DEFINE_GAMEPLAY_TAG(Status_Attribute_Endurance_IsRegenerating, FName{TEXT("Status.Attribute.Endurance.IsRegenerating")});
+	UE_DEFINE_GAMEPLAY_TAG(Status_Attribute_Endurance_IsFull, FName{TEXT("Status.Attribute.Endurance.IsFull")});
+	UE_DEFINE_GAMEPLAY_TAG(Status_Attribute_Endurance_IsExhausted, FName{TEXT("Status.Attribute.Endurance.IsExhausted")});
+	UE_DEFINE_GAMEPLAY_TAG(Status_Attribute_Oxygen_IsRegenerating, FName{TEXT("Status.Attribute.Oxygen.IsRegenerating")});
+	UE_DEFINE_GAMEPLAY_TAG(Status_Attribute_Oxygen_IsFull, FName{TEXT("Status.Attribute.Oxygen.IsFull")});
+	UE_DEFINE_GAMEPLAY_TAG(Status_Attribute_Oxygen_IsDrowning, FName{TEXT("Status.Attribute.Oxygen.IsDrowning")});
 	
 	// -----------------------------------------------------------------------------------------------------------------
 	// Vital Attributes

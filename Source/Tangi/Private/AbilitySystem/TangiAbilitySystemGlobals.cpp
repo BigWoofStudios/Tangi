@@ -5,6 +5,11 @@
 
 #include "AbilitySystem/TangiGameplayEffectContext.h"
 
+UTangiAbilitySystemGlobals::UTangiAbilitySystemGlobals()
+{
+	ReplicateActivationOwnedTags = true;
+}
+
 FGameplayEffectContext* UTangiAbilitySystemGlobals::AllocGameplayEffectContext() const
 {
 	return new FTangiGameplayEffectContext();
