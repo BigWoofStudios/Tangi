@@ -55,10 +55,29 @@ void UTangiAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallb
 	FEffectProperties Props;
 	SetEffectProperties(Data, Props);
 
-	if (GetIncomingDamageAttribute() == Data.EvaluatedData.Attribute) DamagePostGameplayEffect(Props);
-	if (TSet{GetHealthAttribute(), GetMaxHealthAttribute()}.Contains(Data.EvaluatedData.Attribute)) HealthPostGameplayEffect();
-	if (TSet{GetEnduranceAttribute(), GetMaxEnduranceAttribute()}.Contains(Data.EvaluatedData.Attribute)) EndurancePostGameplayEffect();
-	if (TSet{GetOxygenAttribute(), GetMaxOxygenAttribute()}.Contains(Data.EvaluatedData.Attribute)) OxygenPostGameplayEffect();
+	if (GetIncomingDamageAttribute() == Data.EvaluatedData.Attribute)
+	{
+		DamagePostGameplayEffect(Props);
+	}
+	
+	if (TSet{GetHealthAttribute(), GetMaxHealthAttribute()}.Contains(Data.EvaluatedData.Attribute))
+	{
+		SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
+	}
+	
+	if (TSet{GetEnduranceAttribute(), GetMaxEnduranceAttribute()}.Contains(Data.EvaluatedData.Attribute))
+	{
+		SetEndurance(FMath::Clamp(GetEndurance(), 0.f, GetMaxEndurance()));
+	}
+	
+	if (TSet{GetOxygenAttribute(), GetMaxOxygenAttribute()}.Contains(Data.EvaluatedData.Attribute))
+	{
+		SetOxygen(FMath::Clamp(GetOxygen(), 0.f, GetMaxOxygen()));
+	}
+	
+	HealthPostGameplayEffect();
+	EndurancePostGameplayEffect();
+	OxygenPostGameplayEffect();
 }
 
 void UTangiAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props)
@@ -115,12 +134,8 @@ void UTangiAttributeSet::OnRep_Health(const FGameplayAttributeData& OldValue) co
 void UTangiAttributeSet::OnRep_Endurance(const FGameplayAttributeData& OldValue) const {GAMEPLAYATTRIBUTE_REPNOTIFY(UTangiAttributeSet, Endurance, OldValue);}
 void UTangiAttributeSet::OnRep_Oxygen(const FGameplayAttributeData& OldValue) const {GAMEPLAYATTRIBUTE_REPNOTIFY(UTangiAttributeSet, Oxygen, OldValue);}
 
-void UTangiAttributeSet::HealthPostGameplayEffect()
+void UTangiAttributeSet::HealthPostGameplayEffect() const
 {
-	// Clamp value
-	SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
-
-	// Handle tags associated with this attribute
 	UAbilitySystemComponent *ASC = GetOwningAbilitySystemComponent();
 	if (!ASC) return;
 
@@ -132,7 +147,7 @@ void UTangiAttributeSet::HealthPostGameplayEffect()
 			ASC->AddReplicatedLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Health_IsDead);
 		}
 	}
-	else
+	else if (ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_Attribute_Health_IsDead))
 	{
 		ASC->RemoveLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Health_IsDead);
 		ASC->RemoveReplicatedLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Health_IsDead);
@@ -146,18 +161,15 @@ void UTangiAttributeSet::HealthPostGameplayEffect()
 			ASC->AddReplicatedLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Health_IsFull);
 		}
 	}
-	else
+	else if (ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_Attribute_Health_IsFull))
 	{
 		ASC->RemoveLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Health_IsFull);
 		ASC->RemoveReplicatedLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Health_IsFull);
 	}
 }
 
-void UTangiAttributeSet::EndurancePostGameplayEffect() 
+void UTangiAttributeSet::EndurancePostGameplayEffect() const
 {
-	// Clamp value
-	SetEndurance(FMath::Clamp(GetEndurance(), 0.f, GetMaxEndurance()));
-
 	// Handle tags associated with this attribute
 	UAbilitySystemComponent *ASC = GetOwningAbilitySystemComponent();
 	if (!ASC) return;
@@ -170,7 +182,7 @@ void UTangiAttributeSet::EndurancePostGameplayEffect()
 			ASC->AddReplicatedLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Endurance_IsExhausted);
 		}
 	}
-	else
+	else if (ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_Attribute_Endurance_IsExhausted))
 	{
 		ASC->RemoveLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Endurance_IsExhausted);
 		ASC->RemoveReplicatedLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Endurance_IsExhausted);
@@ -184,18 +196,15 @@ void UTangiAttributeSet::EndurancePostGameplayEffect()
 			ASC->AddReplicatedLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Endurance_IsFull);
 		}
 	}
-	else
+	else if (ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_Attribute_Endurance_IsFull))
 	{
 		ASC->RemoveLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Endurance_IsFull);
 		ASC->RemoveReplicatedLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Endurance_IsFull);
 	}
 }
 
-void UTangiAttributeSet::OxygenPostGameplayEffect()
+void UTangiAttributeSet::OxygenPostGameplayEffect() const
 {
-	// Clamp value
-	SetOxygen(FMath::Clamp(GetOxygen(), 0.f, GetMaxOxygen()));
-
 	// Handle tags associated with this attribute
 	UAbilitySystemComponent *ASC = GetOwningAbilitySystemComponent();
 	if (!ASC) return;
@@ -208,7 +217,7 @@ void UTangiAttributeSet::OxygenPostGameplayEffect()
 			ASC->TryActivateAbilitiesByTag(FGameplayTagContainer(FTangiGameplayTags::GameplayAbility_Drown));
 		}
 	}
-	else
+	else if (ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsDrowning))
 	{
 		ASC->RemoveLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsDrowning);
 		ASC->RemoveReplicatedLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsDrowning);
@@ -224,7 +233,7 @@ void UTangiAttributeSet::OxygenPostGameplayEffect()
 			ASC->AddReplicatedLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsFull);
 		}
 	}
-	else
+	else if (ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsFull))
 	{
 		ASC->RemoveLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsFull);
 		ASC->RemoveReplicatedLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsFull);

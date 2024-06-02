@@ -251,9 +251,21 @@ void ATangiCharacterBase::SetUnderwater(const bool NewValue)
 			}
 			else
 			{
-				ASC->RemoveLooseGameplayTag(FTangiGameplayTags::Status_IsUnderwater);
-				ASC->RemoveReplicatedLooseGameplayTag(FTangiGameplayTags::Status_IsUnderwater);
-				const FGameplayTagContainer Container = FGameplayTagContainer(FTangiGameplayTags::GameplayAbility_HoldBreath);
+				FGameplayTagContainer Container;
+				if (ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_IsUnderwater))
+				{
+					ASC->RemoveLooseGameplayTag(FTangiGameplayTags::Status_IsUnderwater);
+					ASC->RemoveReplicatedLooseGameplayTag(FTangiGameplayTags::Status_IsUnderwater);
+					Container.AddTagFast(FTangiGameplayTags::GameplayAbility_HoldBreath);
+					
+				}
+				if (ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsDrowning))
+				{
+					ASC->RemoveLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsDrowning);
+					ASC->RemoveReplicatedLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsDrowning);
+					Container.AddTagFast(FTangiGameplayTags::GameplayAbility_Drown);
+				}
+
 				ASC->CancelAbilities(&Container);
 			}
 		}

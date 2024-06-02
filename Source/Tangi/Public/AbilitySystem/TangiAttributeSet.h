@@ -79,9 +79,9 @@ private:
 	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_Health, Category = "Attribute|Vital")
 	FGameplayAttributeData Health;
 
-	void HealthPostGameplayEffect();
-	void OxygenPostGameplayEffect();
-	void EndurancePostGameplayEffect();
+	void HealthPostGameplayEffect() const;
+	void OxygenPostGameplayEffect() const;
+	void EndurancePostGameplayEffect() const;
 #pragma endregion
 
 // -----------------------------------------------------------------------------------------------------------------
