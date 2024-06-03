@@ -35,4 +35,5 @@ public:
 
 	// Attack
 	UFUNCTION(BlueprintCallable) virtual UAnimMontage* GetMeleeAttackMontage() = 0;
+	UFUNCTION(BlueprintCallable) virtual UAnimMontage* GetAttackMontage() = 0;
 };

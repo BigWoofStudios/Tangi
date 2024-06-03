@@ -126,24 +126,6 @@ void UTangiAttributeSet::ShowFloatingText(const FEffectProperties& Props, const 
 	}
 }
 
-void UTangiAttributeSet::AddReplicatedLooseTag(const FGameplayTag& Tag) const
-{
-	if (UAbilitySystemComponent* AbilitySystemComponent = GetOwningAbilitySystemComponent())
-	{
-		AbilitySystemComponent->AddLooseGameplayTag(Tag);
-		AbilitySystemComponent->AddReplicatedLooseGameplayTag(Tag);
-	}
-}
-
-void UTangiAttributeSet::RemoveReplicatedLooseTag(const FGameplayTag& Tag) const
-{
-	if (UAbilitySystemComponent* AbilitySystemComponent = GetOwningAbilitySystemComponent())
-	{
-		AbilitySystemComponent->RemoveLooseGameplayTag(Tag);
-		AbilitySystemComponent->RemoveReplicatedLooseGameplayTag(Tag);
-	}
-}
-
 // -----------------------------------------------------------------------------------------------------------------
 // Vital Attributes
 // -----------------------------------------------------------------------------------------------------------------
@@ -157,6 +139,9 @@ void UTangiAttributeSet::HealthPostGameplayEffect() const
 	const UAbilitySystemComponent *ASC = GetOwningAbilitySystemComponent();
 	if (!ASC) return;
 
+	AActor* OwningActor = GetOwningActor();
+	if (!OwningActor) return;
+	
 	const bool bIsDead = ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_Attribute_Health_IsDead);
 	const bool bIsFullHealth = ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_Attribute_Health_IsFull);
 	
@@ -164,24 +149,24 @@ void UTangiAttributeSet::HealthPostGameplayEffect() const
 	{
 		if (!bIsDead)
 		{
-			AddReplicatedLooseTag(FTangiGameplayTags::Status_Attribute_Health_IsDead);
+			UAbilitySystemBlueprintLibrary::AddLooseGameplayTags(OwningActor, FGameplayTagContainer{FTangiGameplayTags::Status_Attribute_Health_IsDead}, true);
 		}
 	}
 	else if (bIsDead)
 	{
-		RemoveReplicatedLooseTag(FTangiGameplayTags::Status_Attribute_Health_IsDead);
+		UAbilitySystemBlueprintLibrary::RemoveLooseGameplayTags(OwningActor, FGameplayTagContainer{FTangiGameplayTags::Status_Attribute_Health_IsDead}, true);
 	}
 	
 	if (GetHealth() >= GetMaxHealth())
 	{
 		if (!bIsFullHealth)
 		{
-			AddReplicatedLooseTag(FTangiGameplayTags::Status_Attribute_Health_IsFull);
+			UAbilitySystemBlueprintLibrary::AddLooseGameplayTags(OwningActor, FGameplayTagContainer{FTangiGameplayTags::Status_Attribute_Health_IsFull}, true);
 		}
 	}
 	else if (bIsFullHealth)
 	{
-		RemoveReplicatedLooseTag(FTangiGameplayTags::Status_Attribute_Health_IsFull);
+		UAbilitySystemBlueprintLibrary::RemoveLooseGameplayTags(OwningActor, FGameplayTagContainer{FTangiGameplayTags::Status_Attribute_Health_IsFull}, true);
 	}
 }
 
@@ -190,7 +175,10 @@ void UTangiAttributeSet::EndurancePostGameplayEffect() const
 	// Handle tags associated with this attribute
 	const UAbilitySystemComponent *ASC = GetOwningAbilitySystemComponent();
 	if (!ASC) return;
-
+	
+	AActor* OwningActor = GetOwningActor();
+	if (!OwningActor) return;
+	
 	const bool bIsExhausted = ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_Attribute_Endurance_IsExhausted);
 	const bool bIsFullEndurance = ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_Attribute_Endurance_IsFull);
 	
@@ -198,24 +186,24 @@ void UTangiAttributeSet::EndurancePostGameplayEffect() const
 	{
 		if (!bIsExhausted)
 		{
-			AddReplicatedLooseTag(FTangiGameplayTags::Status_Attribute_Endurance_IsExhausted);
+			UAbilitySystemBlueprintLibrary::AddLooseGameplayTags(OwningActor, FGameplayTagContainer{FTangiGameplayTags::Status_Attribute_Endurance_IsExhausted}, true);
 		}
 	}
 	else if (bIsExhausted)
 	{
-		RemoveReplicatedLooseTag(FTangiGameplayTags::Status_Attribute_Endurance_IsExhausted);
+		UAbilitySystemBlueprintLibrary::RemoveLooseGameplayTags(OwningActor, FGameplayTagContainer{FTangiGameplayTags::Status_Attribute_Endurance_IsExhausted}, true);
 	}
 
 	if (GetEndurance() >= GetMaxEndurance())
 	{
 		if (!bIsFullEndurance)
 		{
-			AddReplicatedLooseTag(FTangiGameplayTags::Status_Attribute_Endurance_IsFull);
+			UAbilitySystemBlueprintLibrary::AddLooseGameplayTags(OwningActor, FGameplayTagContainer{FTangiGameplayTags::Status_Attribute_Endurance_IsFull}, true);
 		}
 	}
 	else if (bIsFullEndurance)
 	{
-		RemoveReplicatedLooseTag(FTangiGameplayTags::Status_Attribute_Endurance_IsFull);
+		UAbilitySystemBlueprintLibrary::RemoveLooseGameplayTags(OwningActor, FGameplayTagContainer{FTangiGameplayTags::Status_Attribute_Endurance_IsFull}, true);
 	}
 }
 
@@ -224,28 +212,31 @@ void UTangiAttributeSet::OxygenPostGameplayEffect() const
 	// Handle tags associated with this attribute
 	const UAbilitySystemComponent* ASC = GetOwningAbilitySystemComponent();
 	if (!ASC) return;
-
+	
+	AActor* OwningActor = GetOwningActor();
+	if (!OwningActor) return;
+	
 	// Check for underwater and oxygen levels
 	const bool bIsUnderwater = ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_IsUnderwater);
 	const bool bIsDrowning = ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsDrowning);
 	const bool bIsDead = ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_Attribute_Health_IsDead);
 	const bool bIsOxygenFull = ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsFull);
-
+	
 	// Handle drowning tag logic
 	if (GetOxygen() <= 0.f && bIsUnderwater)
 	{
 		if (bIsDead && bIsDrowning)
 		{
-			RemoveReplicatedLooseTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsDrowning);
+			UAbilitySystemBlueprintLibrary::RemoveLooseGameplayTags(OwningActor, FGameplayTagContainer{FTangiGameplayTags::Status_Attribute_Oxygen_IsDrowning}, true);
 		}
 		else if (!bIsDrowning)
 		{
-			AddReplicatedLooseTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsDrowning);
+			UAbilitySystemBlueprintLibrary::AddLooseGameplayTags(OwningActor, FGameplayTagContainer{FTangiGameplayTags::Status_Attribute_Oxygen_IsDrowning}, true);
 		}
 	}
 	else if (bIsDrowning)
 	{
-		RemoveReplicatedLooseTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsDrowning);
+		UAbilitySystemBlueprintLibrary::RemoveLooseGameplayTags(OwningActor, FGameplayTagContainer{FTangiGameplayTags::Status_Attribute_Oxygen_IsDrowning}, true);
 	}
 
 	// Handle oxygen full tag logic
@@ -253,12 +244,12 @@ void UTangiAttributeSet::OxygenPostGameplayEffect() const
 	{
 		if (!bIsOxygenFull)
 		{
-			AddReplicatedLooseTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsFull);
+			UAbilitySystemBlueprintLibrary::AddLooseGameplayTags(OwningActor, FGameplayTagContainer{FTangiGameplayTags::Status_Attribute_Oxygen_IsFull}, true);
 		}
 	}
 	else if (bIsOxygenFull)
 	{
-		RemoveReplicatedLooseTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsFull);
+		UAbilitySystemBlueprintLibrary::RemoveLooseGameplayTags(OwningActor, FGameplayTagContainer{FTangiGameplayTags::Status_Attribute_Oxygen_IsFull}, true);
 	}
 }
 #pragma endregion

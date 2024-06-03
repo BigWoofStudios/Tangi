@@ -32,14 +32,21 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent; }
 	
 #pragma region Combat Interface
+	// TODO: Is this needed?
 	virtual UStaticMeshComponent* GetActiveWeaponMesh() override { return TestWeapon; }
+	
 	virtual UAnimMontage* GetDeathMontage() override { return DeathMontage; }
 	virtual TArray<USoundBase*> GetDeathSounds() override { return DeathSounds; }
 	virtual bool GetIsDead() override { return bDead; }
+	
 	virtual UAnimMontage* GetHitReactMontage() override { return HitReactMontage; }
 	virtual TArray<USoundBase*> GetHitReactSounds() override { return HitReactSounds; }
 	virtual bool GetIsHitReacting() override { return bHitReacting; }
+	
 	virtual UAnimMontage* GetMeleeAttackMontage() override { return nullptr; }
+	// TODO: This should be able to switch between the proper montage based on other criteria like what equipment they have
+	// TODO: This might be specific implementations for Character and Enemy
+	virtual UAnimMontage* GetAttackMontage() override { return nullptr; }
 #pragma endregion 
 	
 	// If set, this table is used to look up tag relationships for activate and cancel
