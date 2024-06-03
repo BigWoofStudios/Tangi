@@ -82,6 +82,9 @@ private:
 	void HealthPostGameplayEffect() const;
 	void OxygenPostGameplayEffect() const;
 	void EndurancePostGameplayEffect() const;
+	void AddReplicatedLooseTag(const FGameplayTag& Tag) const;
+	void RemoveReplicatedLooseTag(const FGameplayTag& Tag) const;
+	
 #pragma endregion
 
 // -----------------------------------------------------------------------------------------------------------------
