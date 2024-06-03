@@ -42,6 +42,7 @@ void ATangiCharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	
 	DOREPLIFETIME_WITH_PARAMS_FAST(ThisClass, bDead, Parameters);
 	DOREPLIFETIME_WITH_PARAMS_FAST(ThisClass, bHitReacting, Parameters);
+	DOREPLIFETIME_WITH_PARAMS_FAST(ThisClass, bDrowning, Parameters);
 	DOREPLIFETIME_WITH_PARAMS_FAST(ThisClass, bSwimming, Parameters);
 	DOREPLIFETIME_WITH_PARAMS_FAST(ThisClass, bUnderwater, Parameters);
 }
@@ -125,25 +126,20 @@ void ATangiCharacterBase::PossessedBy(AController* NewController)
 	LandedDelegate.AddDynamic(this, &ATangiCharacterBase::ApplyFallDamage);
 	if (GetAbilitySystemComponent())
 	{
-		GetAbilitySystemComponent()->RegisterGameplayTagEvent(FTangiGameplayTags::Status_Attribute_Health_IsDead, EGameplayTagEventType::NewOrRemoved).AddUObject(
-			this, &ATangiCharacterBase::DeathTagChanged
-		);
-		
-		GetAbilitySystemComponent()->RegisterGameplayTagEvent(FTangiGameplayTags::Status_IsHitReacting, EGameplayTagEventType::NewOrRemoved).AddUObject(
-			this, &ATangiCharacterBase::HitReactTagChanged
-		);
+		GetAbilitySystemComponent()->RegisterGenericGameplayTagEvent().AddUObject(this, &ATangiCharacterBase::TagChanged);
 	}
 }
 
 void ATangiCharacterBase::AddCharacterAbilities() const
 {
-	if (HasAuthority())
+	if (!HasAuthority())
 	{
-		UTangiAbilitySystemComponent *TangiAbilitySystemComponent = CastChecked<UTangiAbilitySystemComponent>(AbilitySystemComponent);
-	
-		// Add the default startup abilities for this character
-		TangiAbilitySystemComponent->AddStartupAbilities(StartupAbilities);
+		UE_LOG(LogTemp, Warning, TEXT("ACharacterBase::AddCharacterAbilities must be called from the server."));
+		return;
 	}
+	
+	// Add the default startup abilities for this character
+	CastChecked<UTangiAbilitySystemComponent>(AbilitySystemComponent)->AddStartupAbilities(StartupAbilities);
 }
 
 void ATangiCharacterBase::ApplyFallDamage(const FHitResult&)
@@ -154,12 +150,26 @@ void ATangiCharacterBase::ApplyFallDamage(const FHitResult&)
 	}
 }
 
+void ATangiCharacterBase::TagChanged(const FGameplayTag CallbackTag, const int32 NewCount)
+{
+	if (CallbackTag == FTangiGameplayTags::Status_Attribute_Health_IsDead)
+	{
+		SetDead(NewCount > 0);	
+	}
+	else if (CallbackTag == FTangiGameplayTags::Status_IsHitReacting)
+	{
+		SetHitReacting(NewCount > 0);
+	}
+	else if (CallbackTag == FTangiGameplayTags::Status_Attribute_Oxygen_IsDrowning)
+	{
+		SetDrowning(NewCount > 0);
+	}
+}
+
 // ---------------------------------------------------------------------------------------------------------------------
 // Hit React
 // ---------------------------------------------------------------------------------------------------------------------
 #pragma region Hit React
-void ATangiCharacterBase::HitReactTagChanged(const FGameplayTag, const int32 NewCount) { SetHitReacting(NewCount > 0); }
-
 void ATangiCharacterBase::SetHitReacting(const bool NewValue)
 {
 	if (!HasAuthority())
@@ -183,8 +193,6 @@ void ATangiCharacterBase::ServerSetHitReacting_Implementation(const bool NewValu
 // Death
 // ---------------------------------------------------------------------------------------------------------------------
 #pragma region Death
-void ATangiCharacterBase::DeathTagChanged(const FGameplayTag, const int32 NewCount) { SetDead(NewCount > 0); }
-
 void ATangiCharacterBase::SetDead(const bool NewValue)
 {
 	if (!HasAuthority())
@@ -209,6 +217,20 @@ void ATangiCharacterBase::ServerSetDead_Implementation(const bool NewValue) { Se
 // Swimming
 // ---------------------------------------------------------------------------------------------------------------------
 #pragma region Swimming
+void ATangiCharacterBase::SetDrowning(const bool NewValue)
+{
+	if (!HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SetDrowning must be called from the server!"));
+		return;
+	}
+	
+	if (bDrowning != NewValue)
+	{
+		bDrowning = NewValue;
+		MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, bDrowning, this);
+	}
+}
 
 void ATangiCharacterBase::SetSwimming(const bool NewValue)
 {
@@ -250,12 +272,10 @@ void ATangiCharacterBase::SetUnderwater(const bool NewValue)
 			}
 			else
 			{
-				FGameplayTagContainer Container;
 				if (ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_IsUnderwater))
 				{
 					ASC->RemoveLooseGameplayTag(FTangiGameplayTags::Status_IsUnderwater);
 					ASC->RemoveReplicatedLooseGameplayTag(FTangiGameplayTags::Status_IsUnderwater);
-					
 				}
 				if (ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsDrowning))
 				{
@@ -272,10 +292,11 @@ void ATangiCharacterBase::RefreshSwimming()
 	if (!HasAuthority()) return;
 	
 	const APhysicsVolume* CurrentVolume = GetPhysicsVolume();
-	SetSwimming(CurrentVolume->bWaterVolume && GetCharacterMovement()->IsSwimming());
+	const bool bNewSwimming = CurrentVolume->bWaterVolume && GetCharacterMovement()->IsSwimming();
+	SetSwimming(bNewSwimming);
 
 	bool bNewUnderwater = false;
-	if (bSwimming)
+	if (bNewSwimming)
 	{
 		const FVector CapsuleTop = GetCapsuleComponent()->GetComponentLocation() + FVector(0.0f, 0.0f, GetCapsuleComponent()->GetScaledCapsuleHalfHeight());
 		const float WaterSurfaceZ = CurrentVolume->GetActorLocation().Z + CurrentVolume->GetBounds().BoxExtent.Z;

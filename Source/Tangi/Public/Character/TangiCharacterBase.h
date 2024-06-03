@@ -90,6 +90,8 @@ private:
 
 	UFUNCTION() void ApplyFallDamage(const FHitResult& Hit);
 	
+	void TagChanged(const FGameplayTag CallbackTag, const int32 NewCount);
+	
 	// Critical section to ensure thread safety
 	mutable FCriticalSection ConditionCriticalSection;
 	
@@ -105,8 +107,6 @@ public:
 	}
 	
 private:
-	virtual void HitReactTagChanged(const FGameplayTag CallbackTag, const int32 NewCount);
-	
 	UPROPERTY(EditDefaultsOnly, Category = "Combat|Hit React")
 	TObjectPtr<UAnimMontage> HitReactMontage = nullptr;
 
@@ -132,8 +132,6 @@ public:
 	}
 	
 private:
-	virtual void DeathTagChanged(const FGameplayTag CallbackTag, const int32 NewCount);
-	
 	UPROPERTY(EditDefaultsOnly, Category = "Combat|Death")
 	TObjectPtr<UAnimMontage> DeathMontage = nullptr;
 
@@ -152,6 +150,11 @@ private:
 // ---------------------------------------------------------------------------------------------------------------------
 #pragma region Swimming
 public:
+	UFUNCTION(BlueprintPure, meta=(BlueprintThreadSafe)) uint8 GetDrowning() const
+	{
+		FScopeLock Lock(&ConditionCriticalSection);
+		return bDrowning;
+	}
 	UFUNCTION(BlueprintPure, meta=(BlueprintThreadSafe)) uint8 GetSwimming() const
 	{
 		FScopeLock Lock(&ConditionCriticalSection);
@@ -172,6 +175,7 @@ private:
 	UPROPERTY(VisibleAnywhere, Replicated, Category = "State|Swimming", Transient)
 	uint8 bSwimming: 1 = 0;
 	
+	void SetDrowning(const bool NewValue);
 	void SetSwimming(const bool NewValue);
 	void SetUnderwater(const bool NewValue);
 
