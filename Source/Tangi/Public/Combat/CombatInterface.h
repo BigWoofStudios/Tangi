@@ -24,15 +24,15 @@ public:
 	virtual UStaticMeshComponent* GetActiveWeaponMesh() = 0;
 
 	// Hit React
-	UFUNCTION(BlueprintPure) virtual bool GetIsHitReacting() = 0;
-	UFUNCTION(BlueprintPure) virtual UAnimMontage* GetHitReactMontage() = 0;
-	UFUNCTION(BlueprintPure) virtual TArray<USoundBase*> GetHitReactSounds() = 0;
+	UFUNCTION(BlueprintCallable) virtual bool GetIsHitReacting() = 0;
+	UFUNCTION(BlueprintCallable) virtual UAnimMontage* GetHitReactMontage() = 0;
+	UFUNCTION(BlueprintCallable) virtual TArray<USoundBase*> GetHitReactSounds() = 0;
 
 	// Death
-	UFUNCTION(BlueprintPure) virtual bool GetIsDead() = 0;
-	UFUNCTION(BlueprintPure) virtual UAnimMontage* GetDeathMontage() = 0;
-	UFUNCTION(BlueprintPure) virtual TArray<USoundBase*> GetDeathSounds() = 0;
+	UFUNCTION(BlueprintCallable) virtual bool GetIsDead() = 0;
+	UFUNCTION(BlueprintCallable) virtual UAnimMontage* GetDeathMontage() = 0;
+	UFUNCTION(BlueprintCallable) virtual TArray<USoundBase*> GetDeathSounds() = 0;
 
 	// Attack
-	UFUNCTION(BlueprintPure) virtual UAnimMontage* GetMeleeAttackMontage() = 0;
+	UFUNCTION(BlueprintCallable) virtual UAnimMontage* GetMeleeAttackMontage() = 0;
 };

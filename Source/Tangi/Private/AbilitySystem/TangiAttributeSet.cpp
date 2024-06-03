@@ -210,7 +210,12 @@ void UTangiAttributeSet::OxygenPostGameplayEffect() const
 	if (!ASC) return;
 	if (GetOxygen() <= 0.f && ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_IsUnderwater))
 	{
-		if (!ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsDrowning))
+		if (ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_Attribute_Health_IsDead) && ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsDrowning))
+		{
+			ASC->RemoveLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsDrowning);
+			ASC->RemoveReplicatedLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsDrowning);
+		}
+		else if (!ASC->HasMatchingGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsDrowning))
 		{
 			ASC->AddLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsDrowning);
 			ASC->AddReplicatedLooseGameplayTag(FTangiGameplayTags::Status_Attribute_Oxygen_IsDrowning);
