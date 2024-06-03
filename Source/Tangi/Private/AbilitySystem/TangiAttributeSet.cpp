@@ -126,6 +126,24 @@ void UTangiAttributeSet::ShowFloatingText(const FEffectProperties& Props, const 
 	}
 }
 
+void UTangiAttributeSet::AddReplicatedLooseTag(const FGameplayTag& Tag) const
+{
+	if (UAbilitySystemComponent* AbilitySystemComponent = GetOwningAbilitySystemComponent())
+	{
+		AbilitySystemComponent->AddLooseGameplayTag(Tag);
+		AbilitySystemComponent->AddReplicatedLooseGameplayTag(Tag);
+	}
+}
+
+void UTangiAttributeSet::RemoveReplicatedLooseTag(const FGameplayTag& Tag) const
+{
+	if (UAbilitySystemComponent* AbilitySystemComponent = GetOwningAbilitySystemComponent())
+	{
+		AbilitySystemComponent->RemoveLooseGameplayTag(Tag);
+		AbilitySystemComponent->RemoveReplicatedLooseGameplayTag(Tag);
+	}
+}
+
 // -----------------------------------------------------------------------------------------------------------------
 // Vital Attributes
 // -----------------------------------------------------------------------------------------------------------------
@@ -198,24 +216,6 @@ void UTangiAttributeSet::EndurancePostGameplayEffect() const
 	else if (bIsFullEndurance)
 	{
 		RemoveReplicatedLooseTag(FTangiGameplayTags::Status_Attribute_Endurance_IsFull);
-	}
-}
-
-void UTangiAttributeSet::AddReplicatedLooseTag(const FGameplayTag& Tag) const
-{
-	if ( UAbilitySystemComponent* ASC = GetOwningAbilitySystemComponent())
-	{
-		ASC->AddLooseGameplayTag(Tag);
-		ASC->AddReplicatedLooseGameplayTag(Tag);
-	}
-}
-
-void UTangiAttributeSet::RemoveReplicatedLooseTag(const FGameplayTag& Tag) const
-{
-	if ( UAbilitySystemComponent* ASC = GetOwningAbilitySystemComponent())
-	{
-		ASC->RemoveLooseGameplayTag(Tag);
-		ASC->RemoveReplicatedLooseGameplayTag(Tag);
 	}
 }
 
