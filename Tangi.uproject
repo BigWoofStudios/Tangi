@@ -13,7 +13,8 @@
 				"GameplayAbilities",
 				"CoreUObject",
 				"UMG",
-				"EnhancedInput"
+				"EnhancedInput",
+				"Water"
 			]
 		}
 	],
@@ -102,6 +103,14 @@
 		},
 		{
 			"Name": "MotionWarping",
+			"Enabled": true
+		},
+		{
+			"Name": "Chooser",
+			"Enabled": true
+		},
+		{
+			"Name": "AnimationWarping",
 			"Enabled": true
 		}
 	],
