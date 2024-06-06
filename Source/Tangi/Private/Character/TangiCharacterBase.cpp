@@ -24,6 +24,9 @@ ATangiCharacterBase::ATangiCharacterBase()
 
 	CharacterTrajectory = CreateDefaultSubobject<UCharacterTrajectoryComponent>("CharacterTrajectory");
 	AddOwnedComponent(CharacterTrajectory);
+
+	BagComponent = CreateDefaultSubobject<UBagComponent>("BagComponent");
+	AddOwnedComponent(BagComponent);
 	
 	TestWeapon = CreateDefaultSubobject<UStaticMeshComponent>("OneHandedWeapon");
 	TestWeapon->CanCharacterStepUpOn = ECB_No;

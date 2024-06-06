@@ -10,6 +10,8 @@
 #include "Combat/CombatInterface.h"
 #include "GameFramework/Character.h"
 #include "HAL/CriticalSection.h"
+#include "ItemSystem/BagComponent.h"
+#include "ItemSystem/ItemSystemInterface.h"
 #include "TangiCharacterBase.generated.h"
 
 class UTangiAbilityTagMapping;
@@ -19,7 +21,7 @@ class UGameplayEffect;
 class UGameplayAbility;
 
 UCLASS()
-class TANGI_API ATangiCharacterBase : public ACharacter, public IAbilitySystemInterface, public ICombatInterface
+class TANGI_API ATangiCharacterBase : public ACharacter, public IAbilitySystemInterface, public ICombatInterface, public IItemSystemInterface
 {
 	GENERATED_BODY()
 
@@ -48,6 +50,9 @@ public:
 	// TODO: This might be specific implementations for Character and Enemy
 	virtual UAnimMontage* GetAttackMontage() override { return nullptr; }
 #pragma endregion 
+
+
+	virtual UBagComponent* GetBag() override { return BagComponent; }
 	
 	// If set, this table is used to look up tag relationships for activate and cancel
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|Ability")
@@ -61,6 +66,9 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 	UCharacterTrajectoryComponent* CharacterTrajectory = nullptr;
+
+	UPROPERTY(BlueprintReadOnly)
+	UBagComponent* BagComponent = nullptr;
 	
 protected:
 	virtual void BeginPlay() override;
@@ -78,21 +86,21 @@ protected:
 	UPROPERTY() TObjectPtr<UAttributeSet> AttributeSet = nullptr;
 
 private:
-	UPROPERTY(EditDefaultsOnly, Category = "GAS|Attribute")
+	UPROPERTY(EditDefaultsOnly, Category = "GAS|Defaults")
 	TSubclassOf<UGameplayEffect> DefaultVitalAttributes = nullptr;
-	UPROPERTY(EditDefaultsOnly, Category = "GAS|Attribute")
+	UPROPERTY(EditDefaultsOnly, Category = "GAS|Defaults")
 	TSubclassOf<UGameplayEffect> DefaultSecondaryAttributes = nullptr;
-	UPROPERTY(EditDefaultsOnly, Category = "GAS|Regeneration")
+	UPROPERTY(EditDefaultsOnly, Category = "GAS|Defaults")
 	TSubclassOf<UGameplayEffect> RegenerateHealthEffect = nullptr;
-	UPROPERTY(EditDefaultsOnly, Category = "GAS|Regeneration")
+	UPROPERTY(EditDefaultsOnly, Category = "GAS|Defaults")
 	TSubclassOf<UGameplayEffect> RegenerateEnduranceEffect = nullptr;
-	UPROPERTY(EditDefaultsOnly, Category = "GAS|Regeneration")
+	UPROPERTY(EditDefaultsOnly, Category = "GAS|Defaults")
 	TSubclassOf<UGameplayEffect> RegenerateOxygenEffect = nullptr;
 	
-	UPROPERTY(EditDefaultsOnly, Category = "GAS|Ability", meta=(Description="These abilities will be granted on startup / when the ASC is associated."))
+	UPROPERTY(EditDefaultsOnly, Category = "GAS|Defaults", meta=(Description="These abilities will be granted on startup / when the ASC is associated."))
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities = {};
 
-	UPROPERTY(EditDefaultsOnly, Category = "GAS|Effect")
+	UPROPERTY(EditDefaultsOnly, Category = "GAS|Defaults")
 	TSubclassOf<UGameplayEffect> GE_FallDamage = nullptr;
 
 	UFUNCTION() void ApplyFallDamage(const FHitResult& Hit);

@@ -54,5 +54,5 @@ private:
 
 	void HandleDelegate();
 	
-	void HandleInteract();
+	virtual void HandleInteract();
 };
