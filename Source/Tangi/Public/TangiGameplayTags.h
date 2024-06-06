@@ -107,7 +107,10 @@ namespace FTangiGameplayTags
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Secondary_MaxEndurance);
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Secondary_MaxOxygen);
 	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Secondary_CriticalHitChance);
-
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Secondary_PhysicalResistance);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Secondary_MagicResistance);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Damage_Physical);
+	TANGI_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Damage_Magic);
 	// -----------------------------------------------------------------------------------------------------------------
 	// Movement Moves
 	// -----------------------------------------------------------------------------------------------------------------
@@ -119,4 +122,6 @@ namespace FTangiGameplayTags
 
 	// These are mappings from MovementMode enums to GameplayTags associated with those enums (below)
 	TANGI_API extern const TMap<uint8, FGameplayTag> MovementModeTagMap;
+	
+	TANGI_API extern const TMap<FGameplayTag, FGameplayTag> DamageTypesToResistances;
 };

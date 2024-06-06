@@ -98,7 +98,7 @@ private:
 // 	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_Todo, Category = "Attribute|Primary")
 // 	FGameplayAttributeData Todo;
 #pragma endregion
-	
+
 // -----------------------------------------------------------------------------------------------------------------
 // Secondary Attributes
 // -----------------------------------------------------------------------------------------------------------------
@@ -108,12 +108,16 @@ public:
 	ATTRIBUTE_ACCESSORS(UTangiAttributeSet, MaxEndurance);
 	ATTRIBUTE_ACCESSORS(UTangiAttributeSet, MaxOxygen);
 	ATTRIBUTE_ACCESSORS(UTangiAttributeSet, CriticalHitChance);
+	ATTRIBUTE_ACCESSORS(UTangiAttributeSet, PhysicalResistance);
+	ATTRIBUTE_ACCESSORS(UTangiAttributeSet, MagicResistance);
 
 protected:
 	UFUNCTION() void OnRep_MaxHealth(const FGameplayAttributeData &OldValue) const;
 	UFUNCTION() void OnRep_MaxEndurance(const FGameplayAttributeData &OldValue) const;
 	UFUNCTION() void OnRep_MaxOxygen(const FGameplayAttributeData &OldValue) const;
 	UFUNCTION() void OnRep_CriticalHitChance(const FGameplayAttributeData &OldValue) const;
+	UFUNCTION() void OnRep_PhysicalResistance(const FGameplayAttributeData &OldValue) const;
+	UFUNCTION() void OnRep_MagicResistance(const FGameplayAttributeData &OldValue) const;
 	
 private:
 	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_MaxHealth, Category = "Attribute|Secondary")
@@ -124,6 +128,10 @@ private:
 	FGameplayAttributeData MaxOxygen;
 	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_CriticalHitChance, Category = "Attribute|Secondary")
 	FGameplayAttributeData CriticalHitChance;
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_PhysicalResistance, Category = "Attribute|Secondary")
+	FGameplayAttributeData PhysicalResistance;
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_MagicResistance, Category = "Attribute|Secondary")
+	FGameplayAttributeData MagicResistance;
 #pragma endregion
 
 // -----------------------------------------------------------------------------------------------------------------

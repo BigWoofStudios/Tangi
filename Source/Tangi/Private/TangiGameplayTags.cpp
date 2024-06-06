@@ -104,7 +104,12 @@ namespace FTangiGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Attribute_Secondary_MaxEndurance, FName{TEXT("Attribute.Secondary.MaxEndurance")});
 	UE_DEFINE_GAMEPLAY_TAG(Attribute_Secondary_MaxOxygen, FName{TEXT("Attribute.Secondary.MaxOxygen")});
 	UE_DEFINE_GAMEPLAY_TAG(Attribute_Secondary_CriticalHitChance, FName{TEXT("Attribute.Secondary.CriticalHitChance")});
-	
+	UE_DEFINE_GAMEPLAY_TAG(Attribute_Secondary_PhysicalResistance, FName{TEXT("Attribute.Secondary.PhysicalResistance")});
+	UE_DEFINE_GAMEPLAY_TAG(Attribute_Secondary_MagicResistance, FName{TEXT("Attribute.Secondary.MagicResistance")});
+
+
+	UE_DEFINE_GAMEPLAY_TAG(Damage_Physical, FName(TEXT("Damage.Physical")));
+	UE_DEFINE_GAMEPLAY_TAG(Damage_Magic, FName(TEXT("Damage.Magic")));
 	// -----------------------------------------------------------------------------------------------------------------
 	// Movement Moves
 	// -----------------------------------------------------------------------------------------------------------------
@@ -122,6 +127,11 @@ namespace FTangiGameplayTags
 			{MOVE_Flying, Movement_Mode_Flying},
 	};
 
+	const TMap<FGameplayTag, FGameplayTag> DamageTypesToResistances = {
+		{Damage_Physical, Attribute_Secondary_PhysicalResistance},
+		{Damage_Magic, Attribute_Secondary_MagicResistance},
+	};
+	
 	FGameplayTag FindTagByString(const FString &TagString, const bool bMatchPartialString)
 	{
 		const UGameplayTagsManager &Manager = UGameplayTagsManager::Get();

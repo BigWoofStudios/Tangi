@@ -3,69 +3,87 @@
 #include "AbilitySystem/ExecCalc/ExecCalc_Damage.h"
 #include "AbilitySystemComponent.h"
 #include "TangiGameplayTags.h"
+#include "AbilitySystem/TangiAbilitySystemLibrary.h"
 #include "AbilitySystem/TangiAttributeSet.h"
 
-// Explicitly not adding the `F` in front because it isn't a USTRUCT, but rather internal to this file only.
-// ReSharper disable once CppUE4CodingStandardNamingViolationWarning
-struct TangiDamageStatics
+struct FTangiDamageStatics
 {
 	FGameplayEffectAttributeCaptureDefinition CriticalHitChanceDef;
+	FGameplayEffectAttributeCaptureDefinition PhysicalResistanceDef;
+	FGameplayEffectAttributeCaptureDefinition MagicResistanceDef;
 	
 	TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition> TagsToCaptureDefs;
-
-	TangiDamageStatics()
+	
+	FTangiDamageStatics()
 	{
 		CriticalHitChanceDef = FGameplayEffectAttributeCaptureDefinition(UTangiAttributeSet::GetCriticalHitChanceAttribute(), EGameplayEffectAttributeCaptureSource::Source, false);
+		PhysicalResistanceDef = FGameplayEffectAttributeCaptureDefinition(UTangiAttributeSet::GetPhysicalResistanceAttribute(), EGameplayEffectAttributeCaptureSource::Target, false);
+		MagicResistanceDef = FGameplayEffectAttributeCaptureDefinition(UTangiAttributeSet::GetMagicResistanceAttribute(), EGameplayEffectAttributeCaptureSource::Target, false);
 		
 		TagsToCaptureDefs.Add(FTangiGameplayTags::Attribute_Secondary_CriticalHitChance, CriticalHitChanceDef);
+		TagsToCaptureDefs.Add(FTangiGameplayTags::Attribute_Secondary_PhysicalResistance, PhysicalResistanceDef);
+		TagsToCaptureDefs.Add(FTangiGameplayTags::Attribute_Secondary_MagicResistance, MagicResistanceDef);
 	}
 };
 
-static const TangiDamageStatics& DamageStatics()
+static const FTangiDamageStatics& DamageStatics()
 {
-	static TangiDamageStatics DStatics;
+	static FTangiDamageStatics DStatics;
 	return DStatics;
 }
 
 UExecCalc_Damage::UExecCalc_Damage()
 {
 	RelevantAttributesToCapture.Add(DamageStatics().CriticalHitChanceDef);
+	RelevantAttributesToCapture.Add(DamageStatics().PhysicalResistanceDef);
+	RelevantAttributesToCapture.Add(DamageStatics().MagicResistanceDef);
 }
 
 void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
 {
-	// Source (Who is dealing the damage) -- Target (Who is receiving the damage)
+	float PhysicalDamage = 0.f;
+	float MagicDamage = 0.f;
 	
-	// const UAbilitySystemComponent* SourceASC = ExecutionParams.GetSourceAbilitySystemComponent();
-	// const UAbilitySystemComponent* TargetASC = ExecutionParams.GetTargetAbilitySystemComponent();
-	
-	// AActor* SourceAvatar = SourceASC ? SourceASC->GetAvatarActor() : nullptr;
-	// AActor* TargetAvatar = TargetASC ? TargetASC->GetAvatarActor() : nullptr;
-	
-	// Can be used to get info about the character that is related to combat
-	// ICombatInterface* SourceCombatInterface = Cast<ICombatInterface>(SourceAvatar);
-	// ICombatInterface* TargetCombatInterface = Cast<ICombatInterface>(TargetAvatar);
-	
-	// Can be used to get info about the character that is related to the items they possess or have equipped
-	// IItemSystemInterface* SourceItemSystemInterface = Cast<IItemSystemInterface>(SourceAvatar);
-	// IItemSystemInterface* TargetItemSystemInterface = Cast<IItemSystemInterface>(TargetAvatar);
- 
 	const FGameplayEffectSpec& Spec = ExecutionParams.GetOwningSpec();
-    	
-    FAggregatorEvaluateParameters EvaluationParameters;
-    EvaluationParameters.SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();
-    EvaluationParameters.TargetTags = Spec.CapturedTargetTags.GetAggregatedTags();
+	FAggregatorEvaluateParameters EvaluationParameters;
+	EvaluationParameters.SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();
+	EvaluationParameters.TargetTags = Spec.CapturedTargetTags.GetAggregatedTags();
+	
+	FGameplayEffectContextHandle EffectContextHandle = Spec.GetContext();
+	
+	for (const TTuple<FGameplayTag, FGameplayTag>& Pair : FTangiGameplayTags::DamageTypesToResistances)
+	{
+		const FGameplayTag DamageTypeTag = Pair.Key;
+		const FGameplayTag ResistanceTag = Pair.Value;
+		checkf(FTangiDamageStatics().TagsToCaptureDefs.Contains(ResistanceTag), TEXT("TagsToCaptureDefs doesn't contain Tag: [%s] in ExecCalc_Damage"), *ResistanceTag.ToString());
 
-	float Damage = 10.f; // TODO: Get the actual damage set by caller magnitude
+		float DamageTypeValue = Spec.GetSetByCallerMagnitude(DamageTypeTag, false);
+		if (DamageTypeValue <= 0.f) continue;
+		
+		if (DamageTypeTag.MatchesTag(FTangiGameplayTags::Damage_Physical))
+		{
+			PhysicalDamage += DamageTypeValue;
+		}
+		else if (DamageTypeTag.MatchesTag(FTangiGameplayTags::Damage_Magic))
+		{
+			MagicDamage += DamageTypeValue;
+		}
+	}
+	
+	float Damage = PhysicalDamage + MagicDamage;
 
 #pragma region Critical Hit
 	float SourceCriticalHitChance = 0.f;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().CriticalHitChanceDef, EvaluationParameters, SourceCriticalHitChance);
 	SourceCriticalHitChance = FMath::Clamp(SourceCriticalHitChance, 0.f, 100.f);
 	const bool bIsCriticalHit = FMath::RandRange(1, 100) < SourceCriticalHitChance;
-	Damage = bIsCriticalHit ? Damage * 1.25f : Damage;
+	UTangiAbilitySystemLibrary::SetIsCriticalHit(EffectContextHandle, bIsCriticalHit);
+	Damage *= bIsCriticalHit ? 1.25f : 1.f;
 #pragma endregion
 	
+	// -----------------------------------------------------------------------------------------------------------------
+	// Final damage being dealt
+	// -----------------------------------------------------------------------------------------------------------------
 	const FGameplayModifierEvaluatedData EvaluatedData(UTangiAttributeSet::GetIncomingDamageAttribute(), EGameplayModOp::Additive, Damage);
 	OutExecutionOutput.AddOutputModifier(EvaluatedData);
 }

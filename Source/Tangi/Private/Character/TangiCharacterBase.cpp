@@ -55,7 +55,7 @@ void ATangiCharacterBase::OnMovementModeChanged(const EMovementMode PrevMovement
 	// Falling movement mode is actually also jumping because it doesn't take into account the Z velocity, so
 	// because of this a character is considered falling when accelerating upwards and therefore the movement mode gets
 	// set to Falling. This will hopefully be configurable in the new Mover2.0 plugin (Character Motion Component) but
-	// is it currently experimental and has bugs which make it unusable as of UE v5.4.1
+	// is it currently experimental and has bugs which make it unusable as of UEv5.4.1
 	if (GetAbilitySystemComponent())
 	{
 		for (const TTuple<unsigned char, FGameplayTag> Pair : FTangiGameplayTags::MovementModeTagMap)

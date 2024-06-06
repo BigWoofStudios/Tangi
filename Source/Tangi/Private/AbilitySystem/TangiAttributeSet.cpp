@@ -21,6 +21,8 @@ UTangiAttributeSet::UTangiAttributeSet()
 	TagToAttribute.Add(FTangiGameplayTags::Attribute_Secondary_MaxEndurance, GetMaxEnduranceAttribute);
 	TagToAttribute.Add(FTangiGameplayTags::Attribute_Secondary_MaxOxygen, GetMaxOxygenAttribute);
 	TagToAttribute.Add(FTangiGameplayTags::Attribute_Secondary_CriticalHitChance, GetCriticalHitChanceAttribute);
+	TagToAttribute.Add(FTangiGameplayTags::Attribute_Secondary_PhysicalResistance, GetPhysicalResistanceAttribute);
+	TagToAttribute.Add(FTangiGameplayTags::Attribute_Secondary_MagicResistance, GetMagicResistanceAttribute);
 }
 
 void UTangiAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -262,6 +264,8 @@ void UTangiAttributeSet::OnRep_MaxHealth(const FGameplayAttributeData& OldValue)
 void UTangiAttributeSet::OnRep_MaxEndurance(const FGameplayAttributeData& OldValue) const {GAMEPLAYATTRIBUTE_REPNOTIFY(UTangiAttributeSet, MaxEndurance, OldValue);}
 void UTangiAttributeSet::OnRep_MaxOxygen(const FGameplayAttributeData& OldValue) const {GAMEPLAYATTRIBUTE_REPNOTIFY(UTangiAttributeSet, MaxOxygen, OldValue);}
 void UTangiAttributeSet::OnRep_CriticalHitChance(const FGameplayAttributeData& OldValue) const {GAMEPLAYATTRIBUTE_REPNOTIFY(UTangiAttributeSet, CriticalHitChance, OldValue);}
+void UTangiAttributeSet::OnRep_PhysicalResistance(const FGameplayAttributeData& OldValue) const {GAMEPLAYATTRIBUTE_REPNOTIFY(UTangiAttributeSet, PhysicalResistance, OldValue);}
+void UTangiAttributeSet::OnRep_MagicResistance(const FGameplayAttributeData& OldValue) const {GAMEPLAYATTRIBUTE_REPNOTIFY(UTangiAttributeSet, MagicResistance, OldValue);}
 
 void UTangiAttributeSet::DamagePostGameplayEffect(const FEffectProperties& Props)
 {
