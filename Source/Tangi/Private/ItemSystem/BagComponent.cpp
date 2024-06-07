@@ -32,15 +32,11 @@ bool UBagComponent::PickUpItem(ATangiBaseItem* Item)
 	}
 	// add item to Items array... todo, need to just find a slot
 	Items.Add(Item);
+
+	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, Item->GetName());
 	
 	MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, Items, this);
 	return true;
-}
-
-
-void UBagComponent::DropItem_Implementation()
-{
-	MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, Items, this);
 }
 
 void UBagComponent::BeginPlay()

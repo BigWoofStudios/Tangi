@@ -73,7 +73,6 @@ void ABaseInteractableActor::EndInteract()
 
 bool ABaseInteractableActor::CanEditChange(const FProperty* InProperty) const
 {
-		
 	return Super::CanEditChange(InProperty);
 }
 
@@ -86,11 +85,10 @@ void ABaseInteractableActor::BeginPlay()
 	}
 }
 
-
 void ABaseInteractableActor::HandleDelegate()
 {
 	const float RemainingInteractionTime = GetWorldTimerManager().GetTimerElapsed(InteractionTimer);
-	const float PercentComplete = (RemainingInteractionTime / GetInteractionDuration());
+	const float PercentComplete = RemainingInteractionTime / GetInteractionDuration();
 	FocusWidget->PercentComplete = PercentComplete;
 }
 

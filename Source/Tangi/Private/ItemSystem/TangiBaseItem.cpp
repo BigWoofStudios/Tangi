@@ -32,14 +32,11 @@ void ATangiBaseItem::HandleInteract()
 	{
 		if (ItemSystemInterface->GetBag()->PickUpItem(this))
 		{
-			// If a specific quantity needs to be picked up, it needs to be handled here.
-			// and the PickUpItem implementation should return the amount left over.
 			Destroy();
 		}
 	}
 	
-	// No need for Super::HandleInteract() b/c this actor implements
-	// the interact functionality in C++.
+	// No Super::HandleInteract() b/c this C++ actor implements the interact functionality.
 	EndInteract();
 }
 

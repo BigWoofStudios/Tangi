@@ -87,7 +87,15 @@ void UInteractionComponent::ResetInteraction()
 
 void UInteractionComponent::BeginInteract()
 {
-	ServerBeginInteract(InteractionTarget, GetOwner());
+	if (APlayerController* PC = Cast<APlayerController>(GetOwner()))
+	{
+		ServerBeginInteract(InteractionTarget, PC->GetPawn());
+	}
+	else
+	{
+		ServerBeginInteract(InteractionTarget, GetOwner());
+	}
+	
 }
 
 void UInteractionComponent::ServerBeginInteract_Implementation(AActor* Target, AActor* OtherActor)
