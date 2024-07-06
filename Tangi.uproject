@@ -121,6 +121,14 @@
 				"Win64",
 				"Linux"
 			]
+		},
+		{
+			"Name": "AnimationLocomotionLibrary",
+			"Enabled": true
+		},
+		{
+			"Name": "DeformerGraph",
+			"Enabled": true
 		}
 	],
 	"TargetPlatforms": [
